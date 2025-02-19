@@ -1,20 +1,21 @@
 package com.investments.tracker.model;
 
 import com.investments.tracker.model.enums.Currency;
+import com.investments.tracker.model.enums.ProductType;
 import com.investments.tracker.model.enums.TransactionType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "transactions")
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +27,10 @@ public class Transaction {
     @Column(name = "transaction_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
+
+    @Column(name = "product_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductType productType;
 
     @Column(name = "product_name", nullable = false)
     private String productName;

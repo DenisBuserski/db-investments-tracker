@@ -39,7 +39,7 @@ public class DepositController {
     }
 
     @PostMapping("/in")
-    public void deposit(@RequestBody @Valid DepositDTO depositDTO) {
+    public void insertDeposit(@RequestBody @Valid DepositDTO depositDTO) {
         log.info("Making deposit for [{} - {}]", depositDTO.getAmount(),depositDTO.getCurrency());
         this.cashTransactionService.insertDeposit(depositDTO);
         log.info("Deposit for [{} - {}] successful", depositDTO.getAmount(),depositDTO.getCurrency());
