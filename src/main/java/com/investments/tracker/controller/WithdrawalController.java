@@ -1,5 +1,6 @@
 package com.investments.tracker.controller;
 
+import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.WithdrawalRequestDTO;
 import com.investments.tracker.service.WithdrawalService;
 import jakarta.validation.Valid;
@@ -22,15 +23,15 @@ public class WithdrawalController {
     }
 
     @PostMapping("/out")
-    public void withdrawCash(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
+    public BalanceResponseDTO withdrawCash(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
         log.info("Making withdrawal for [{} - {}]", withdrawalRequestDTO.getAmount(), withdrawalRequestDTO.getCurrency());
-        BigDecimal balanceAmount = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
-        if (balanceAmount.compareTo(BigDecimal.ZERO) == 0) {
-            log.info("You don't have any balance");
-        } else if (balanceAmount.compareTo(BigDecimal.valueOf(-1)) == 0) {
-            log.info("You don't have enough money to withdraw");
+        BalanceResponseDTO balance = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
+        if (balance.getBalance().compareTo(BigDecimal.ZERO) == 0) {
+            log.info("You don't have enough money or no balance at all");
+            return balance;
         } else {
-            log.info("You have successfully withdrawn for [{}]", balanceAmount);
+            log.info("Withdrawal for [{} {}] successful", withdrawalRequestDTO.getAmount(), withdrawalRequestDTO.getCurrency());
+            return balance;
         }
     }
 }

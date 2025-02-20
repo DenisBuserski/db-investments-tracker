@@ -2,6 +2,7 @@ package com.investments.tracker.service.impl;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
+import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.WithdrawalRequestDTO;
 import com.investments.tracker.model.enums.CashTransactionType;
 import com.investments.tracker.repository.BalanceRepository;
@@ -30,7 +31,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     }
 
     @Override
-    public BigDecimal withdrawCash(WithdrawalRequestDTO withdrawalRequestDTO) {
+    public BalanceResponseDTO withdrawCash(WithdrawalRequestDTO withdrawalRequestDTO) {
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             Balance balance = latestBalance.get();
@@ -48,7 +49,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
                         .currency(withdrawalRequestDTO.getCurrency())
                         .build();
                 this.cashTransactionRepository.save(withdrawal);
-                log.info("Inserted withdrawal for [{} - {}]", withdrawal.getAmount(), withdrawal.getCurrency());
+                log.info("Inserted withdrawal for [{} {}] in table [{}]", withdrawal.getAmount(), withdrawal.getCurrency(), "cash_transaction");
 
                 Balance newBalance = Balance.builder()
                         .date(LocalDate.now())
@@ -59,15 +60,33 @@ public class WithdrawalServiceImpl implements WithdrawalService {
                         .totalFees(balance.getTotalFees())
                         .build();
                 this.balanceRepository.save(newBalance);
-                log.info("Updating balance table for withdrawal [{} - {}] ", withdrawal.getAmount(), withdrawal.getCurrency());
-                return withdrawal.getAmount();
+                log.info("Updating table [{}] for withdrawal [{} {}] ", "balance",  withdrawal.getAmount(), withdrawal.getCurrency());
+                return BalanceResponseDTO.builder()
+                        .balance(newBalance.getBalance())
+                        .totalDeposits(newBalance.getTotalDeposits())
+                        .totalWithdrawals(newBalance.getTotalWithdrawals())
+                        .totalDividends(newBalance.getTotalDividends())
+                        .totalFees(newBalance.getTotalFees())
+                        .build();
             } else {
                 log.info("You don't have enough money to withdraw. Current balance is [{}]", balance.getBalance());
-                return BigDecimal.valueOf(-1);
+                return BalanceResponseDTO.builder()
+                        .balance(balance.getBalance())
+                        .totalDeposits(balance.getTotalDeposits())
+                        .totalWithdrawals(balance.getTotalWithdrawals())
+                        .totalDividends(balance.getTotalDividends())
+                        .totalFees(balance.getTotalFees())
+                        .build();
             }
         } else {
             log.info("No balance found");
-            return BigDecimal.ZERO;
+            return BalanceResponseDTO.builder()
+                    .balance(BigDecimal.ZERO)
+                    .totalDeposits(BigDecimal.ZERO)
+                    .totalWithdrawals(BigDecimal.ZERO)
+                    .totalDividends(BigDecimal.ZERO)
+                    .totalFees(BigDecimal.ZERO)
+                    .build();
         }
 
     }
