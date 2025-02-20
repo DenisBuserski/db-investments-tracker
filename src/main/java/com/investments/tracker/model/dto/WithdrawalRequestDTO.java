@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 @Builder
 @ToString
 public class WithdrawalRequestDTO {
-    @NotNull(message = "Deposit cannot be NULL!")
-    @Positive(message = "Deposit amount must be more than 0!")
+    @NotNull(message = "Withdrawal cannot be NULL!")
+    @Positive(message = "Withdrawal amount must be more than 0!")
     private BigDecimal amount;
 
     @NotNull(message = "Currency cannot be NULL!")

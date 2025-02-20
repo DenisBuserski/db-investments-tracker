@@ -12,7 +12,8 @@ public interface BalanceRepository extends JpaRepository<Balance, Long> {
     @Query("""
            SELECT b
            FROM Balance b
-           ORDER BY b.date DESC
+           ORDER BY b.id DESC
+           LIMIT 1
            """)
     Optional<Balance> getLatestBalance();
 }

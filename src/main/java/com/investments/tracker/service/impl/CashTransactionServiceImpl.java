@@ -4,7 +4,6 @@ import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.dto.DepositRequestDTO;
 import com.investments.tracker.model.dto.DepositResultDTO;
-import com.investments.tracker.model.dto.WithdrawalRequestDTO;
 import com.investments.tracker.model.enums.CashTransactionType;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
@@ -91,43 +90,4 @@ public class CashTransactionServiceImpl implements CashTransactionService {
         }
     }
 
-    @Override
-    public Balance withdrawCash(WithdrawalRequestDTO withdrawalRequestDTO) {
-        Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
-        if (latestBalance.isPresent()) {
-            Balance balance = latestBalance.get();
-            // Check if we have enough money
-            if (balance.getBalance().compareTo(withdrawalRequestDTO.getAmount()) > 0) {
-                // -1 if balance.getBalance() is less than withdrawalRequestDTO.getAmount()
-                // 0 if they are equal
-                // 1 if balance.getBalance() is greater than withdrawalRequestDTO.getAmount()
-
-                // Make withdraw
-                CashTransaction withdrawal = CashTransaction.builder()
-                        .date(LocalDate.now())
-                        .cashTransactionType(CashTransactionType.WITHDRAWAL)
-                        .amount(withdrawalRequestDTO.getAmount())
-                        .currency(withdrawalRequestDTO.getCurrency())
-                        .build();
-                this.cashTransactionRepository.save(withdrawal);
-                Balance newBalance = Balance.builder()
-                        .date(LocalDate.now())
-                        .balance(balance.getBalance().subtract(withdrawalRequestDTO.getAmount()))
-                        .totalDeposits(balance.getTotalDeposits())
-                        .totalWithdrawals(balance.getTotalWithdrawals().add(withdrawalRequestDTO.getAmount()))
-                        .totalDividends(balance.getTotalDividends())
-                        .totalFees(balance.getTotalFees())
-                        .build();
-                this.balanceRepository.save(newBalance);
-                return newBalance;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-
-
-
-    }
 }

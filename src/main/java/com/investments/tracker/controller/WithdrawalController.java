@@ -1,55 +1,36 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.model.Balance;
-import com.investments.tracker.model.dto.DepositResultDTO;
 import com.investments.tracker.model.dto.WithdrawalRequestDTO;
-import com.investments.tracker.service.CashTransactionService;
+import com.investments.tracker.service.WithdrawalService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import java.math.BigDecimal;
+
 
 @RestController
 @RequestMapping("/withdrawal")
 @Slf4j
 public class WithdrawalController {
-    private final CashTransactionService cashTransactionService;
+    private final WithdrawalService withdrawalService;
 
     @Autowired
-    public WithdrawalController(CashTransactionService cashTransactionService) {
-        this.cashTransactionService = cashTransactionService;
+    public WithdrawalController(WithdrawalService withdrawalService) {
+        this.withdrawalService = withdrawalService;
     }
 
-    @GetMapping("/get/from/{fromDate}/to/{toDate}")
-    public List<DepositResultDTO> getDepositsFromTo(
-            @PathVariable(name = "fromDate") LocalDate from,
-            @PathVariable(name = "toDate") LocalDate to) {
-        log.info("Getting deposits from [{}] to [{}]", from, to);
-        List<DepositResultDTO> deposits = this.cashTransactionService.getAllDepositsFromTo(from, to);
-        if (deposits.isEmpty()) {
-            log.info("No deposits found");
-            return Collections.emptyList();
-        } else {
-            log.info("Deposits from [{}] to [{}] => [{}]", from, to, deposits);
-            return deposits;
-        }
-    }
-
-    @GetMapping("/out")
+    @PostMapping("/out")
     public void withdrawCash(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
         log.info("Making withdrawal for [{} - {}]", withdrawalRequestDTO.getAmount(), withdrawalRequestDTO.getCurrency());
-        Balance balance = this.cashTransactionService.withdrawCash(withdrawalRequestDTO);
-        if (balance == null) {
+        BigDecimal balanceAmount = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
+        if (balanceAmount.compareTo(BigDecimal.ZERO) == 0) {
             log.info("You don't have any balance");
-        } else if (balance.getBalance().compareTo(withdrawalRequestDTO.getAmount()) == 0) {
-
+        } else if (balanceAmount.compareTo(BigDecimal.valueOf(-1)) == 0) {
+            log.info("You don't have enough money to withdraw");
         } else {
-            log.info("Successfully withdrawal [{} - {}]", withdrawalRequestDTO.getAmount(), withdrawalRequestDTO.getCurrency());
-            log.info("New balance is [{}]", balance.getBalance());
+            log.info("You have successfully withdrawn for [{}]", balanceAmount);
         }
     }
 }
