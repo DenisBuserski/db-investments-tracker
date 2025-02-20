@@ -1,6 +1,6 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.model.dto.TransactionDTO;
+import com.investments.tracker.model.dto.TransactionRequestDTO;
 import com.investments.tracker.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +21,11 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
+    @PostMapping("/in")
+    public void insertTransaction(@RequestBody @Valid TransactionRequestDTO transactionRequestDTO) {
+        this.transactionService.insertTransaction(transactionRequestDTO);
+    }
+
     @GetMapping("/get/from/{fromDate}/to/{toDate}")
     public List<String> getTransactionsFromTo(
             @PathVariable(name = "fromDate") LocalDate from,
@@ -28,8 +33,5 @@ public class TransactionController {
         return null;
     }
 
-    @PostMapping("/in")
-    public void insertTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
-        this.transactionService.insertTransaction(transactionDTO);
-    }
+
 }

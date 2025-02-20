@@ -1,8 +1,7 @@
 package com.investments.tracker.service;
 
-import com.investments.tracker.model.dto.TransactionDTO;
-import jakarta.validation.Valid;
+import com.investments.tracker.model.dto.TransactionRequestDTO;
 
 public interface TransactionService {
-    void insertTransaction(TransactionDTO transactionDTO);
+    void insertTransaction(TransactionRequestDTO transactionDTO);
 }

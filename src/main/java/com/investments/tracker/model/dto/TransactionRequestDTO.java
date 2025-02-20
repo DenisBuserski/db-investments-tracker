@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 @ToString
-public class TransactionDTO {
+public class TransactionRequestDTO {
     private LocalDate date;
     private TransactionType transactionType;
     private ProductType productType;

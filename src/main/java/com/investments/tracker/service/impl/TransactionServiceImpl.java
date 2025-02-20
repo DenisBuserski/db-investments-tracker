@@ -1,7 +1,7 @@
 package com.investments.tracker.service.impl;
 
 import com.investments.tracker.model.Transaction;
-import com.investments.tracker.model.dto.TransactionDTO;
+import com.investments.tracker.model.dto.TransactionRequestDTO;
 import com.investments.tracker.repository.TransactionRepository;
 import com.investments.tracker.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void insertTransaction(TransactionDTO transactionDTO) {
+    public void insertTransaction(TransactionRequestDTO transactionDTO) {
         Transaction transaction = Transaction.builder()
                 .date(LocalDate.now())
                 .transactionType(transactionDTO.getTransactionType())
