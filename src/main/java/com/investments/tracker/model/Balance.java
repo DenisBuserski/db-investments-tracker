@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
+@ToString
 public class Balance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
