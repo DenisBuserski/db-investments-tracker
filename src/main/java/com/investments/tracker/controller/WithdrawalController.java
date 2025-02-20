@@ -24,10 +24,9 @@ public class WithdrawalController {
 
     @PostMapping("/out")
     public BalanceResponseDTO withdrawCash(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
-        log.info("Making withdrawal for [{} - {}]", withdrawalRequestDTO.getAmount(), withdrawalRequestDTO.getCurrency());
+        log.info("Making withdrawal for [{} {}]", withdrawalRequestDTO.getAmount(), withdrawalRequestDTO.getCurrency());
         BalanceResponseDTO balance = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
         if (balance.getBalance().compareTo(BigDecimal.ZERO) == 0) {
-            log.info("You don't have enough money or no balance at all");
             return balance;
         } else {
             log.info("Withdrawal for [{} {}] successful", withdrawalRequestDTO.getAmount(), withdrawalRequestDTO.getCurrency());

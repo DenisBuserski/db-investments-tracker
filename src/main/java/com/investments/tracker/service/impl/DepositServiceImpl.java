@@ -67,42 +67,43 @@ public class DepositServiceImpl implements DepositService {
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             Balance balance = latestBalance.get();
-            Balance newBalance = Balance.builder()
-                    .date(LocalDate.now())
-                    .balance(balance.getBalance().add(deposit.getAmount()))
-                    .totalDeposits(balance.getTotalDeposits().add(deposit.getAmount()))
-                    .totalWithdrawals(balance.getTotalWithdrawals())
-                    .totalDividends(balance.getTotalDividends())
-                    .totalFees(balance.getTotalFees())
-                    .build();
+            Balance newBalance = createNewBalance(balance, deposit);
             this.balanceRepository.save(newBalance);
-            log.info("Updating table [{}] for deposit [{} {}]", "balance", deposit.getAmount(), deposit.getCurrency());
-            return BalanceResponseDTO.builder()
-                    .balance(newBalance.getBalance())
-                    .totalDeposits(newBalance.getTotalDeposits())
-                    .totalWithdrawals(newBalance.getTotalWithdrawals())
-                    .totalDividends(newBalance.getTotalDividends())
-                    .totalFees(newBalance.getTotalFees())
-                    .build();
+            log.info("Inserted deposit for [{} {}] in table [{}]",  deposit.getAmount(), deposit.getCurrency(), "balance");
+            return createNewBalanceDTO(newBalance);
         } else {
-            Balance newBalance = Balance.builder()
-                    .date(LocalDate.now())
-                    .balance(deposit.getAmount())
-                    .totalDeposits(deposit.getAmount())
-                    .totalWithdrawals(BigDecimal.ZERO)
-                    .totalDividends(BigDecimal.ZERO)
-                    .totalFees(BigDecimal.ZERO)
-                    .build();
+            Balance newBalance = createNewBalance(null, deposit);
             this.balanceRepository.save(newBalance);
-            log.info("Inserting in table [{}] for the first time for deposit [{} {}]", "balance", deposit.getAmount(), deposit.getCurrency());
-            return BalanceResponseDTO.builder()
-                    .balance(newBalance.getBalance())
-                    .totalDeposits(newBalance.getTotalDeposits())
-                    .totalWithdrawals(newBalance.getTotalWithdrawals())
-                    .totalDividends(newBalance.getTotalDividends())
-                    .totalFees(newBalance.getTotalFees())
-                    .build();
+            log.info("Inserted deposit for [{} {}] for the first time in table [{}]",  deposit.getAmount(), deposit.getCurrency(), "balance");
+            return createNewBalanceDTO(newBalance);
         }
+    }
+
+    private static BalanceResponseDTO createNewBalanceDTO(Balance newBalance) {
+        return BalanceResponseDTO.builder()
+                .balance(newBalance.getBalance())
+                .totalDeposits(newBalance.getTotalDeposits())
+                .totalWithdrawals(newBalance.getTotalWithdrawals())
+                .totalDividends(newBalance.getTotalDividends())
+                .totalFees(newBalance.getTotalFees())
+                .build();
+    }
+
+    private static Balance createNewBalance(Balance balance, CashTransaction deposit) {
+        BigDecimal newBalanceAmount = balance == null ? deposit.getAmount() : balance.getBalance().add(deposit.getAmount());
+        BigDecimal newTotalDeposits = balance == null ? deposit.getAmount() : balance.getBalance().add(deposit.getAmount());
+        BigDecimal newTotalWithdrawals = balance == null ? BigDecimal.ZERO : balance.getTotalWithdrawals();
+        BigDecimal newTotalDividends = balance == null ? BigDecimal.ZERO : balance.getTotalDividends();
+        BigDecimal newTotalFees = balance == null ? BigDecimal.ZERO : balance.getTotalFees();
+
+        return Balance.builder()
+                .date(LocalDate.now())
+                .balance(newBalanceAmount)
+                .totalDeposits(newTotalDeposits)
+                .totalWithdrawals(newTotalWithdrawals)
+                .totalDividends(newTotalDividends)
+                .totalFees(newTotalFees)
+                .build();
     }
 
 }
