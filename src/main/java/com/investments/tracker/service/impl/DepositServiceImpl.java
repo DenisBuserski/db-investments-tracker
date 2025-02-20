@@ -5,7 +5,6 @@ import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.DepositRequestDTO;
 import com.investments.tracker.model.dto.DepositResponseDTO;
-import com.investments.tracker.model.enums.CashTransactionType;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.service.DepositService;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static com.investments.tracker.model.enums.CashTransactionType.*;
 
 @Service
 @Slf4j
@@ -37,7 +38,7 @@ public class DepositServiceImpl implements DepositService {
     @Override
     public List<DepositResponseDTO> getAllDepositsFromTo(LocalDate from, LocalDate to) {
         log.info("Getting all deposits from [{}] to [{}]", from, to);
-        List<CashTransaction> depositsResult = this.cashTransactionRepository.getDepositsFromTo(from, to);
+        List<CashTransaction> depositsResult = this.cashTransactionRepository.getCashTransactionsFromTo(from, to, DEPOSIT);
         if (!depositsResult.isEmpty()) {
             List<DepositResponseDTO> deposits = new ArrayList<>();
             depositsResult.stream().forEach(deposit -> {
@@ -57,7 +58,7 @@ public class DepositServiceImpl implements DepositService {
     public BalanceResponseDTO insertDeposit(DepositRequestDTO depositRequestDTO) {
         CashTransaction deposit = CashTransaction.builder()
                 .date(LocalDate.now())
-                .cashTransactionType(CashTransactionType.DEPOSIT)
+                .cashTransactionType(DEPOSIT)
                 .amount(depositRequestDTO.getAmount())
                 .currency(depositRequestDTO.getCurrency())
                 .build();

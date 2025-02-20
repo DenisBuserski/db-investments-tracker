@@ -47,5 +47,19 @@ public class DepositController {
         }
     }
 
-    // TODO: Get all deposits
+    @GetMapping("/get/all")
+    public List<DepositResponseDTO> getAllDeposits() {
+        log.info("Getting all deposits");
+        List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(
+                LocalDate.of(2025, 1, 1),
+                LocalDate.now());
+        if (deposits.isEmpty()) {
+            log.info("No deposits found");
+            return Collections.emptyList();
+        } else {
+            log.info("Deposits [{}]", deposits);
+            return deposits;
+        }
+    }
+
 }
