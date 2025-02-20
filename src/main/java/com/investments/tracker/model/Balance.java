@@ -35,6 +35,4 @@ public class Balance {
 
     @Column(name = "total_fees")
     private BigDecimal totalFees;
-
-
 }

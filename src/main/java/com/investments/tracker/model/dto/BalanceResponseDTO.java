@@ -1,0 +1,18 @@
+package com.investments.tracker.model.dto;
+
+import lombok.*;
+
+import java.math.BigDecimal;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Builder
+@ToString
+public class BalanceResponseDTO {
+    private BigDecimal balance;
+    private BigDecimal totalDeposits;
+    private BigDecimal totalWithdrawals;
+    private BigDecimal totalDividends;
+    private BigDecimal totalFees;
+}

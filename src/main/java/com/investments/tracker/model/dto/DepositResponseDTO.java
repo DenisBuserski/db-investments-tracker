@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 @ToString
-public class DepositResultDTO {
+public class DepositResponseDTO {
     private BigDecimal amount;
     private Currency currency;
     private LocalDate date;

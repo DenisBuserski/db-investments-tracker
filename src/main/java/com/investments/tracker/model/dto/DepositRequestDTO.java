@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Getter
 @Builder
-@ToString
 public class DepositRequestDTO {
     @NotNull(message = "Deposit cannot be NULL!")
     @Positive(message = "Deposit amount must be more than 0!")
