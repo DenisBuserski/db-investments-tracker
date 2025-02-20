@@ -2,7 +2,7 @@ package com.investments.tracker.service.impl;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.model.dto.DepositDTO;
+import com.investments.tracker.model.dto.DepositRequestDTO;
 import com.investments.tracker.model.dto.DepositResultDTO;
 import com.investments.tracker.model.dto.WithdrawalRequestDTO;
 import com.investments.tracker.model.enums.CashTransactionType;
@@ -54,15 +54,15 @@ public class CashTransactionServiceImpl implements CashTransactionService {
     }
 
     @Override
-    public void insertDeposit(DepositDTO depositDTO) {
+    public void insertDeposit(DepositRequestDTO depositRequestDTO) {
         CashTransaction deposit = CashTransaction.builder()
                 .date(LocalDate.now())
                 .cashTransactionType(CashTransactionType.DEPOSIT)
-                .amount(depositDTO.getAmount())
-                .currency(depositDTO.getCurrency())
+                .amount(depositRequestDTO.getAmount())
+                .currency(depositRequestDTO.getCurrency())
                 .build();
         this.cashTransactionRepository.save(deposit);
-        log.info("Inserted deposit for [{} - {}] ", deposit.getAmount(), deposit.getCurrency());
+        log.info("Inserted deposit for [{} - {}]", deposit.getAmount(), deposit.getCurrency());
 
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {

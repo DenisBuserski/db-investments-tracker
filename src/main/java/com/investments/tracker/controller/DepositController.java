@@ -1,6 +1,6 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.model.dto.DepositDTO;
+import com.investments.tracker.model.dto.DepositRequestDTO;
 import com.investments.tracker.model.dto.DepositResultDTO;
 import com.investments.tracker.service.CashTransactionService;
 import jakarta.validation.Valid;
@@ -23,6 +23,13 @@ public class DepositController {
         this.cashTransactionService = cashTransactionService;
     }
 
+    @PostMapping("/in")
+    public void insertDeposit(@RequestBody @Valid DepositRequestDTO depositRequestDTO) {
+        log.info("Making deposit for [{} - {}]", depositRequestDTO.getAmount(), depositRequestDTO.getCurrency());
+        this.cashTransactionService.insertDeposit(depositRequestDTO);
+        log.info("Deposit for [{} - {}] successful", depositRequestDTO.getAmount(), depositRequestDTO.getCurrency());
+    }
+
     @GetMapping("/get/from/{fromDate}/to/{toDate}")
     public List<DepositResultDTO> getDepositsFromTo(
             @PathVariable(name = "fromDate") LocalDate from,
@@ -38,10 +45,5 @@ public class DepositController {
         }
     }
 
-    @PostMapping("/in")
-    public void insertDeposit(@RequestBody @Valid DepositDTO depositDTO) {
-        log.info("Making deposit for [{} - {}]", depositDTO.getAmount(),depositDTO.getCurrency());
-        this.cashTransactionService.insertDeposit(depositDTO);
-        log.info("Deposit for [{} - {}] successful", depositDTO.getAmount(),depositDTO.getCurrency());
-    }
+    // TODO: Get all deposits
 }

@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Getter
 @Builder
 @ToString
-public class DepositDTO {
+public class DepositRequestDTO {
     @NotNull(message = "Deposit cannot be NULL!")
     @Positive(message = "Deposit amount must be more than 0!")
     private BigDecimal amount;

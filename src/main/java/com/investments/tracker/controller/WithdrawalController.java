@@ -1,7 +1,6 @@
 package com.investments.tracker.controller;
 
 import com.investments.tracker.model.Balance;
-import com.investments.tracker.model.dto.DepositDTO;
 import com.investments.tracker.model.dto.DepositResultDTO;
 import com.investments.tracker.model.dto.WithdrawalRequestDTO;
 import com.investments.tracker.service.CashTransactionService;
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
