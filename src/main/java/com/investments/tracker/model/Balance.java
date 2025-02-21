@@ -24,15 +24,18 @@ public class Balance {
 
     private BigDecimal balance;
 
-    @Column(name = "total_deposits")
+    @Column(name = "total_investments", nullable = false)
+    private BigDecimal totalInvestments;
+
+    @Column(name = "total_deposits", nullable = false)
     private BigDecimal totalDeposits;
 
-    @Column(name = "total_withdrawals")
+    @Column(name = "total_withdrawals", nullable = false)
     private BigDecimal totalWithdrawals;
 
-    @Column(name = "total_dividends")
+    @Column(name = "total_dividends", nullable = false)
     private BigDecimal totalDividends;
 
-    @Column(name = "total_fees")
+    @Column(name = "total_fees", nullable = false)
     private BigDecimal totalFees;
 }
