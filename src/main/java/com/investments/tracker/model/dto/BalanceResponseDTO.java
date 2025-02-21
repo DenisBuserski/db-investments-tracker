@@ -11,8 +11,10 @@ import java.math.BigDecimal;
 @ToString
 public class BalanceResponseDTO {
     private BigDecimal balance;
+    private BigDecimal totalInvestments;
     private BigDecimal totalDeposits;
     private BigDecimal totalWithdrawals;
     private BigDecimal totalDividends;
     private BigDecimal totalFees;
+    private BigDecimal lastPortfolioValue;
 }

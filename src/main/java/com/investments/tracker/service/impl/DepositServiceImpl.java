@@ -88,28 +88,34 @@ public class DepositServiceImpl implements DepositService {
 
     private static Balance createNewBalance(Balance balance, CashTransaction deposit) {
         BigDecimal newBalanceAmount = balance == null ? deposit.getAmount() : balance.getBalance().add(deposit.getAmount());
-        BigDecimal newTotalDeposits = balance == null ? deposit.getAmount() : balance.getBalance().add(deposit.getAmount());
+        BigDecimal newTotalInvestments = balance == null ? BigDecimal.ZERO : balance.getTotalInvestments();
+        BigDecimal newTotalDeposits = balance == null ? deposit.getAmount() : balance.getTotalDeposits().add(deposit.getAmount());
         BigDecimal newTotalWithdrawals = balance == null ? BigDecimal.ZERO : balance.getTotalWithdrawals();
         BigDecimal newTotalDividends = balance == null ? BigDecimal.ZERO : balance.getTotalDividends();
         BigDecimal newTotalFees = balance == null ? BigDecimal.ZERO : balance.getTotalFees();
+        BigDecimal newLastPortfolioValue = balance == null ? BigDecimal.ZERO : balance.getLastPortfolioValue();
 
         return Balance.builder()
                 .date(LocalDate.now())
                 .balance(newBalanceAmount)
+                .totalInvestments(newTotalInvestments)
                 .totalDeposits(newTotalDeposits)
                 .totalWithdrawals(newTotalWithdrawals)
                 .totalDividends(newTotalDividends)
                 .totalFees(newTotalFees)
+                .lastPortfolioValue(newLastPortfolioValue)
                 .build();
     }
 
     private static BalanceResponseDTO createNewBalanceDTO(Balance newBalance) {
         return BalanceResponseDTO.builder()
                 .balance(newBalance.getBalance())
+                .totalInvestments(newBalance.getTotalInvestments())
                 .totalDeposits(newBalance.getTotalDeposits())
                 .totalWithdrawals(newBalance.getTotalWithdrawals())
                 .totalDividends(newBalance.getTotalDividends())
                 .totalFees(newBalance.getTotalFees())
+                .lastPortfolioValue(newBalance.getLastPortfolioValue())
                 .build();
     }
 
