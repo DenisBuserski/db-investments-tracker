@@ -38,4 +38,7 @@ public class Balance {
 
     @Column(name = "total_fees", nullable = false)
     private BigDecimal totalFees;
+
+    @Column(name = "last_portfolio_value", nullable = false)
+    private BigDecimal lastPortfolioValue;
 }
