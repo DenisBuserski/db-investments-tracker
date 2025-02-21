@@ -24,8 +24,8 @@ public class Balance {
 
     private BigDecimal balance;
 
-    @Column(name = "total_investments", nullable = false)
-    private BigDecimal totalInvestments;
+//    @Column(name = "total_investments", nullable = false)
+//    private BigDecimal totalInvestments;
 
     @Column(name = "total_deposits", nullable = false)
     private BigDecimal totalDeposits;
@@ -39,6 +39,6 @@ public class Balance {
     @Column(name = "total_fees", nullable = false)
     private BigDecimal totalFees;
 
-    @Column(name = "last_portfolio_value", nullable = false)
-    private BigDecimal lastPortfolioValue;
+//    @Column(name = "last_portfolio_value", nullable = false)
+//    private BigDecimal lastPortfolioValue;
 }
