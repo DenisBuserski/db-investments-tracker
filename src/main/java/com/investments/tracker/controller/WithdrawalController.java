@@ -1,8 +1,8 @@
 package com.investments.tracker.controller;
 
 import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.DepositResponseDTO;
 import com.investments.tracker.model.dto.WithdrawalRequestDTO;
+import com.investments.tracker.model.dto.WithdrawalResponseDTO;
 import com.investments.tracker.service.WithdrawalService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/withdrawal")
@@ -32,32 +31,28 @@ public class WithdrawalController {
     }
 
     @GetMapping("/get/from/{fromDate}/to/{toDate}")
-    public List<DepositResponseDTO> getDepositsFromTo(
+    public List<WithdrawalResponseDTO> getWithdrawalsFromTo(
             @PathVariable(name = "fromDate") LocalDate from,
             @PathVariable(name = "toDate") LocalDate to) {
         log.info("Getting withdrawals from [{}] to [{}]", from, to);
-        List<DepositResponseDTO> deposits = this.withdrawalService.getAllWithdrawalsFromTo(from, to);
-        if (deposits.isEmpty()) {
-            log.info("No deposits found");
+        List<WithdrawalResponseDTO> withdrawals = this.withdrawalService.getAllWithdrawalsFromTo(from, to);
+        if (withdrawals.isEmpty()) {
             return Collections.emptyList();
         } else {
-            log.info("Deposits from [{}] to [{}] => [{}]", from, to, deposits);
-            return deposits;
+            return withdrawals;
         }
     }
 
     @GetMapping("/get/all")
-    public List<DepositResponseDTO> getAllDeposits() {
+    public List<WithdrawalResponseDTO> getAllWithdrawals() {
         log.info("Getting all withdrawals");
-        List<DepositResponseDTO> deposits = this.withdrawalService.getAllWithdrawalsFromTo(
+        List<WithdrawalResponseDTO> withdrawals = this.withdrawalService.getAllWithdrawalsFromTo(
                 LocalDate.of(2025, 1, 1),
                 LocalDate.now());
-        if (deposits.isEmpty()) {
-            log.info("No deposits found");
+        if (withdrawals.isEmpty()) {
             return Collections.emptyList();
         } else {
-            log.info("Deposits [{}]", deposits);
-            return deposits;
+            return withdrawals;
         }
     }
 

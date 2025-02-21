@@ -2,10 +2,7 @@ package com.investments.tracker.service.impl;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.DepositRequestDTO;
-import com.investments.tracker.model.dto.DepositResponseDTO;
-import com.investments.tracker.model.dto.WithdrawalRequestDTO;
+import com.investments.tracker.model.dto.*;
 import com.investments.tracker.model.enums.CashTransactionType;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
@@ -16,8 +13,13 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
+import static com.investments.tracker.model.enums.CashTransactionType.WITHDRAWAL;
 
 
 @Service
@@ -35,8 +37,22 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     }
 
     @Override
-    public List<DepositResponseDTO> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
-        return List.of();
+    public List<WithdrawalResponseDTO> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
+        log.info("Getting all withdrawals from [{}] to [{}]", from, to);
+        List<CashTransaction> withdrawalResult = this.cashTransactionRepository.getCashTransactionsFromTo(from, to, WITHDRAWAL);
+        if (!withdrawalResult.isEmpty()) {
+            List<WithdrawalResponseDTO> withdrawals = new ArrayList<>();
+            withdrawalResult.stream().forEach(withdrawal -> {
+                WithdrawalResponseDTO withdrawalDTO = WithdrawalResponseDTO.builder()
+                        .date(withdrawal.getDate())
+                        .amount(withdrawal.getAmount())
+                        .currency(withdrawal.getCurrency())
+                        .build();
+                withdrawals.add(withdrawalDTO);
+            });
+            return withdrawals;
+        }
+        return Collections.emptyList();
     }
 
     @Override
