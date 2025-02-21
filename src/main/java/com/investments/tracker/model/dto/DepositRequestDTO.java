@@ -20,5 +20,4 @@ public class DepositRequestDTO {
     @NotNull(message = "Currency cannot be NULL!")
     @ValidCurrency
     private Currency currency;
-
 }

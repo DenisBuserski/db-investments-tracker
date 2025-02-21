@@ -20,16 +20,14 @@ public class DepositController {
     private final DepositService depositService;
 
     @Autowired
-    public DepositController(DepositService cashTransactionService) {
-        this.depositService = cashTransactionService;
+    public DepositController(DepositService depositService) {
+        this.depositService = depositService;
     }
 
     @PostMapping("/in")
     public BalanceResponseDTO insertDeposit(@RequestBody @Valid DepositRequestDTO depositRequestDTO) {
         log.info("Making deposit for [{} {}]", depositRequestDTO.getAmount(), depositRequestDTO.getCurrency());
-        BalanceResponseDTO balanceResponseDTO = this.depositService.insertDeposit(depositRequestDTO);
-        log.info("Deposit for [{} {}] successful", depositRequestDTO.getAmount(), depositRequestDTO.getCurrency());
-        return balanceResponseDTO;
+        return this.depositService.insertDeposit(depositRequestDTO);
     }
 
     @GetMapping("/get/from/{fromDate}/to/{toDate}")
@@ -39,10 +37,8 @@ public class DepositController {
         log.info("Getting deposits from [{}] to [{}]", from, to);
         List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(from, to);
         if (deposits.isEmpty()) {
-            log.info("No deposits found");
             return Collections.emptyList();
         } else {
-            log.info("Deposits from [{}] to [{}] => [{}]", from, to, deposits);
             return deposits;
         }
     }
@@ -54,10 +50,8 @@ public class DepositController {
                 LocalDate.of(2025, 1, 1),
                 LocalDate.now());
         if (deposits.isEmpty()) {
-            log.info("No deposits found");
             return Collections.emptyList();
         } else {
-            log.info("Deposits [{}]", deposits);
             return deposits;
         }
     }

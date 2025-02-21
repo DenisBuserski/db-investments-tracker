@@ -56,12 +56,7 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public BalanceResponseDTO insertDeposit(DepositRequestDTO depositRequestDTO) {
-        CashTransaction deposit = CashTransaction.builder()
-                .date(LocalDate.now())
-                .cashTransactionType(DEPOSIT)
-                .amount(depositRequestDTO.getAmount())
-                .currency(depositRequestDTO.getCurrency())
-                .build();
+        CashTransaction deposit = createCashtransaction(depositRequestDTO);
         this.cashTransactionRepository.save(deposit);
         log.info("Inserted deposit for [{} {}] in table [{}]", deposit.getAmount(), deposit.getCurrency(), "cash_transaction");
 
@@ -71,22 +66,23 @@ public class DepositServiceImpl implements DepositService {
             Balance newBalance = createNewBalance(balance, deposit);
             this.balanceRepository.save(newBalance);
             log.info("Inserted deposit for [{} {}] in table [{}]",  deposit.getAmount(), deposit.getCurrency(), "balance");
+            log.info("Deposit for [{} {}] successful", deposit.getAmount(), deposit.getCurrency());
             return createNewBalanceDTO(newBalance);
         } else {
             Balance newBalance = createNewBalance(null, deposit);
             this.balanceRepository.save(newBalance);
             log.info("Inserted deposit for [{} {}] for the first time in table [{}]",  deposit.getAmount(), deposit.getCurrency(), "balance");
+            log.info("Deposit for [{} {}] successful", deposit.getAmount(), deposit.getCurrency());
             return createNewBalanceDTO(newBalance);
         }
     }
 
-    private static BalanceResponseDTO createNewBalanceDTO(Balance newBalance) {
-        return BalanceResponseDTO.builder()
-                .balance(newBalance.getBalance())
-                .totalDeposits(newBalance.getTotalDeposits())
-                .totalWithdrawals(newBalance.getTotalWithdrawals())
-                .totalDividends(newBalance.getTotalDividends())
-                .totalFees(newBalance.getTotalFees())
+    private static CashTransaction createCashtransaction(DepositRequestDTO depositRequestDTO) {
+        return CashTransaction.builder()
+                .date(LocalDate.now())
+                .cashTransactionType(DEPOSIT)
+                .amount(depositRequestDTO.getAmount())
+                .currency(depositRequestDTO.getCurrency())
                 .build();
     }
 
@@ -104,6 +100,16 @@ public class DepositServiceImpl implements DepositService {
                 .totalWithdrawals(newTotalWithdrawals)
                 .totalDividends(newTotalDividends)
                 .totalFees(newTotalFees)
+                .build();
+    }
+
+    private static BalanceResponseDTO createNewBalanceDTO(Balance newBalance) {
+        return BalanceResponseDTO.builder()
+                .balance(newBalance.getBalance())
+                .totalDeposits(newBalance.getTotalDeposits())
+                .totalWithdrawals(newBalance.getTotalWithdrawals())
+                .totalDividends(newBalance.getTotalDividends())
+                .totalFees(newBalance.getTotalFees())
                 .build();
     }
 
