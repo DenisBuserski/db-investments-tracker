@@ -26,10 +26,9 @@ public class WithdrawalController {
     }
 
     @PostMapping("/out")
-    public BalanceResponseDTO withdrawCash(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) throws Exception {
+    public BalanceResponseDTO withdrawCash(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
         log.info("Making withdrawal for [{} {}]", withdrawalRequestDTO.getAmount(), withdrawalRequestDTO.getCurrency());
-        BalanceResponseDTO balance = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
-        return balance;
+        return this.withdrawalService.withdrawCash(withdrawalRequestDTO);
     }
 
     @GetMapping("/get/from/{fromDate}/to/{toDate}")

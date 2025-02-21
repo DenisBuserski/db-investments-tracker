@@ -3,6 +3,7 @@ package com.investments.tracker.service.impl;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
+import com.investments.tracker.model.dto.DepositRequestDTO;
 import com.investments.tracker.model.dto.DepositResponseDTO;
 import com.investments.tracker.model.dto.WithdrawalRequestDTO;
 import com.investments.tracker.model.enums.CashTransactionType;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @Slf4j
@@ -33,6 +35,11 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     }
 
     @Override
+    public List<DepositResponseDTO> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
+        return List.of();
+    }
+
+    @Override
     public BalanceResponseDTO withdrawCash(WithdrawalRequestDTO withdrawalRequestDTO) {
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
@@ -42,25 +49,13 @@ public class WithdrawalServiceImpl implements WithdrawalService {
                 // 0 if they are equal
                 // 1 if balance.getBalance() is greater than withdrawalRequestDTO.getAmount()
 
-                CashTransaction withdrawal = CashTransaction.builder()
-                        .date(LocalDate.now())
-                        .cashTransactionType(CashTransactionType.WITHDRAWAL)
-                        .amount(withdrawalRequestDTO.getAmount())
-                        .currency(withdrawalRequestDTO.getCurrency())
-                        .build();
+                CashTransaction withdrawal = createCashtransaction(withdrawalRequestDTO);
                 this.cashTransactionRepository.save(withdrawal);
                 log.info("Inserted withdrawal for [{} {}] in table [{}]", withdrawal.getAmount(), withdrawal.getCurrency(), "cash_transaction");
 
-                Balance newBalance = Balance.builder()
-                        .date(LocalDate.now())
-                        .balance(balance.getBalance().subtract(withdrawal.getAmount()))
-                        .totalDeposits(balance.getTotalDeposits())
-                        .totalWithdrawals(balance.getTotalWithdrawals().add(withdrawal.getAmount()))
-                        .totalDividends(balance.getTotalDividends())
-                        .totalFees(balance.getTotalFees())
-                        .build();
+                Balance newBalance = createNewBalance(balance, withdrawal);
                 this.balanceRepository.save(newBalance);
-                log.info("Updating table [{}] for withdrawal [{} {}] ", "balance",  withdrawal.getAmount(), withdrawal.getCurrency());
+                log.info("Inserted withdrawal for [{} {}] in table [{}]", withdrawal.getAmount(), withdrawal.getCurrency(), "balance");
                 log.info("Withdrawal for [{} {}] successful", withdrawal.getAmount(), withdrawal.getCurrency());
                 return createNewBalanceDTO(newBalance);
             } else {
@@ -69,29 +64,46 @@ public class WithdrawalServiceImpl implements WithdrawalService {
             }
         } else {
             log.info("No balance found");
-            return BalanceResponseDTO.builder()
-                    .balance(BigDecimal.ZERO)
-                    .totalDeposits(BigDecimal.ZERO)
-                    .totalWithdrawals(BigDecimal.ZERO)
-                    .totalDividends(BigDecimal.ZERO)
-                    .totalFees(BigDecimal.ZERO)
-                    .build();
+            return createNewBalanceDTO(null);
         }
 
     }
 
-    @Override
-    public List<DepositResponseDTO> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
-        return List.of();
+
+
+    private static CashTransaction createCashtransaction(WithdrawalRequestDTO withdrawalRequestDTO) {
+        return CashTransaction.builder()
+                .date(LocalDate.now())
+                .cashTransactionType(CashTransactionType.WITHDRAWAL)
+                .amount(withdrawalRequestDTO.getAmount())
+                .currency(withdrawalRequestDTO.getCurrency())
+                .build();
+    }
+
+    private static Balance createNewBalance(Balance balance, CashTransaction withdrawal) {
+        return Balance.builder()
+                .date(LocalDate.now())
+                .balance(balance.getBalance().subtract(withdrawal.getAmount()))
+                .totalDeposits(balance.getTotalDeposits())
+                .totalWithdrawals(balance.getTotalWithdrawals().add(withdrawal.getAmount()))
+                .totalDividends(balance.getTotalDividends())
+                .totalFees(balance.getTotalFees())
+                .build();
     }
 
     private static BalanceResponseDTO createNewBalanceDTO(Balance newBalance) {
+        BigDecimal newBalanceAmount = newBalance == null ? BigDecimal.ZERO : newBalance.getBalance();
+        BigDecimal newTotalDeposits = newBalance == null ? BigDecimal.ZERO: newBalance.getTotalDeposits();
+        BigDecimal newTotalWithdrawals = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalWithdrawals();
+        BigDecimal newTotalDividends = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalDividends();
+        BigDecimal newTotalFees = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalFees();
+
         return BalanceResponseDTO.builder()
-                .balance(newBalance.getBalance())
-                .totalDeposits(newBalance.getTotalDeposits())
-                .totalWithdrawals(newBalance.getTotalWithdrawals())
-                .totalDividends(newBalance.getTotalDividends())
-                .totalFees(newBalance.getTotalFees())
+                .balance(newBalanceAmount)
+                .totalDeposits(newTotalDeposits)
+                .totalWithdrawals(newTotalWithdrawals)
+                .totalDividends(newTotalDividends)
+                .totalFees(newTotalFees)
                 .build();
     }
 
