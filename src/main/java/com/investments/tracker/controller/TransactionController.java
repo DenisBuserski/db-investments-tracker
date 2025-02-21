@@ -23,6 +23,7 @@ public class TransactionController {
 
     @PostMapping("/in")
     public void insertTransaction(@RequestBody @Valid TransactionRequestDTO transactionRequestDTO) {
+        log.info("Inserting transaction for date [{}] and product [{}]", transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
         this.transactionService.insertTransaction(transactionRequestDTO);
     }
 

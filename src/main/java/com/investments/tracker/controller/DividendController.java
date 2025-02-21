@@ -1,7 +1,6 @@
 package com.investments.tracker.controller;
 
 import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.DividendRequestDTO;
 import com.investments.tracker.service.DividendService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ public class DividendController {
     }
 
     @PostMapping("/in")
-    public BalanceResponseDTO insertDividend(@RequestBody @Valid DividendRequestDTO dividendRequestDTO) {
+    public BalanceResponseDTO insertDividend() {
         log.info("Inserting dividend");
         return null;
     }
