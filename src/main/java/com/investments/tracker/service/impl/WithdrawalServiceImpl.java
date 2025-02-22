@@ -100,26 +100,32 @@ public class WithdrawalServiceImpl implements WithdrawalService {
         return Balance.builder()
                 .date(LocalDate.now())
                 .balance(balance.getBalance().subtract(withdrawal.getAmount()))
+                .totalInvestments(balance.getTotalInvestments())
                 .totalDeposits(balance.getTotalDeposits())
                 .totalWithdrawals(balance.getTotalWithdrawals().add(withdrawal.getAmount()))
                 .totalDividends(balance.getTotalDividends())
                 .totalFees(balance.getTotalFees())
+                .lastPortfolioValue(balance.getLastPortfolioValue())
                 .build();
     }
 
     private static BalanceResponseDTO createNewBalanceDTO(Balance newBalance) {
         BigDecimal newBalanceAmount = newBalance == null ? BigDecimal.ZERO : newBalance.getBalance();
-        BigDecimal newTotalDeposits = newBalance == null ? BigDecimal.ZERO: newBalance.getTotalDeposits();
+        BigDecimal newTotalInvestments = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalInvestments();
+        BigDecimal newTotalDeposits = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalDeposits();
         BigDecimal newTotalWithdrawals = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalWithdrawals();
         BigDecimal newTotalDividends = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalDividends();
         BigDecimal newTotalFees = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalFees();
+        BigDecimal newLastPortfolioValue = newBalance == null ? BigDecimal.ZERO : newBalance.getLastPortfolioValue();
 
         return BalanceResponseDTO.builder()
                 .balance(newBalanceAmount)
+                .totalInvestments(newTotalInvestments)
                 .totalDeposits(newTotalDeposits)
                 .totalWithdrawals(newTotalWithdrawals)
                 .totalDividends(newTotalDividends)
                 .totalFees(newTotalFees)
+                .lastPortfolioValue(newLastPortfolioValue)
                 .build();
     }
 
