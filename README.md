@@ -10,8 +10,15 @@ Withdrawals
 
 
 Table of Contents
-- About the Project
-- Technologies Used
+<details>
+<summary>About the Project</summary>
+This project is and Investments tracker application, that helps you track your investments.
+
+</details>
+
+
+<details>
+<summary>Technologies Used</summary>
 
 | Layer           | Technology       |
 |-----------------|------------------|
@@ -23,63 +30,98 @@ Table of Contents
 | Frontend        | React            |
 | Version control | Git              |
 
-- Architecture Overview
+</details>
 
+
+<details>
+<summary>Architecture Overview</summary>
 Diagram how the app works
 
-- Features
+</details>
 
-  User Registration & Login
-  JWT Authentication
-  CRUD Operations
-  Role-based Authorization
-  Pagination & Sorting
-  Swagger API Documentation
-  Error Handling
 
-- Installation Guide
+<details>
+<summary>Features</summary>
+User Registration & Login
+JWT Authentication
+CRUD Operations
+Role-based Authorization
+Pagination & Sorting
+Swagger API Documentation
+Error Handling
 
+</details>
+
+
+<details>
+<summary>Installation Guide</summary>
 What is needed to run the project
 
-- How to Run the Project
+</details>
 
+
+<details>
+<summary>How to Run the Project</summary>
 Backend installation
 Frontend installation
 
-- API Endpoints
+</details>
 
-create an openapi.json file and automatically generate API docs using Swagger.
+
+<details>
+<summary>API Endpoints</summary>
+Create an openapi.json file and automatically generate API docs using Swagger.
 
 | Method | Endpoint | Description       | Auth required |
 |--------|----------|-------------------|---------------|
 | POST   |          | Creates a deposit |               |
 
-- Database Structure
+</details> 
 
+
+<details>
+<summary>Database Structure</summary>
 DB schema
 
-- Folder Structure
+</details>
 
+
+<details>
+<summary>Folder Structure</summary>
 Screenshot from IntelliJ
-- Screenshots
 
+</details>
+
+
+<details>
+<summary>Screenshots</summary>
 Home Page
 Login Page
 
-- Future Improvements
+</details>
 
+
+<details>
+<summary>Future Improvements</summary>
 Add email verification
 Dockerize the app
 Implement CI/CD
 Improve frontend UI
 
-- Author
+</details>
 
-Your Name
+
+<details>
+<summary>Author</summary>
+Your Name: Denis Buserski
 LinkedIn: Your Profile
 GitHub: Your GitHub
 
+</details>
 
-- License
 
+<details>
+<summary>License</summary>
 This project is licensed under the MIT License. (ADD MIT)
+
+</details>
