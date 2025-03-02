@@ -72,12 +72,12 @@ Frontend installation
 <summary>API Endpoints</summary>
 Create an openapi.json file and automatically generate API docs using Swagger.
 
-| Method | Endpoint                                      | Description       | Auth required |
-|--------|-----------------------------------------------|-------------------|---------------|
-| POST   | `/deposit/in`                                 | Make a deposit    |               |
-| GET    | `/deposit/get/from/{fromDate}/to/{toDate}`    | Get deposits      |               |
-| POST   | `/withdrawal/out`                             | Make a withdrawal |               |
-| GET    | `/withdrawal/get/from/{fromDate}/to/{toDate}` | Get withdrawals   |               |
+| Method  | Endpoint                                      | Description       | Auth required |
+|---------|-----------------------------------------------|-------------------|---------------|
+| `POST`  | `/deposit/in`                                 | Make a deposit    |               |
+| `GET`   | `/deposit/get/from/{fromDate}/to/{toDate}`    | Get deposits      |               |
+| `POST`  | `/withdrawal/out`                             | Make a withdrawal |               |
+| `GET`   | `/withdrawal/get/from/{fromDate}/to/{toDate}` | Get withdrawals   |               |
 
 </details> 
 
