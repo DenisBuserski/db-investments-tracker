@@ -41,22 +41,19 @@ public class DepositServiceImpl implements DepositService {
         CashTransaction deposit = createCashtransaction(depositRequestDTO);
         this.cashTransactionRepository.save(deposit);
         log.info("Inserted deposit for [{} {}] in table [{}]", deposit.getAmount(), deposit.getCurrency(), "cash_transaction");
+        Balance newBalance;
 
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
-            Balance balance = latestBalance.get();
-            Balance newBalance = createNewBalance(balance, deposit);
-            this.balanceRepository.save(newBalance);
+            newBalance = createNewBalance(latestBalance.get(), deposit);
             log.info("Inserted deposit for [{} {}] in table [{}]",  deposit.getAmount(), deposit.getCurrency(), "balance");
-            log.info("Deposit for [{} {}] successful", deposit.getAmount(), deposit.getCurrency());
-            return createNewBalanceDTO(newBalance);
         } else {
-            Balance newBalance = createNewBalance(null, deposit);
-            this.balanceRepository.save(newBalance);
+            newBalance = createNewBalance(null, deposit);
             log.info("Inserted deposit for [{} {}] for the first time in table [{}]",  deposit.getAmount(), deposit.getCurrency(), "balance");
-            log.info("Deposit for [{} {}] successful", deposit.getAmount(), deposit.getCurrency());
-            return createNewBalanceDTO(newBalance);
         }
+        this.balanceRepository.save(newBalance);
+        log.info("Deposit for [{} {}] successful", deposit.getAmount(), deposit.getCurrency());
+        return createBalanceResponseDTO(newBalance);
     }
 
     private static CashTransaction createCashtransaction(DepositRequestDTO depositRequestDTO) {
@@ -89,7 +86,7 @@ public class DepositServiceImpl implements DepositService {
                 .build();
     }
 
-    private static BalanceResponseDTO createNewBalanceDTO(Balance newBalance) {
+    private static BalanceResponseDTO createBalanceResponseDTO(Balance newBalance) {
         return BalanceResponseDTO.builder()
                 .balance(newBalance.getBalance())
                 .totalInvestments(newBalance.getTotalInvestments())
