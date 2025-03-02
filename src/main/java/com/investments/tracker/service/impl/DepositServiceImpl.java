@@ -35,24 +35,6 @@ public class DepositServiceImpl implements DepositService {
         this.balanceRepository = balanceRepository;
     }
 
-    @Override
-    public List<DepositResponseDTO> getAllDepositsFromTo(LocalDate from, LocalDate to) {
-        log.info("Getting all deposits from [{}] to [{}]", from, to);
-        List<CashTransaction> depositsResult = this.cashTransactionRepository.getCashTransactionsFromTo(from, to, DEPOSIT);
-        if (!depositsResult.isEmpty()) {
-            List<DepositResponseDTO> deposits = new ArrayList<>();
-            depositsResult.stream().forEach(deposit -> {
-                DepositResponseDTO depositDTO = DepositResponseDTO.builder()
-                        .date(deposit.getDate())
-                        .amount(deposit.getAmount())
-                        .currency(deposit.getCurrency())
-                        .build();
-                deposits.add(depositDTO);
-            });
-            return deposits;
-        }
-        return Collections.emptyList();
-    }
 
     @Override
     public BalanceResponseDTO insertDeposit(DepositRequestDTO depositRequestDTO) {
@@ -117,6 +99,25 @@ public class DepositServiceImpl implements DepositService {
                 .totalFees(newBalance.getTotalFees())
                 .lastPortfolioValue(newBalance.getLastPortfolioValue())
                 .build();
+    }
+
+    @Override
+    public List<DepositResponseDTO> getAllDepositsFromTo(LocalDate from, LocalDate to) {
+        log.info("Getting all deposits from [{}] to [{}]", from, to);
+        List<CashTransaction> depositsResult = this.cashTransactionRepository.getCashTransactionsFromTo(from, to, DEPOSIT);
+        if (!depositsResult.isEmpty()) {
+            List<DepositResponseDTO> deposits = new ArrayList<>();
+            depositsResult.stream().forEach(deposit -> {
+                DepositResponseDTO depositDTO = DepositResponseDTO.builder()
+                        .date(deposit.getDate())
+                        .amount(deposit.getAmount())
+                        .currency(deposit.getCurrency())
+                        .build();
+                deposits.add(depositDTO);
+            });
+            return deposits;
+        }
+        return Collections.emptyList();
     }
 
 }
