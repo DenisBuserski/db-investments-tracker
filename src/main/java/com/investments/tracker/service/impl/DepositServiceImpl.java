@@ -62,6 +62,7 @@ public class DepositServiceImpl implements DepositService {
                 .cashTransactionType(DEPOSIT)
                 .amount(depositRequestDTO.getAmount())
                 .currency(depositRequestDTO.getCurrency())
+                .description(depositRequestDTO.getDescription())
                 .build();
     }
 
@@ -109,6 +110,7 @@ public class DepositServiceImpl implements DepositService {
                         .date(deposit.getDate())
                         .amount(deposit.getAmount())
                         .currency(deposit.getCurrency())
+                        .description(deposit.getDescription())
                         .build();
                 deposits.add(depositDTO);
             });

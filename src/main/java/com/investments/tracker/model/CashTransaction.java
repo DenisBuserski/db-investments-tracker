@@ -30,6 +30,10 @@ public class CashTransaction {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "currency")
     @Enumerated(EnumType.STRING)
     private Currency currency;
+
+    @Column(name = "description")
+    private String description;
 }
