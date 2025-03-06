@@ -22,23 +22,24 @@ public class Balance {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
+    @Column(precision = 10, scale = 2) // 10 total digits, 2 after the decimal
     private BigDecimal balance;
 
-    @Column(name = "total_investments", nullable = false)
+    @Column(name = "total_investments", nullable = false, precision = 10, scale = 3)
     private BigDecimal totalInvestments;
 
-    @Column(name = "total_deposits", nullable = false)
+    @Column(name = "total_deposits", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalDeposits;
 
-    @Column(name = "total_withdrawals", nullable = false)
+    @Column(name = "total_withdrawals", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalWithdrawals;
 
-    @Column(name = "total_dividends", nullable = false)
+    @Column(name = "total_dividends", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalDividends;
 
-    @Column(name = "total_fees", nullable = false)
+    @Column(name = "total_fees", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalFees;
 
-    @Column(name = "last_portfolio_value", nullable = false)
+    @Column(name = "last_portfolio_value", nullable = false, precision = 10, scale = 3)
     private BigDecimal lastPortfolioValue;
 }

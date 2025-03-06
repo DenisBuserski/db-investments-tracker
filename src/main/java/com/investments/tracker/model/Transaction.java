@@ -35,15 +35,15 @@ public class Transaction {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
-    @Column(name = "single_price", nullable = false)
+    @Column(name = "single_price", nullable = false, precision = 10, scale = 3)
     private BigDecimal singlePrice;
 
     private int quantity;
 
-    @Column(name = "exchange_rate")
+    @Column(name = "exchange_rate", precision = 10, scale = 5)
     private BigDecimal exchangeRate;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_amount", nullable = false, precision = 10, scale = 3)
     private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)

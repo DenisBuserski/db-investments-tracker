@@ -27,7 +27,7 @@ public class CashTransaction {
     @Enumerated(EnumType.STRING)
     private CashTransactionType cashTransactionType;
 
-    @Column(name = "amount", nullable = false)
+    @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
     @Column(name = "currency")
