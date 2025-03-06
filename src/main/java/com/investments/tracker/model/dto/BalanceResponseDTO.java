@@ -3,6 +3,7 @@ package com.investments.tracker.model.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 @Builder
 @ToString
 public class BalanceResponseDTO {
+    private LocalDate date;
     private BigDecimal balance;
     private BigDecimal totalInvestments;
     private BigDecimal totalDeposits;

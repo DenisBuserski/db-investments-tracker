@@ -58,7 +58,7 @@ public class DepositServiceImpl implements DepositService {
 
     private static CashTransaction createCashtransaction(DepositRequestDTO depositRequestDTO) {
         return CashTransaction.builder()
-                .date(LocalDate.now())
+                .date(depositRequestDTO.getDate())
                 .cashTransactionType(DEPOSIT)
                 .amount(depositRequestDTO.getAmount())
                 .currency(depositRequestDTO.getCurrency())
@@ -76,7 +76,7 @@ public class DepositServiceImpl implements DepositService {
         BigDecimal newLastPortfolioValue = balance == null ? BigDecimal.ZERO : balance.getLastPortfolioValue();
 
         return Balance.builder()
-                .date(LocalDate.now())
+                .date(deposit.getDate())
                 .balance(newBalanceAmount)
                 .totalInvestments(newTotalInvestments)
                 .totalDeposits(newTotalDeposits)
@@ -89,6 +89,7 @@ public class DepositServiceImpl implements DepositService {
 
     private static BalanceResponseDTO createBalanceResponseDTO(Balance newBalance) {
         return BalanceResponseDTO.builder()
+                .date(newBalance.getDate())
                 .balance(newBalance.getBalance())
                 .totalInvestments(newBalance.getTotalInvestments())
                 .totalDeposits(newBalance.getTotalDeposits())
