@@ -38,8 +38,7 @@ public class Transaction {
     @Column(name = "single_price", nullable = false)
     private BigDecimal singlePrice;
 
-    @Column(nullable = false)
-    private BigDecimal quantity;
+    private int quantity;
 
     @Column(name = "exchange_rate")
     private BigDecimal exchangeRate;

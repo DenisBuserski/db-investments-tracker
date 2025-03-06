@@ -1,6 +1,7 @@
 package com.investments.tracker.service.impl;
 
 import com.investments.tracker.model.Balance;
+import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.model.dto.TransactionRequestDTO;
 import com.investments.tracker.repository.BalanceRepository;
@@ -30,36 +31,63 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void insertTransaction(TransactionRequestDTO transactionDTO) {
-        // Check if we have enough money in Balance
         Optional<Balance> currentBalance = this.balanceRepository.getLatestBalance();
         if (!currentBalance.isPresent()) {
             log.error("There is no current balance. Transaction cannot be created.");
         } else {
             BigDecimal balanceValue = currentBalance.get().getBalance();
-            BigDecimal transactionValue = transactionDTO.getSinglePrice().multiply(transactionDTO.getQuantity());
-            if (balanceValue.compareTo(transactionValue) >= 0) {
-                Transaction transaction = createTransaction(transactionDTO);
-                this.transactionRepository.save(transaction);
-                // Take money from the Balance
+
+            if (transactionDTO.getExchangeRate().equals(BigDecimal.ZERO)) {
+                BigDecimal transactionValue = transactionDTO.getSinglePrice().multiply(BigDecimal.valueOf(transactionDTO.getQuantity()));
+                if (balanceValue.compareTo(transactionValue) >= 0) {
+                    Transaction transaction = createTransaction(transactionDTO);
+                    this.transactionRepository.save(transaction);
+                    // Take money from the Balance
+
+
+                    Balance newBalance = createNewBalance(currentBalance.get(), transaction);
+                    this.balanceRepository.save(newBalance);
+
+                } else {
+                    log.info("Transaction cannot be created because it's not enough balance.");
+                }
 
             } else {
-                log.info("Transaction cannot be created because it's not enough balance.");
+
             }
+
+
+
         }
     }
 
     private static Transaction createTransaction(TransactionRequestDTO transactionDTO) {
-        // Keep in mind the exchange rate if there is one
         return Transaction.builder()
-                .date(LocalDate.now())
+                .date(transactionDTO.getDate())
                 .transactionType(transactionDTO.getTransactionType())
                 .productType(transactionDTO.getProductType())
                 .productName(transactionDTO.getProductName())
                 .singlePrice(transactionDTO.getSinglePrice())
                 .quantity(transactionDTO.getQuantity())
-                .exchangeRate(transactionDTO.getExchangeRate())
-                .totalAmount(transactionDTO.getSinglePrice().multiply(transactionDTO.getQuantity()))
+                .exchangeRate(transactionDTO.getExchangeRate()) // Keep in mind the exchange rate if there is one
+                .totalAmount(transactionDTO.getSinglePrice().multiply(BigDecimal.valueOf(transactionDTO.getQuantity())))
                 .currency(transactionDTO.getCurrency())
+                .build();
+    }
+
+    private static Balance createNewBalance(Balance balance, Transaction transaction) {
+        BigDecimal newBalanceValue = balance.getBalance().subtract(transaction.getTotalAmount());
+        BigDecimal newTotalInvestments = balance.getTotalInvestments().add(transaction.getTotalAmount());
+
+        return Balance.builder()
+                .date(transaction.getDate())
+                .balance(newBalanceValue)
+                .totalInvestments(newTotalInvestments)
+                .totalDeposits(balance.getTotalDeposits())
+                .totalWithdrawals(balance.getTotalWithdrawals())
+                .totalDividends(balance.getTotalDividends())
+                .totalFees(balance.getTotalFees())
+                .lastPortfolioValue(balance.getLastPortfolioValue())
                 .build();
     }
 }

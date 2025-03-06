@@ -33,9 +33,8 @@ public class TransactionRequestDTO {
     @Positive(message = "Single price must be more than 0!")
     private BigDecimal singlePrice;
 
-    @NotNull(message = "Quantity cannot be NULL!")
     @Positive(message = "Quantity must be more than 0!")
-    private BigDecimal quantity;
+    private int quantity;
 
     @NotNull(message = "Exchange rate cannot be NULL!")
     private BigDecimal exchangeRate;
