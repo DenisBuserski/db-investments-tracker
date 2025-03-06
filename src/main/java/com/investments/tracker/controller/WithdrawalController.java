@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +55,12 @@ public class WithdrawalController {
         } else {
             return withdrawals;
         }
+    }
+
+    @GetMapping("/get/total/amount")
+    public BigDecimal getTotalDepositAmount() {
+        log.info("Getting total amount of withdrawals");
+        return this.withdrawalService.getTotalWithdrawalsAmount();
     }
 
 }

@@ -26,5 +26,5 @@ public interface CashTransactionRepository extends JpaRepository<CashTransaction
     @Query("""
            SELECT SUM(t.amount) FROM CashTransaction t WHERE t.cashTransactionType = :cashTransactionType
            """)
-    BigDecimal getTotalDepositsAmount(CashTransactionType cashTransactionType);
+    BigDecimal getTotalAmountOf(CashTransactionType cashTransactionType);
 }

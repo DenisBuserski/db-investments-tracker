@@ -61,9 +61,6 @@ public class WithdrawalServiceImpl implements WithdrawalService {
         if (latestBalance.isPresent()) {
             Balance balance = latestBalance.get();
             if (balance.getBalance().compareTo(withdrawalRequestDTO.getAmount()) >= 0) {
-                // -1 if balance.getBalance() is less than withdrawalRequestDTO.getAmount()
-                // 0 if they are equal
-                // 1 if balance.getBalance() is greater than withdrawalRequestDTO.getAmount()
 
                 CashTransaction withdrawal = createCashtransaction(withdrawalRequestDTO);
                 this.cashTransactionRepository.save(withdrawal);
@@ -127,6 +124,11 @@ public class WithdrawalServiceImpl implements WithdrawalService {
                 .totalFees(newTotalFees)
                 .lastPortfolioValue(newLastPortfolioValue)
                 .build();
+    }
+
+    @Override
+    public BigDecimal getTotalWithdrawalsAmount() {
+        return this.cashTransactionRepository.getTotalAmountOf(WITHDRAWAL);
     }
 
 }

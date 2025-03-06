@@ -40,16 +40,13 @@ public class DepositServiceImpl implements DepositService {
     public BalanceResponseDTO insertDeposit(DepositRequestDTO depositRequestDTO) {
         CashTransaction deposit = createCashtransaction(depositRequestDTO);
         this.cashTransactionRepository.save(deposit);
-        log.info("Inserted deposit for [{} {}] in table [{}]", deposit.getAmount(), deposit.getCurrency(), "cash_transaction");
         Balance newBalance;
 
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             newBalance = createNewBalance(latestBalance.get(), deposit);
-            log.info("Inserted deposit for [{} {}] in table [{}]",  deposit.getAmount(), deposit.getCurrency(), "balance");
         } else {
             newBalance = createNewBalance(null, deposit);
-            log.info("Inserted deposit for [{} {}] for the first time in table [{}]",  deposit.getAmount(), deposit.getCurrency(), "balance");
         }
         this.balanceRepository.save(newBalance);
         log.info("Deposit for [{} {}] successful", deposit.getAmount(), deposit.getCurrency());
@@ -122,7 +119,7 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public BigDecimal getTotalDepositsAmount() {
-        return this.cashTransactionRepository.getTotalDepositsAmount(DEPOSIT);
+        return this.cashTransactionRepository.getTotalAmountOf(DEPOSIT);
     }
 
 }
