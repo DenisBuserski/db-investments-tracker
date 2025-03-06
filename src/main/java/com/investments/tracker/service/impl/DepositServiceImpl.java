@@ -120,4 +120,9 @@ public class DepositServiceImpl implements DepositService {
         return Collections.emptyList();
     }
 
+    @Override
+    public BigDecimal getTotalDepositsAmount() {
+        return this.cashTransactionRepository.getTotalDepositsAmount(DEPOSIT);
+    }
+
 }
