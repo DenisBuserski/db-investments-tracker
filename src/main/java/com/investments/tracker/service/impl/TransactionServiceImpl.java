@@ -3,6 +3,7 @@ package com.investments.tracker.service.impl;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Transaction;
+import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.TransactionRequestDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.TransactionRepository;
@@ -30,10 +31,11 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void insertTransaction(TransactionRequestDTO transactionDTO) {
+    public BalanceResponseDTO insertTransaction(TransactionRequestDTO transactionDTO) {
         Optional<Balance> currentBalance = this.balanceRepository.getLatestBalance();
         if (!currentBalance.isPresent()) {
             log.error("There is no current balance. Transaction cannot be created.");
+            return createBalanceResponseDTO(null);
         } else {
             BigDecimal balanceValue = currentBalance.get().getBalance();
 
@@ -42,22 +44,23 @@ public class TransactionServiceImpl implements TransactionService {
                 if (balanceValue.compareTo(transactionValue) >= 0) {
                     Transaction transaction = createTransaction(transactionDTO);
                     this.transactionRepository.save(transaction);
-                    // Take money from the Balance
-
+                    log.info("Creating transaction for [{}] in table [{}]", transaction.getProductName(), "transactions");
 
                     Balance newBalance = createNewBalance(currentBalance.get(), transaction);
                     this.balanceRepository.save(newBalance);
 
+                    // Update portfolio
+
+                    return createBalanceResponseDTO(newBalance);
                 } else {
                     log.info("Transaction cannot be created because it's not enough balance.");
+                    return createBalanceResponseDTO(null);
                 }
-
             } else {
+                // Use exchange rate
 
+                return createBalanceResponseDTO(null);
             }
-
-
-
         }
     }
 
@@ -88,6 +91,19 @@ public class TransactionServiceImpl implements TransactionService {
                 .totalDividends(balance.getTotalDividends())
                 .totalFees(balance.getTotalFees())
                 .lastPortfolioValue(balance.getLastPortfolioValue())
+                .build();
+    }
+
+    private static BalanceResponseDTO createBalanceResponseDTO(Balance newBalance) {
+        return BalanceResponseDTO.builder()
+                .date(newBalance.getDate())
+                .balance(newBalance.getBalance())
+                .totalInvestments(newBalance.getTotalInvestments())
+                .totalDeposits(newBalance.getTotalDeposits())
+                .totalWithdrawals(newBalance.getTotalWithdrawals())
+                .totalDividends(newBalance.getTotalDividends())
+                .totalFees(newBalance.getTotalFees())
+                .lastPortfolioValue(newBalance.getLastPortfolioValue())
                 .build();
     }
 }

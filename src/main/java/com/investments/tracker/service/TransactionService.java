@@ -1,7 +1,8 @@
 package com.investments.tracker.service;
 
+import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.TransactionRequestDTO;
 
 public interface TransactionService {
-    void insertTransaction(TransactionRequestDTO transactionDTO);
+    BalanceResponseDTO insertTransaction(TransactionRequestDTO transactionDTO);
 }
