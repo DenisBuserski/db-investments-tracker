@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
 import static com.investments.tracker.model.enums.CashTransactionType.WITHDRAWAL;
 
 

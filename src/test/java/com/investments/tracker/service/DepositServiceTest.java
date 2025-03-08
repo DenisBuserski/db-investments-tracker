@@ -6,9 +6,13 @@ import com.investments.tracker.model.dto.DepositRequestDTO;
 import com.investments.tracker.model.dto.DepositResponseDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
+import com.investments.tracker.service.impl.DepositServiceImpl;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,9 +22,12 @@ import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
 import static com.investments.tracker.model.enums.Currency.EUR;
 
 @SpringBootTest
+@TestPropertySource(locations = "classpath:application-test.properties") // H2 config
+@Transactional
 public class DepositServiceTest {
+
     @Autowired
-    DepositService depositService;
+    DepositServiceImpl depositService;
 
     @Autowired
     CashTransactionRepository cashTransactionRepository;
@@ -30,11 +37,21 @@ public class DepositServiceTest {
 
     DepositRequestDTO depositRequestDTO;
 
+    CashTransaction cashTransaction;
+
 
     @BeforeEach
-    public void setup() {
+    public void setUp() {
         depositRequestDTO = DepositRequestDTO.builder()
                 .date(LocalDate.now())
+                .amount(BigDecimal.valueOf(1000))
+                .currency(EUR)
+                .description("TEST DESCRIPTION")
+                .build();
+
+        cashTransaction = CashTransaction.builder()
+                .date(LocalDate.now())
+                .cashTransactionType(DEPOSIT)
                 .amount(BigDecimal.valueOf(1000))
                 .currency(EUR)
                 .description("TEST DESCRIPTION")
@@ -69,13 +86,6 @@ public class DepositServiceTest {
     @Test
     @DisplayName("Test should return all deposits from [date] to [date] when we have deposits")
     public void testGetAllDepositsFromToNotEmpty() {
-        CashTransaction cashTransaction = CashTransaction.builder()
-                .date(LocalDate.now())
-                .cashTransactionType(DEPOSIT)
-                .amount(BigDecimal.valueOf(1000))
-                .currency(EUR)
-                .description("TEST DESCRIPTION")
-                .build();
         cashTransactionRepository.save(cashTransaction);
         List<DepositResponseDTO> result = depositService.getAllDepositsFromTo(LocalDate.now(), LocalDate.now());
         Assertions.assertEquals(1, result.size());
@@ -91,13 +101,6 @@ public class DepositServiceTest {
     @Test
     @DisplayName("Test should return amount of all deposits when we have deposits")
     public void testGetTotalDepositsAmountNotEmpty() {
-        CashTransaction cashTransaction = CashTransaction.builder()
-                .date(LocalDate.now())
-                .cashTransactionType(DEPOSIT)
-                .amount(BigDecimal.valueOf(1000))
-                .currency(EUR)
-                .description("TEST DESCRIPTION")
-                .build();
         cashTransactionRepository.save(cashTransaction);
         BigDecimal result = depositService.getTotalDepositsAmount();
         Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
