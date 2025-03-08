@@ -10,6 +10,7 @@ import com.investments.tracker.service.impl.DepositServiceImpl;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -22,22 +23,22 @@ import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
 import static com.investments.tracker.model.enums.Currency.EUR;
 
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties") // H2 config
+@TestPropertySource(locations = "classpath:application-test.properties")
 @Transactional
 public class DepositServiceTest {
 
     @Autowired
-    DepositServiceImpl depositService;
+    private DepositServiceImpl depositService;
 
     @Autowired
-    CashTransactionRepository cashTransactionRepository;
+    private CashTransactionRepository cashTransactionRepository;
 
     @Autowired
-    BalanceRepository balanceRepository;
+    private BalanceRepository balanceRepository;
 
-    DepositRequestDTO depositRequestDTO;
+    private DepositRequestDTO depositRequestDTO;
 
-    CashTransaction cashTransaction;
+    private CashTransaction cashTransaction;
 
 
     @BeforeEach
@@ -78,7 +79,6 @@ public class DepositServiceTest {
     public void testInsertSuccessfulDeposit() {
         depositService.insertDeposit(depositRequestDTO);
         BalanceResponseDTO balanceResponseDTO = depositService.insertDeposit(depositRequestDTO);
-
         Assertions.assertEquals(0, balanceResponseDTO.getBalance().compareTo(BigDecimal.valueOf(2000)));
         Assertions.assertEquals(0, balanceResponseDTO.getTotalDeposits().compareTo(BigDecimal.valueOf(2000)));
     }
@@ -112,6 +112,5 @@ public class DepositServiceTest {
         BigDecimal result = depositService.getTotalDepositsAmount();
         Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(0)));
     }
-
-
+    
 }
