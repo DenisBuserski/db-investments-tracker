@@ -112,5 +112,5 @@ public class DepositServiceTest {
         BigDecimal result = depositService.getTotalDepositsAmount();
         Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(0)));
     }
-    
+
 }
