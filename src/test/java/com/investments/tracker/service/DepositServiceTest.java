@@ -64,9 +64,6 @@ public class DepositServiceTest {
 
         Assertions.assertEquals(0, balanceResponseDTO.getBalance().compareTo(BigDecimal.valueOf(2000)));
         Assertions.assertEquals(0, balanceResponseDTO.getTotalDeposits().compareTo(BigDecimal.valueOf(2000)));
-
-
-
     }
 
     @Test
@@ -80,9 +77,7 @@ public class DepositServiceTest {
                 .description("TEST DESCRIPTION")
                 .build();
         cashTransactionRepository.save(cashTransaction);
-
         List<DepositResponseDTO> result = depositService.getAllDepositsFromTo(LocalDate.now(), LocalDate.now());
-
         Assertions.assertEquals(1, result.size());
     }
 
