@@ -119,8 +119,8 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public BigDecimal getTotalDepositsAmount() {
-        // Check if there are entries
-        return this.cashTransactionRepository.getTotalAmountOf(DEPOSIT);
+        Optional<BigDecimal> totalDeposits = this.cashTransactionRepository.getTotalAmountOf(DEPOSIT);
+        return totalDeposits.orElse(BigDecimal.ZERO);
     }
 
 }

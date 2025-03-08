@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CashTransactionRepository extends JpaRepository<CashTransaction, Long> {
@@ -26,5 +27,5 @@ public interface CashTransactionRepository extends JpaRepository<CashTransaction
     @Query("""
            SELECT SUM(t.amount) FROM CashTransaction t WHERE t.cashTransactionType = :cashTransactionType
            """)
-    BigDecimal getTotalAmountOf(CashTransactionType cashTransactionType);
+    Optional<BigDecimal> getTotalAmountOf(CashTransactionType cashTransactionType);
 }

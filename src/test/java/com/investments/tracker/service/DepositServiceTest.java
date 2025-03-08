@@ -87,4 +87,28 @@ public class DepositServiceTest {
         List<DepositResponseDTO> result = depositService.getAllDepositsFromTo(LocalDate.now(), LocalDate.now());
         Assertions.assertEquals(0, result.size());
     }
+
+    @Test
+    @DisplayName("Test should return amount of all deposits when we have deposits")
+    public void testGetTotalDepositsAmountNotEmpty() {
+        CashTransaction cashTransaction = CashTransaction.builder()
+                .date(LocalDate.now())
+                .cashTransactionType(DEPOSIT)
+                .amount(BigDecimal.valueOf(1000))
+                .currency(EUR)
+                .description("TEST DESCRIPTION")
+                .build();
+        cashTransactionRepository.save(cashTransaction);
+        BigDecimal result = depositService.getTotalDepositsAmount();
+        Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
+    }
+
+    @Test
+    @DisplayName("Test should return amount of all deposits when we don't have deposits")
+    public void testGetTotalDepositsAmountEmpty() {
+        BigDecimal result = depositService.getTotalDepositsAmount();
+        Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(0)));
+    }
+
+
 }
