@@ -1,8 +1,6 @@
 package com.investments.tracker.repository;
 
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.model.dto.DepositRequestDTO;
-import com.investments.tracker.model.enums.CashTransactionType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

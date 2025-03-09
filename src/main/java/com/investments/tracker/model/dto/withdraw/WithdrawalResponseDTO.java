@@ -1,4 +1,4 @@
-package com.investments.tracker.model.dto;
+package com.investments.tracker.model.dto.withdraw;
 
 import com.investments.tracker.model.enums.Currency;
 import lombok.*;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 @ToString
-public class DepositResponseDTO {
+public class WithdrawalResponseDTO {
     private BigDecimal amount;
     private Currency currency;
     private LocalDate date;

@@ -2,15 +2,13 @@ package com.investments.tracker.service;
 
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.DepositRequestDTO;
-import com.investments.tracker.model.dto.DepositResponseDTO;
-import com.investments.tracker.repository.BalanceRepository;
+import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
+import com.investments.tracker.model.dto.deposit.DepositResponseDTO;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.service.impl.DepositServiceImpl;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;

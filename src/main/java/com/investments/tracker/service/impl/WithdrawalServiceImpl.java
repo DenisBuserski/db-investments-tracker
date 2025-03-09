@@ -3,6 +3,8 @@ package com.investments.tracker.service.impl;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.dto.*;
+import com.investments.tracker.model.dto.withdraw.WithdrawalRequestDTO;
+import com.investments.tracker.model.dto.withdraw.WithdrawalResponseDTO;
 import com.investments.tracker.model.enums.CashTransactionType;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
@@ -115,6 +117,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
                         .date(withdrawal.getDate())
                         .amount(withdrawal.getAmount())
                         .currency(withdrawal.getCurrency())
+                        .description(withdrawal.getDescription())
                         .build();
                 withdrawals.add(withdrawalDTO);
             });
