@@ -33,9 +33,6 @@ public class DepositServiceTest {
     @Autowired
     private CashTransactionRepository cashTransactionRepository;
 
-    @Autowired
-    private BalanceRepository balanceRepository;
-
     private DepositRequestDTO depositRequestDTO;
 
     private CashTransaction cashTransaction;
@@ -62,7 +59,6 @@ public class DepositServiceTest {
     @AfterEach
     public void cleanUp() {
         cashTransactionRepository.deleteAll();
-        balanceRepository.deleteAll();
     }
 
 
@@ -99,7 +95,7 @@ public class DepositServiceTest {
     }
 
     @Test
-    @DisplayName("Test should return amount of all deposits when we have deposits")
+    @DisplayName("Test should return total amount of all deposits when we have deposits")
     public void testGetTotalDepositsAmountNotEmpty() {
         cashTransactionRepository.save(cashTransaction);
         BigDecimal result = depositService.getTotalDepositsAmount();
@@ -107,7 +103,7 @@ public class DepositServiceTest {
     }
 
     @Test
-    @DisplayName("Test should return amount of all deposits when we don't have deposits")
+    @DisplayName("Test should return total amount of all deposits when we don't have deposits")
     public void testGetTotalDepositsAmountEmpty() {
         BigDecimal result = depositService.getTotalDepositsAmount();
         Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(0)));

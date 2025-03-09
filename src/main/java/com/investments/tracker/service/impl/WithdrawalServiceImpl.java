@@ -85,16 +85,17 @@ public class WithdrawalServiceImpl implements WithdrawalService {
 
     private static CashTransaction createCashtransaction(WithdrawalRequestDTO withdrawalRequestDTO) {
         return CashTransaction.builder()
-                .date(LocalDate.now())
+                .date(withdrawalRequestDTO.getDate())
                 .cashTransactionType(CashTransactionType.WITHDRAWAL)
                 .amount(withdrawalRequestDTO.getAmount())
                 .currency(withdrawalRequestDTO.getCurrency())
+                .description(withdrawalRequestDTO.getDescription())
                 .build();
     }
 
     private static Balance createNewBalance(Balance balance, CashTransaction withdrawal) {
         return Balance.builder()
-                .date(LocalDate.now())
+                .date(withdrawal.getDate())
                 .balance(balance.getBalance().subtract(withdrawal.getAmount()))
                 .totalInvestments(balance.getTotalInvestments())
                 .totalDeposits(balance.getTotalDeposits())
