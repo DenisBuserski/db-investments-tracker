@@ -48,7 +48,7 @@ public class WithdrawalController {
     public List<WithdrawalResponseDTO> getAllWithdrawals() {
         log.info("Getting all withdrawals");
         List<WithdrawalResponseDTO> withdrawals = this.withdrawalService.getAllWithdrawalsFromTo(
-                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2000, 1, 1),
                 LocalDate.now());
         if (withdrawals.isEmpty()) {
             return Collections.emptyList();

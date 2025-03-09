@@ -36,38 +36,17 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     }
 
     @Override
-    public List<WithdrawalResponseDTO> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
-        log.info("Getting all withdrawals from [{}] to [{}]", from, to);
-        List<CashTransaction> withdrawalResult = this.cashTransactionRepository.getCashTransactionsFromTo(from, to, WITHDRAWAL);
-        if (!withdrawalResult.isEmpty()) {
-            List<WithdrawalResponseDTO> withdrawals = new ArrayList<>();
-            withdrawalResult.stream().forEach(withdrawal -> {
-                WithdrawalResponseDTO withdrawalDTO = WithdrawalResponseDTO.builder()
-                        .date(withdrawal.getDate())
-                        .amount(withdrawal.getAmount())
-                        .currency(withdrawal.getCurrency())
-                        .build();
-                withdrawals.add(withdrawalDTO);
-            });
-            return withdrawals;
-        }
-        return Collections.emptyList();
-    }
-
-    @Override
     public BalanceResponseDTO withdrawCash(WithdrawalRequestDTO withdrawalRequestDTO) {
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             Balance balance = latestBalance.get();
+            // Throw exception if try to insert withdrawal with date before the balance
             if (balance.getBalance().compareTo(withdrawalRequestDTO.getAmount()) >= 0) {
-
                 CashTransaction withdrawal = createCashtransaction(withdrawalRequestDTO);
                 this.cashTransactionRepository.save(withdrawal);
-                log.info("Inserted withdrawal for [{} {}] in table [{}]", withdrawal.getAmount(), withdrawal.getCurrency(), "cash_transaction");
 
                 Balance newBalance = createNewBalance(balance, withdrawal);
                 this.balanceRepository.save(newBalance);
-                log.info("Inserted withdrawal for [{} {}] in table [{}]", withdrawal.getAmount(), withdrawal.getCurrency(), "balance");
                 log.info("Withdrawal for [{} {}] successful", withdrawal.getAmount(), withdrawal.getCurrency());
                 return createNewBalanceDTO(newBalance);
             } else {
@@ -78,10 +57,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
             log.info("No balance found");
             return createNewBalanceDTO(null);
         }
-
     }
-
-
 
     private static CashTransaction createCashtransaction(WithdrawalRequestDTO withdrawalRequestDTO) {
         return CashTransaction.builder()
@@ -107,6 +83,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     }
 
     private static BalanceResponseDTO createNewBalanceDTO(Balance newBalance) {
+        LocalDate newDate = newBalance == null ? LocalDate.now(): newBalance.getDate();
         BigDecimal newBalanceAmount = newBalance == null ? BigDecimal.ZERO : newBalance.getBalance();
         BigDecimal newTotalInvestments = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalInvestments();
         BigDecimal newTotalDeposits = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalDeposits();
@@ -116,6 +93,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
         BigDecimal newLastPortfolioValue = newBalance == null ? BigDecimal.ZERO : newBalance.getLastPortfolioValue();
 
         return BalanceResponseDTO.builder()
+                .date(newDate)
                 .balance(newBalanceAmount)
                 .totalInvestments(newTotalInvestments)
                 .totalDeposits(newTotalDeposits)
@@ -125,6 +103,27 @@ public class WithdrawalServiceImpl implements WithdrawalService {
                 .lastPortfolioValue(newLastPortfolioValue)
                 .build();
     }
+
+    @Override
+    public List<WithdrawalResponseDTO> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
+        log.info("Getting all withdrawals from [{}] to [{}]", from, to);
+        List<CashTransaction> withdrawalResult = this.cashTransactionRepository.getCashTransactionsFromTo(from, to, WITHDRAWAL);
+        if (!withdrawalResult.isEmpty()) {
+            List<WithdrawalResponseDTO> withdrawals = new ArrayList<>();
+            withdrawalResult.stream().forEach(withdrawal -> {
+                WithdrawalResponseDTO withdrawalDTO = WithdrawalResponseDTO.builder()
+                        .date(withdrawal.getDate())
+                        .amount(withdrawal.getAmount())
+                        .currency(withdrawal.getCurrency())
+                        .build();
+                withdrawals.add(withdrawalDTO);
+            });
+            return withdrawals;
+        }
+        return Collections.emptyList();
+    }
+
+
 
     @Override
     public BigDecimal getTotalWithdrawalsAmount() {
