@@ -1,10 +1,12 @@
 package com.investments.tracker.service;
 
+import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.deposit.DepositResponseDTO;
 import com.investments.tracker.model.dto.withdraw.WithdrawalRequestDTO;
 import com.investments.tracker.model.dto.withdraw.WithdrawalResponseDTO;
+import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.service.impl.WithdrawalServiceImpl;
 import jakarta.transaction.Transactional;
@@ -32,6 +34,11 @@ public class WithdrawalServiceTest {
     @Autowired
     private CashTransactionRepository cashTransactionRepository;
 
+    @Autowired
+    private BalanceRepository balanceRepository;
+
+    private Balance balance;
+
     private WithdrawalRequestDTO withdrawalRequestDTO;
 
     private CashTransaction cashTransaction;
@@ -39,6 +46,17 @@ public class WithdrawalServiceTest {
 
     @BeforeEach
     public void setUp() {
+        balance = Balance.builder()
+                .date(LocalDate.now())
+                .balance(BigDecimal.valueOf(1000))
+                .totalInvestments(BigDecimal.ZERO)
+                .totalDeposits(BigDecimal.ZERO)
+                .totalWithdrawals(BigDecimal.ZERO)
+                .totalDividends(BigDecimal.ZERO)
+                .totalFees(BigDecimal.ZERO)
+                .lastPortfolioValue(BigDecimal.ZERO)
+                .build();
+
         withdrawalRequestDTO = WithdrawalRequestDTO.builder()
                 .date(LocalDate.now())
                 .amount(BigDecimal.valueOf(1000))
@@ -58,12 +76,16 @@ public class WithdrawalServiceTest {
     @AfterEach
     public void cleanUp() {
         cashTransactionRepository.deleteAll();
+        balanceRepository.deleteAll();
     }
 
     @Test
     @DisplayName("Test should create a successful withdrawal")
     public void testInsertSuccessfulWithdrawal() {
-
+        this.balanceRepository.save(balance);
+        BalanceResponseDTO balanceResponseDTO = withdrawalService.withdrawCash(withdrawalRequestDTO);
+        Assertions.assertEquals(balanceResponseDTO.getBalance(), BigDecimal.ZERO);
+        Assertions.assertEquals(balanceResponseDTO.getTotalWithdrawals(), BigDecimal.valueOf(1000));
     }
 
 
@@ -86,13 +108,17 @@ public class WithdrawalServiceTest {
     @Test
     @DisplayName("Test should return total amount of all withdrawals when we have withdrawals")
     public void testGetTotalWithdrawalsAmountNotEmpty() {
+        cashTransactionRepository.save(cashTransaction);
+        BigDecimal result = withdrawalService.getTotalWithdrawalsAmount();
+        Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
 
     }
 
     @Test
     @DisplayName("Test should return total amount of all withdrawals when we don't have withdrawals")
     public void testGetTotalWithdrawalsAmountEmpty() {
-
+        BigDecimal result = withdrawalService.getTotalWithdrawalsAmount();
+        Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
     }
 
 }
