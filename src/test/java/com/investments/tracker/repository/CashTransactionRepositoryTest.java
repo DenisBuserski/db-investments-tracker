@@ -12,7 +12,6 @@ import org.springframework.test.context.TestPropertySource;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
 import static com.investments.tracker.model.enums.CashTransactionType.WITHDRAWAL;
@@ -62,19 +61,5 @@ public class CashTransactionRepositoryTest {
         Assertions.assertEquals(0, result.size());
     }
 
-    @Test
-    @DisplayName("Get total amount of deposits")
-    public void testGetTotalAmountOfDeposits() {
-        this.cashTransactionRepository.save(cashTransactionDeposit);
-        Optional<BigDecimal> result = this.cashTransactionRepository.getTotalAmountOf(DEPOSIT);
-        Assertions.assertEquals(0, result.get().compareTo(BigDecimal.valueOf(1000)));
-    }
 
-    @Test
-    @DisplayName("Get total amount of withdrawals")
-    public void testGetTotalAmountOfWithdrawals() {
-        this.cashTransactionRepository.save(cashTransactionWithdrawal);
-        Optional<BigDecimal> result = this.cashTransactionRepository.getTotalAmountOf(WITHDRAWAL);
-        Assertions.assertEquals(0, result.get().compareTo(BigDecimal.valueOf(1000)));
-    }
 }

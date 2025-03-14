@@ -128,8 +128,9 @@ public class WithdrawalServiceImpl implements WithdrawalService {
 
     @Override
     public BigDecimal getTotalWithdrawalsAmount() {
-        Optional<BigDecimal> totalWithdrawals = this.cashTransactionRepository.getTotalAmountOf(WITHDRAWAL);
-        return totalWithdrawals.orElse(BigDecimal.ZERO);
+        return null;
+//        Optional<BigDecimal> totalWithdrawals = this.cashTransactionRepository.getTotalAmountOf(WITHDRAWAL);
+//        return totalWithdrawals.orElse(BigDecimal.ZERO);
     }
 
 }
