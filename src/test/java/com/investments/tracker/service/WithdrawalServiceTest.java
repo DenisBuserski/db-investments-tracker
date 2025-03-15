@@ -22,6 +22,7 @@ import java.util.List;
 import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
 import static com.investments.tracker.model.enums.CashTransactionType.WITHDRAWAL;
 import static com.investments.tracker.model.enums.Currency.EUR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -81,11 +82,29 @@ public class WithdrawalServiceTest {
 
     @Test
     @DisplayName("Test should create a successful withdrawal")
-    public void testInsertSuccessfulWithdrawal() {
+    public void testSuccessfulWithdrawal() {
         this.balanceRepository.save(balance);
         BalanceResponseDTO balanceResponseDTO = withdrawalService.withdrawCash(withdrawalRequestDTO);
-        Assertions.assertEquals(balanceResponseDTO.getBalance(), BigDecimal.ZERO);
-        Assertions.assertEquals(balanceResponseDTO.getTotalWithdrawals(), BigDecimal.valueOf(1000));
+        assertEquals(balanceResponseDTO.getBalance(), BigDecimal.ZERO);
+        assertEquals(balanceResponseDTO.getTotalWithdrawals(), BigDecimal.valueOf(1000));
+    }
+
+    @Test
+    @DisplayName("Test should not create a withdrawal because balance is not enough")
+    public void testUnsuccessfulWithdrawal() {
+        this.balanceRepository.save(balance);
+        withdrawalService.withdrawCash(withdrawalRequestDTO);
+        BalanceResponseDTO balanceResponseDTO = withdrawalService.withdrawCash(withdrawalRequestDTO);
+        assertEquals(balanceResponseDTO.getBalance(), BigDecimal.ZERO);
+        assertEquals(balanceResponseDTO.getTotalWithdrawals(), BigDecimal.valueOf(1000));
+    }
+
+    @Test
+    @DisplayName("Test should return empty BalanceDTO when there is no current balance")
+    public void testIncorrectWithdrawal() {
+        BalanceResponseDTO balanceResponseDTO = withdrawalService.withdrawCash(withdrawalRequestDTO);
+        assertEquals(balanceResponseDTO.getBalance(), BigDecimal.ZERO);
+        assertEquals(balanceResponseDTO.getTotalWithdrawals(), BigDecimal.ZERO);
     }
 
 
@@ -95,14 +114,14 @@ public class WithdrawalServiceTest {
     public void testGetAllWithdrawalsFromToNotEmpty() {
         cashTransactionRepository.save(cashTransaction);
         List<WithdrawalResponseDTO> result = withdrawalService.getAllWithdrawalsFromTo(LocalDate.now(), LocalDate.now());
-        Assertions.assertEquals(1, result.size());
+        assertEquals(1, result.size());
     }
 
     @Test
     @DisplayName("Test should return all withdrawals from [date] to [date] when we don't have withdrawals")
     public void testGetAllWithdrawalsFromToEmpty() {
         List<WithdrawalResponseDTO> result = withdrawalService.getAllWithdrawalsFromTo(LocalDate.now(), LocalDate.now());
-        Assertions.assertEquals(0, result.size());
+        assertEquals(0, result.size());
     }
 
     @Test
@@ -110,7 +129,7 @@ public class WithdrawalServiceTest {
     public void testGetTotalWithdrawalsAmountNotEmpty() {
         cashTransactionRepository.save(cashTransaction);
         BigDecimal result = withdrawalService.getTotalWithdrawalsAmount();
-        Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
+        assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
 
     }
 
@@ -118,7 +137,7 @@ public class WithdrawalServiceTest {
     @DisplayName("Test should return total amount of all withdrawals when we don't have withdrawals")
     public void testGetTotalWithdrawalsAmountEmpty() {
         BigDecimal result = withdrawalService.getTotalWithdrawalsAmount();
-        Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
+        assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
     }
 
 }
