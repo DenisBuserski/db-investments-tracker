@@ -22,7 +22,7 @@ import static com.investments.tracker.model.enums.Currency.EUR;
 public class CashTransactionRepositoryTest {
 
     @Autowired
-    private CashTransactionRepository cashTransactionRepository;
+    CashTransactionRepository cashTransactionRepository;
 
     CashTransaction cashTransactionDeposit;
 

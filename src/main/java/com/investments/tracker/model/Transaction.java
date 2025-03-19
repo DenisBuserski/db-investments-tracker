@@ -38,16 +38,17 @@ public class Transaction {
     @Column(name = "single_price", nullable = false, precision = 10, scale = 3)
     private BigDecimal singlePrice;
 
+    @Column(nullable = false)
     private int quantity;
 
-    @Column(name = "exchange_rate", precision = 10, scale = 5)
+    @Column(name = "exchange_rate", nullable = false, precision = 10, scale = 5)
     private BigDecimal exchangeRate;
 
-    @Column(name = "total_amount", nullable = false, precision = 10, scale = 3)
+    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
 
+    @Column(name = "currency", nullable = false)
     @Enumerated(EnumType.STRING)
     private Currency currency;
-
 
 }

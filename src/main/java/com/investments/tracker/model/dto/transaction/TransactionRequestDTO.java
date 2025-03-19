@@ -1,4 +1,4 @@
-package com.investments.tracker.model.dto;
+package com.investments.tracker.model.dto.transaction;
 
 import com.investments.tracker.model.enums.Currency;
 import com.investments.tracker.model.enums.ProductType;
@@ -33,6 +33,7 @@ public class TransactionRequestDTO {
     @Positive(message = "Single price must be more than 0!")
     private BigDecimal singlePrice;
 
+    @NotNull(message = "Quantity cannot be NULL!")
     @Positive(message = "Quantity must be more than 0!")
     private int quantity;
 

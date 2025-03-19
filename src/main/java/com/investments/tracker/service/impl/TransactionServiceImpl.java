@@ -1,10 +1,9 @@
 package com.investments.tracker.service.impl;
 
 import com.investments.tracker.model.Balance;
-import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.TransactionRequestDTO;
+import com.investments.tracker.model.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.TransactionRepository;
 import com.investments.tracker.service.TransactionService;
@@ -44,7 +43,7 @@ public class TransactionServiceImpl implements TransactionService {
                 if (balanceValue.compareTo(transactionValue) >= 0) {
                     Transaction transaction = createTransaction(transactionDTO);
                     this.transactionRepository.save(transaction);
-                    log.info("Creating transaction for [{}] in table [{}]", transaction.getProductName(), "transactions");
+                    log.info("Creating [{}] transaction for [Product: {} | Single price: {} | Quantity {} | ]", transaction.getTransactionType());
 
                     Balance newBalance = createNewBalance(currentBalance.get(), transaction);
                     this.balanceRepository.save(newBalance);
@@ -53,7 +52,7 @@ public class TransactionServiceImpl implements TransactionService {
 
                     return createBalanceResponseDTO(newBalance);
                 } else {
-                    log.info("Transaction cannot be created because it's not enough balance.");
+                    log.info("Transaction cannot be created because there is not enough balance.");
                     return createBalanceResponseDTO(null);
                 }
             } else {
@@ -90,20 +89,29 @@ public class TransactionServiceImpl implements TransactionService {
                 .totalWithdrawals(balance.getTotalWithdrawals())
                 .totalDividends(balance.getTotalDividends())
                 .totalFees(balance.getTotalFees())
-                .lastPortfolioValue(balance.getLastPortfolioValue())
+                .lastPortfolioValue(balance.getLastPortfolioValue()) // Check this
                 .build();
     }
 
-    private static BalanceResponseDTO createBalanceResponseDTO(Balance newBalance) {
+    private static BalanceResponseDTO createBalanceResponseDTO(Balance balance) {
+        LocalDate newDate = balance == null ? LocalDate.now(): balance.getDate();
+        BigDecimal newBalanceAmount = balance == null ? BigDecimal.ZERO : balance.getBalance();
+        BigDecimal newTotalInvestments = balance == null ? BigDecimal.ZERO : balance.getTotalInvestments();
+        BigDecimal newTotalDeposits = balance == null ? BigDecimal.ZERO : balance.getTotalDeposits();
+        BigDecimal newTotalWithdrawals = balance == null ? BigDecimal.ZERO : balance.getTotalWithdrawals();
+        BigDecimal newTotalDividends = balance == null ? BigDecimal.ZERO : balance.getTotalDividends();
+        BigDecimal newTotalFees = balance == null ? BigDecimal.ZERO : balance.getTotalFees();
+        BigDecimal newLastPortfolioValue = balance == null ? BigDecimal.ZERO : balance.getLastPortfolioValue();
+
         return BalanceResponseDTO.builder()
-                .date(newBalance.getDate())
-                .balance(newBalance.getBalance())
-                .totalInvestments(newBalance.getTotalInvestments())
-                .totalDeposits(newBalance.getTotalDeposits())
-                .totalWithdrawals(newBalance.getTotalWithdrawals())
-                .totalDividends(newBalance.getTotalDividends())
-                .totalFees(newBalance.getTotalFees())
-                .lastPortfolioValue(newBalance.getLastPortfolioValue())
+                .date(newDate)
+                .balance(newBalanceAmount)
+                .totalInvestments(newTotalInvestments)
+                .totalDeposits(newTotalDeposits)
+                .totalWithdrawals(newTotalWithdrawals)
+                .totalDividends(newTotalDividends)
+                .totalFees(newTotalFees)
+                .lastPortfolioValue(newLastPortfolioValue)
                 .build();
     }
 }
