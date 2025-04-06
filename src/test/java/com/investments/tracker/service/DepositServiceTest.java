@@ -27,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
-//@SpringBootTest
-//@TestPropertySource(locations = "classpath:application-test.properties")
 @ExtendWith(MockitoExtension.class)
 public class DepositServiceTest {
 
@@ -99,10 +97,10 @@ public class DepositServiceTest {
         assertEquals(balanceResponseDTO.getTotalDeposits(), BigDecimal.valueOf(1000));
 
         verify(cashTransactionRepository).save(any(CashTransaction.class));
-        verify(balanceRepository).save(any(Balance.class));
         // This line verifies that the "save()" method on cashTransactionRepository was called exactly once with any CashTransaction object.
         // The goal is to ensure that the service method interacts with the cashTransactionRepository as expected, performing a save operation on the CashTransaction.
         verify(balanceRepository).getLatestBalance();
+        verify(balanceRepository).save(any(Balance.class));
     }
 
 
@@ -118,6 +116,7 @@ public class DepositServiceTest {
 
         verify(cashTransactionRepository).save(any(CashTransaction.class));
         verify(balanceRepository).getLatestBalance();
+        verify(balanceRepository).save(any(Balance.class));
     }
 
     @Test
@@ -159,7 +158,7 @@ public class DepositServiceTest {
         when(balanceRepository.getTotalDepositsAmount()).thenReturn(Optional.empty());
 
         BigDecimal result = depositService.getTotalDepositsAmount();
-        assertEquals(0, result.compareTo(BigDecimal.valueOf(0)));
+        assertEquals(0, result.compareTo(BigDecimal.ZERO));
 
         verify(balanceRepository).getTotalDepositsAmount();
     }
