@@ -92,8 +92,8 @@ public class DepositControllerTest {
         when(depositService.insertDeposit(depositRequestDTO)).thenReturn(balanceResponseDTO);
 
         mockMvc.perform(post("/deposit/in")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(depositRequestDTO)))
+                        .content(objectMapper.writeValueAsString(depositRequestDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.date").value("2025-03-16"))
                 .andExpect(jsonPath("$.balance").value(BigDecimal.valueOf(1000)))
