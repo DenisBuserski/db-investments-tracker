@@ -7,6 +7,8 @@ import com.investments.tracker.service.DepositService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -26,9 +28,11 @@ public class DepositController {
     }
 
     @PostMapping("/in")
-    public BalanceResponseDTO insertDeposit(@RequestBody @Valid DepositRequestDTO depositRequestDTO) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BalanceResponseDTO> insertDeposit(@RequestBody @Valid DepositRequestDTO depositRequestDTO) {
         log.info("Making deposit for [{} {}]", depositRequestDTO.getAmount(), depositRequestDTO.getCurrency());
-        return this.depositService.insertDeposit(depositRequestDTO);
+        BalanceResponseDTO balanceResponseDTO = this.depositService.insertDeposit(depositRequestDTO);
+        return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/get/from/{fromDate}/to/{toDate}")
