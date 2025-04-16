@@ -37,6 +37,9 @@ This project is and Investments tracker application, that helps you track your i
 <summary>Architecture Overview</summary>
 Diagram how the app works
 
+Deposit and Withdrawals
+![deposit-withdrawal-structure](pictures/deposit-withdrawal-structure.png)
+
 </details>
 
 
