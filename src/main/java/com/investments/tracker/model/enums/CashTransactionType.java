@@ -4,6 +4,5 @@ public enum CashTransactionType {
     DEPOSIT,
     WITHDRAWAL,
     DIVIDEND,
-    DIVIDED_TAX,
     FEE
 }

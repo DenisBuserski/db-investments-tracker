@@ -1,15 +1,44 @@
 package com.investments.tracker.model.dto.dividend;
 
 import com.investments.tracker.model.enums.Currency;
+import com.investments.tracker.model.validation.ValidCurrency;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 public class DividendRequestDTO {
+    @NotNull(message = "Date cannot be NULL!")
+    @PastOrPresent(message = "Date cannot be in the future!")
     private LocalDate date;
+
+    @NotBlank(message = "Product name cannot be blank or NULL!")
     private String productName;
+
+    @Positive(message = "Quantity must be more than 0!")
     private int quantity;
+
+    @NotNull(message = "Dividend amount cannot be NULL!")
+    @Positive(message = "Dividend amount must be more than 0!")
     private BigDecimal dividendAmount;
+
+    @NotNull(message = "Dividend tax amount cannot be NULL!")
+    @Positive(message = "Dividend tax amount must be more than 0!")
+    private BigDecimal dividendTax;
+
+    @NotNull(message = "Exchange rate cannot be NULL!")
     private BigDecimal exchangeRate;
-    private Currency currency;
+
+    @NotNull(message = "Dividend currency cannot be NULL!")
+    @ValidCurrency
+    private Currency dividendCurrency;
 }
