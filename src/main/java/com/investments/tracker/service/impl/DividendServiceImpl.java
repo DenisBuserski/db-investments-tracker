@@ -63,7 +63,7 @@ public class DividendServiceImpl implements DividendService {
         log.info("Dividend for [{}] successful", dividendRequestDTO.getProductName());
         return createBalanceResponseDTO(newBalance);
     }
-    
+
     private static CashTransaction createCashtransaction(DividendRequestDTO dividendRequestDTO, BigDecimal dividendAmount, BigDecimal dividendTax, BigDecimal exchangeRate) {
         String productName = dividendRequestDTO.getProductName();
         int quantity = dividendRequestDTO.getQuantity();

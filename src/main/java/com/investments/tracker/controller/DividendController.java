@@ -1,7 +1,6 @@
 package com.investments.tracker.controller;
 
 import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.deposit.DepositResponseDTO;
 import com.investments.tracker.model.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.model.dto.dividend.DividendResponseDTO;
 import com.investments.tracker.service.DividendService;

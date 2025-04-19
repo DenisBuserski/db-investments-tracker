@@ -84,10 +84,10 @@ Create an openapi.json file and automatically generate API docs using Swagger.
 | `GET`  | `/withdrawal/get/from/{fromDate}/to/{toDate}` | Get withdrawals in range        |               |
 | `GET`  | `/withdrawal/get/all`                         | Get all withdrawals             |               |
 | `GET`  | `/withdrawal/get/total/amount`                | Get total amount of withdrawals |               |
-|        |                                               |                                 |               |
-|        |                                               |                                 |               |
-|        |                                               |                                 |               |
-|        |                                               |                                 |               |
+| `POST` | `/dividend/in`                                | Insert a dividend               |               |
+| `GET`  | `/dividend/get/from/{fromDate}/to/{toDate}`   | Get dividends in range          |               |
+| `GET`  | `/dividend/get/all`                           | Get all dividends               |               |
+| `GET`  | `/dividend/get/total/amount`                  | Get total amount of dividends   |               |
 
 </details> 
 
