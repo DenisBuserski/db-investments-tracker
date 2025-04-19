@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.investments.tracker.model.dto.BalanceResponseDTO.createBalanceResponseDTO;
 import static com.investments.tracker.model.enums.CashTransactionType.*;
 
 @Service
@@ -80,19 +81,6 @@ public class DepositServiceImpl implements DepositService {
                 .totalDividends(newTotalDividends)
                 .totalFees(newTotalFees)
                 .lastPortfolioValue(newLastPortfolioValue)
-                .build();
-    }
-
-    private static BalanceResponseDTO createBalanceResponseDTO(Balance newBalance) {
-        return BalanceResponseDTO.builder()
-                .date(newBalance.getDate())
-                .balance(newBalance.getBalance())
-                .totalInvestments(newBalance.getTotalInvestments())
-                .totalDeposits(newBalance.getTotalDeposits())
-                .totalWithdrawals(newBalance.getTotalWithdrawals())
-                .totalDividends(newBalance.getTotalDividends())
-                .totalFees(newBalance.getTotalFees())
-                .lastPortfolioValue(newBalance.getLastPortfolioValue())
                 .build();
     }
 

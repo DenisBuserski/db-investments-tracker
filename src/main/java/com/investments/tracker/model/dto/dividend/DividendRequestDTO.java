@@ -2,10 +2,7 @@ package com.investments.tracker.model.dto.dividend;
 
 import com.investments.tracker.model.enums.Currency;
 import com.investments.tracker.model.validation.ValidCurrency;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -32,7 +29,7 @@ public class DividendRequestDTO {
     private BigDecimal dividendAmount;
 
     @NotNull(message = "Dividend tax amount cannot be NULL!")
-    @Positive(message = "Dividend tax amount must be more than 0!")
+    @PositiveOrZero(message = "Dividend tax amount must be more or equal to 0!")
     private BigDecimal dividendTax;
 
     @NotNull(message = "Exchange rate cannot be NULL!")

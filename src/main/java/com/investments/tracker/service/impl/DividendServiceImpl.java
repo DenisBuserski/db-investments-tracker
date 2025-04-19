@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static com.investments.tracker.model.dto.BalanceResponseDTO.createBalanceResponseDTO;
 import static com.investments.tracker.model.enums.CashTransactionType.DIVIDEND;
 import static com.investments.tracker.model.enums.Currency.EUR;
 import static java.math.RoundingMode.CEILING;
@@ -37,21 +38,16 @@ public class DividendServiceImpl implements DividendService {
 
     @Override
     public BalanceResponseDTO insertDividend(DividendRequestDTO dividendRequestDTO) {
-        LocalDate dividendDate = dividendRequestDTO.getDate();
-        String productName = dividendRequestDTO.getProductName();
-        int quantity = dividendRequestDTO.getQuantity();
-
         BigDecimal dividendAmountBeforeConversion = dividendRequestDTO.getDividendAmount();
         BigDecimal dividendTax = dividendRequestDTO.getDividendTax();
         BigDecimal exchangeRate = dividendRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequestDTO.getExchangeRate();
-        Currency dividendCurrency = dividendRequestDTO.getDividendCurrency();
         BigDecimal dividendAmount = dividendAmountBeforeConversion.subtract(dividendTax);
 
         if (!exchangeRate.equals(BigDecimal.ZERO)) {
             dividendAmount = dividendAmount.divide(exchangeRate, 10, CEILING).setScale(2, CEILING);
         }
 
-        CashTransaction dividend = createCashtransaction(dividendDate, dividendAmount, productName, quantity, dividendTax, exchangeRate, dividendCurrency);
+        CashTransaction dividend = createCashtransaction(dividendRequestDTO, dividendAmount, dividendTax, exchangeRate);
         this.cashTransactionRepository.save(dividend);
         Balance newBalance;
 
@@ -62,23 +58,20 @@ public class DividendServiceImpl implements DividendService {
             newBalance = createNewBalance(null, dividend);
         }
 
-        return null;
+        this.balanceRepository.save(newBalance);
+        log.info("Dividend for [{}] successful", dividendRequestDTO.getProductName());
+        return createBalanceResponseDTO(newBalance);
     }
 
-
-
-    private static CashTransaction createCashtransaction(
-            LocalDate dividendDate,
-            BigDecimal dividendAmount,
-            String productName,
-            int quantity,
-            BigDecimal dividendTax,
-            BigDecimal exchangeRate,
-            Currency dividendCurrency) {
+    private static CashTransaction createCashtransaction(DividendRequestDTO dividendRequestDTO, BigDecimal dividendAmount, BigDecimal dividendTax, BigDecimal exchangeRate) {
+        String productName = dividendRequestDTO.getProductName();
+        int quantity = dividendRequestDTO.getQuantity();
+        Currency dividendCurrency = dividendRequestDTO.getDividendCurrency();
         String productDescription = String.format("Product:[%s]; Quantity:[%d]; DividendTax[%.2f]; ExchangeRate:[%.4f]; DividendCurrency[%s]",
                 productName, quantity, dividendTax, exchangeRate, dividendCurrency.name());
+
         return CashTransaction.builder()
-                .date(dividendDate)
+                .date(dividendRequestDTO.getDate())
                 .cashTransactionType(DIVIDEND)
                 .amount(dividendAmount)
                 .currency(EUR)
@@ -106,4 +99,5 @@ public class DividendServiceImpl implements DividendService {
                 .lastPortfolioValue(newLastPortfolioValue)
                 .build();
     }
+
 }

@@ -1,5 +1,6 @@
 package com.investments.tracker.model.dto;
 
+import com.investments.tracker.model.Balance;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -19,4 +20,17 @@ public class BalanceResponseDTO {
     private BigDecimal totalDividends;
     private BigDecimal totalFees;
     private BigDecimal lastPortfolioValue;
+
+    public static BalanceResponseDTO createBalanceResponseDTO(Balance newBalance) {
+        return BalanceResponseDTO.builder()
+                .date(newBalance.getDate())
+                .balance(newBalance.getBalance())
+                .totalInvestments(newBalance.getTotalInvestments())
+                .totalDeposits(newBalance.getTotalDeposits())
+                .totalWithdrawals(newBalance.getTotalWithdrawals())
+                .totalDividends(newBalance.getTotalDividends())
+                .totalFees(newBalance.getTotalFees())
+                .lastPortfolioValue(newBalance.getLastPortfolioValue())
+                .build();
+    }
 }
