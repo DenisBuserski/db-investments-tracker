@@ -22,7 +22,6 @@ import java.time.LocalDate;
 
 import static com.investments.tracker.model.enums.Currency.EUR;
 
-import static org.awaitility.Awaitility.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
