@@ -16,11 +16,12 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+import static com.investments.tracker.utils.Constants.START_DATE;
+
 @RestController
 @RequestMapping("/deposit")
 @Slf4j
 public class DepositController {
-    private static final LocalDate START_DATE = LocalDate.of(2000, 1, 1);
     private final DepositService depositService;
 
     @Autowired
