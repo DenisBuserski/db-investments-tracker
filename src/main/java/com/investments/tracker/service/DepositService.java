@@ -9,9 +9,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface DepositService {
-    List<DepositResponseDTO> getAllDepositsFromTo(LocalDate from, LocalDate to);
-
     BalanceResponseDTO insertDeposit(DepositRequestDTO depositDTO);
+
+    List<DepositResponseDTO> getAllDepositsFromTo(LocalDate from, LocalDate to);
 
     BigDecimal getTotalDepositsAmount();
 

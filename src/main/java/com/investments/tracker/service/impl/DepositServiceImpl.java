@@ -98,7 +98,6 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public List<DepositResponseDTO> getAllDepositsFromTo(LocalDate from, LocalDate to) {
-        log.info("Getting all deposits from [{}] to [{}]", from, to);
         List<CashTransaction> depositsResult = this.cashTransactionRepository.getCashTransactionsFromTo(from, to, DEPOSIT);
         if (!depositsResult.isEmpty()) {
             List<DepositResponseDTO> deposits = new ArrayList<>();
@@ -118,8 +117,7 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public BigDecimal getTotalDepositsAmount() {
-        log.info("Getting total amount of deposits");
-        return this.balanceRepository.getTotalDepositsAmount().orElse(BigDecimal.ZERO);
+        return this.cashTransactionRepository.getTotalDepositsAmount().orElse(BigDecimal.ZERO);
     }
 
 }

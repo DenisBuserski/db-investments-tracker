@@ -1,17 +1,18 @@
 package com.investments.tracker.controller;
 
 import com.investments.tracker.model.dto.BalanceResponseDTO;
+import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
+import com.investments.tracker.model.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.service.DividendService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/dividends")
+@RequestMapping("/dividend")
 @Slf4j
 public class DividendController {
     private final DividendService dividendService;
@@ -22,8 +23,10 @@ public class DividendController {
     }
 
     @PostMapping("/in")
-    public BalanceResponseDTO insertDividend() {
-        log.info("Inserting dividend");
-        return null;
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BalanceResponseDTO> insertDividend(@RequestBody @Valid DividendRequestDTO dividendRequestDTO) {
+        log.info("Making deposit for [{} {}]");
+        BalanceResponseDTO balanceResponseDTO = this.dividendService.insertDividend(dividendRequestDTO);
+        return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
     }
 }

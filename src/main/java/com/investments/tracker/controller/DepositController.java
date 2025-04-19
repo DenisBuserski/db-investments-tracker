@@ -20,6 +20,7 @@ import java.util.List;
 @RequestMapping("/deposit")
 @Slf4j
 public class DepositController {
+    private static final LocalDate START_DATE = LocalDate.of(2000, 1, 1);
     private final DepositService depositService;
 
     @Autowired
@@ -36,28 +37,32 @@ public class DepositController {
     }
 
     @GetMapping("/get/from/{fromDate}/to/{toDate}")
-    public List<DepositResponseDTO> getDepositsFromTo(
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<DepositResponseDTO>> getDepositsFromTo(
             @PathVariable(name = "fromDate") LocalDate from,
             @PathVariable(name = "toDate") LocalDate to) {
         log.info("Getting deposits from [{}] to [{}]", from, to);
         List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(from, to);
         if (deposits.isEmpty()) {
-            return Collections.emptyList();
+            log.info("No deposits found");
+            return new ResponseEntity(Collections.EMPTY_LIST, HttpStatus.OK);
         } else {
-            return deposits;
+            log.info("Found deposits - [{}]", deposits.size());
+            return new ResponseEntity<>(deposits, HttpStatus.OK);
         }
     }
 
     @GetMapping("/get/all")
-    public List<DepositResponseDTO> getAllDeposits() {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<DepositResponseDTO>>  getAllDeposits() {
         log.info("Getting all deposits");
-        List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(
-                LocalDate.of(2000, 1, 1),
-                LocalDate.now());
+        List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(START_DATE, LocalDate.now());
         if (deposits.isEmpty()) {
-            return Collections.emptyList();
+            log.info("No deposits found");
+            return new ResponseEntity(Collections.EMPTY_LIST, HttpStatus.OK);
         } else {
-            return deposits;
+            log.info("Found deposits - [{}]", deposits.size());
+            return new ResponseEntity<>(deposits, HttpStatus.OK);
         }
     }
 

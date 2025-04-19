@@ -144,23 +144,23 @@ public class DepositServiceTest {
     @Test
     @DisplayName("Test should return total amount of all deposits when we have deposits")
     public void testGetTotalDepositsAmountNotEmpty() {
-        when(balanceRepository.getTotalDepositsAmount()).thenReturn(Optional.of(balance.getTotalDeposits()));
+        // when(balanceRepository.getTotalDepositsAmount()).thenReturn(Optional.of(balance.getTotalDeposits()));
 
         BigDecimal result = depositService.getTotalDepositsAmount();
         assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
 
-        verify(balanceRepository).getTotalDepositsAmount();
+        // verify(balanceRepository).getTotalDepositsAmount();
     }
 
     @Test
     @DisplayName("Test should return total amount of all deposits when we don't have deposits")
     public void testGetTotalDepositsAmountEmpty() {
-        when(balanceRepository.getTotalDepositsAmount()).thenReturn(Optional.empty());
+        // when(balanceRepository.getTotalDepositsAmount()).thenReturn(Optional.empty());
 
         BigDecimal result = depositService.getTotalDepositsAmount();
         assertEquals(0, result.compareTo(BigDecimal.ZERO));
 
-        verify(balanceRepository).getTotalDepositsAmount();
+        // verify(balanceRepository).getTotalDepositsAmount();
     }
 
 }

@@ -84,6 +84,10 @@ Create an openapi.json file and automatically generate API docs using Swagger.
 | `GET`  | `/withdrawal/get/from/{fromDate}/to/{toDate}` | Get withdrawals in range        |               |
 | `GET`  | `/withdrawal/get/all`                         | Get all withdrawals             |               |
 | `GET`  | `/withdrawal/get/total/amount`                | Get total amount of withdrawals |               |
+|        |                                               |                                 |               |
+|        |                                               |                                 |               |
+|        |                                               |                                 |               |
+|        |                                               |                                 |               |
 
 </details> 
 
@@ -112,19 +116,18 @@ Login Page
 
 <details>
 <summary>Future Improvements</summary>
-Add email verification
-Dockerize the app
-Implement CI/CD
-Improve frontend UI
+
+- Add Swagger-ui
 
 </details>
 
 
 <details>
 <summary>Author</summary>
-Your Name: Denis Buserski
-LinkedIn: Your Profile
-GitHub: Your GitHub
+
+#### Your Name: Denis Buserski 
+#### LinkedIn: LINK 
+#### GitHub: LINK 
 
 </details>
 

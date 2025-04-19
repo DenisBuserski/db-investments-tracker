@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
-@ToString
 public class BalanceResponseDTO {
     private LocalDate date;
     private BigDecimal balance;
