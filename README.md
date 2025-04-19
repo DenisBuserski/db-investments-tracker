@@ -136,7 +136,7 @@ Login Page
 
 
 <details>
-<summary><h3><License/h3></summary>
+<summary><h3>License</h3></summary>
 
 This project is licensed under the MIT License. (ADD MIT)
 
