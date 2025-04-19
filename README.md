@@ -1,49 +1,46 @@
 # Investments tracker application
-(A brief summary of what your project does in 1-2 lines.)
 
+_(A brief summary of what your project does in 1-2 lines.)_
+
+
+## Table of Contents
+
+<details>
+<summary><h3>About the Project</h3></summary>
+
+This project is an Investments tracker application, that helps you track your investments.
 Deposits and Withdrawals can be only in 1 currency - EUR
 
-Deposits
-- Insert deposit 
-
-Withdrawals
+</details>
 
 
-Table of Contents
 <details>
-<summary>About the Project</summary>
-This project is and Investments tracker application, that helps you track your investments.
+<summary><h3>Technologies Used</h3></summary>
+
+| Layer           | Technology         |
+|-----------------|--------------------|
+| Backend         | Java & Spring Boot |
+| Database        | MySQL              |
+| ORM             | Spring Data JPA    |
+| Authentication  | JWT?               |
+| Build tools     | Maven              |
+| Frontend        | React              |
+| Version control | Git                |
 
 </details>
 
 
 <details>
-<summary>Technologies Used</summary>
+<summary><h3>Architecture Overview</h3></summary>
 
-| Layer           | Technology       |
-|-----------------|------------------|
-| Backend         | Java Spring Boot |
-| Database        | MySQL            |
-| ORM             | Spring Data JPA  |
-| Authentication  | JWT?             |
-| Build tools     | Maven            |
-| Frontend        | React            |
-| Version control | Git              |
+_Diagram how the app works_
 
 </details>
 
 
 <details>
-<summary>Architecture Overview</summary>
-Diagram how the app works
+<summary><h3>Features</h3></summary>
 
-
-
-</details>
-
-
-<details>
-<summary>Features</summary>
 User Registration & Login
 JWT Authentication
 CRUD Operations
@@ -56,14 +53,16 @@ Error Handling
 
 
 <details>
-<summary>Installation Guide</summary>
+<summary><h3>Installation Guide</h3></summary>
+
 What is needed to run the project
 
 </details>
 
 
 <details>
-<summary>How to Run the Project</summary>
+<summary><h3>How to Run the Project</h3></summary>
+
 Backend installation
 Frontend installation
 
@@ -71,7 +70,8 @@ Frontend installation
 
 
 <details>
-<summary>API Endpoints</summary>
+<summary><h3>API Endpoints</h3></summary>
+
 Create an openapi.json file and automatically generate API docs using Swagger.
 
 | Method | Endpoint                                      | Description                     | Auth required |
@@ -93,21 +93,24 @@ Create an openapi.json file and automatically generate API docs using Swagger.
 
 
 <details>
-<summary>Database Structure</summary>
+<summary><h3>Database Structure</h3></summary>
+
 DB schema
 
 </details>
 
 
 <details>
-<summary>Folder Structure</summary>
+<summary><h3>Folder Structure</h3></summary>
+
 Screenshot from IntelliJ
 
 </details>
 
 
 <details>
-<summary>Screenshots</summary>
+<summary><h3>Screenshots</h3></summary>
+
 Home Page
 Login Page
 
@@ -115,7 +118,7 @@ Login Page
 
 
 <details>
-<summary>Future Improvements</summary>
+<summary><h3>Future Improvements</h3></summary>
 
 - Add Swagger-ui
 
@@ -123,7 +126,7 @@ Login Page
 
 
 <details>
-<summary>Author</summary>
+<summary><h3>Author</h3></summary>
 
 #### Your Name: Denis Buserski 
 #### LinkedIn: LINK 
@@ -133,7 +136,8 @@ Login Page
 
 
 <details>
-<summary>License</summary>
+<summary><h3><License/h3></summary>
+
 This project is licensed under the MIT License. (ADD MIT)
 
 </details>
