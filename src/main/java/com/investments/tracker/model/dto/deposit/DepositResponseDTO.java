@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Builder
-@ToString
 public class DepositResponseDTO {
     private BigDecimal amount;
     private Currency currency;

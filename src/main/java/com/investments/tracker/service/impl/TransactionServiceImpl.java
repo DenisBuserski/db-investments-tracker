@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
-import static com.investments.tracker.model.enums.CashTransactionType.FEE;
 
 @Service
 @Slf4j
@@ -68,7 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
                 Balance newBalance = createNewBalance(currentBalance.get(), transaction);
                 this.balanceRepository.save(newBalance);
 
-                // Update portfolio
+                // Update or create portfolio
 
                 return createBalanceResponseDTO(newBalance);
             } else {
