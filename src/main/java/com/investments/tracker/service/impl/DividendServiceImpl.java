@@ -5,7 +5,6 @@ import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Dividend;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.dividend.DividendRequestDTO;
-import com.investments.tracker.model.dto.dividend.DividendResponseDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.repository.DividendRepository;
@@ -15,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static com.investments.tracker.model.dto.BalanceResponseDTO.createBalanceResponseDTO;
@@ -88,6 +85,7 @@ public class DividendServiceImpl implements DividendService {
                 .amount(dividendAmount)
                 .currency(EUR)
                 .description(cashtransactionDescription)
+                .referenceId(null)
                 .build();
     }
 
@@ -133,14 +131,4 @@ public class DividendServiceImpl implements DividendService {
                 .build();
     }
 
-    // TODO: Implement methods
-    @Override
-    public List<DividendResponseDTO> getAllDividendsFromTo(LocalDate from, LocalDate to) {
-        return List.of();
-    }
-
-    @Override
-    public BigDecimal getTotalDividendsAmount() {
-        return null;
-    }
 }

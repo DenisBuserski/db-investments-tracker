@@ -9,6 +9,7 @@ import com.investments.tracker.model.enums.CashTransactionType;
 import com.investments.tracker.model.enums.FeeType;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
+import com.investments.tracker.repository.PortfolioRepository;
 import com.investments.tracker.repository.TransactionRepository;
 import com.investments.tracker.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,15 +30,18 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final BalanceRepository balanceRepository;
     private final CashTransactionRepository cashTransactionRepository;
+    private final PortfolioRepository portfolioRepository;
 
     @Autowired
     public TransactionServiceImpl(
             TransactionRepository transactionRepository,
             BalanceRepository balanceRepository,
-            CashTransactionRepository cashTransactionRepository) {
+            CashTransactionRepository cashTransactionRepository,
+            PortfolioRepository portfolioRepository) {
         this.transactionRepository = transactionRepository;
         this.balanceRepository = balanceRepository;
         this.cashTransactionRepository = cashTransactionRepository;
+        this.portfolioRepository = portfolioRepository;
     }
 
     @Override

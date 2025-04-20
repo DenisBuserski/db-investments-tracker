@@ -68,6 +68,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
                 .amount(withdrawalRequestDTO.getAmount())
                 .currency(withdrawalRequestDTO.getCurrency())
                 .description(withdrawalRequestDTO.getDescription())
+                .referenceId(null)
                 .build();
     }
 

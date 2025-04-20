@@ -60,6 +60,7 @@ public class DepositServiceImpl implements DepositService {
                 .amount(depositRequestDTO.getAmount())
                 .currency(depositRequestDTO.getCurrency())
                 .description(depositRequestDTO.getDescription())
+                .referenceId(null)
                 .build();
     }
 
