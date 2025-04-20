@@ -8,6 +8,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "transactions")
@@ -38,10 +40,10 @@ public class Transaction {
     @Column(name = "single_price", nullable = false, precision = 10, scale = 3)
     private BigDecimal singlePrice;
 
-    @Column(nullable = false)
+    @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "exchange_rate", nullable = false, precision = 10, scale = 5)
+    @Column(name = "exchange_rate", nullable = false, precision = 10, scale = 4)
     private BigDecimal exchangeRate;
 
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
@@ -50,5 +52,11 @@ public class Transaction {
     @Column(name = "currency", nullable = false)
     @Enumerated(EnumType.STRING)
     private Currency currency;
+
+    @Column(name = "description")
+    private String description;
+
+    @OneToMany(mappedBy = "transaction", targetEntity = Fee.class)
+    private List<Fee> fee = new ArrayList<>();
 
 }

@@ -6,6 +6,8 @@ import com.investments.tracker.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,17 +25,13 @@ public class TransactionController {
     }
 
     @PostMapping("/in")
-    public BalanceResponseDTO insertTransaction(@RequestBody @Valid TransactionRequestDTO transactionRequestDTO) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BalanceResponseDTO> insertTransaction(@RequestBody @Valid TransactionRequestDTO transactionRequestDTO) {
         log.info("Inserting transaction for date [{}] and product [{}]", transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
-        return this.transactionService.insertTransaction(transactionRequestDTO);
+        BalanceResponseDTO balanceResponseDTO = this.transactionService.insertTransaction(transactionRequestDTO);
+        return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("/get/from/{fromDate}/to/{toDate}")
-    public List<String> getTransactionsFromTo(
-            @PathVariable(name = "fromDate") LocalDate from,
-            @PathVariable(name = "toDate") LocalDate to) {
-        return null;
-    }
 
 
 }

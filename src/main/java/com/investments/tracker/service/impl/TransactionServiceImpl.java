@@ -30,36 +30,50 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public BalanceResponseDTO insertTransaction(TransactionRequestDTO transactionDTO) {
+    public BalanceResponseDTO insertTransaction(TransactionRequestDTO transactionRequestDTO) {
         Optional<Balance> currentBalance = this.balanceRepository.getLatestBalance();
         if (!currentBalance.isPresent()) {
             log.error("There is no current balance. Transaction cannot be created.");
             return createBalanceResponseDTO(null);
         } else {
             BigDecimal balanceValue = currentBalance.get().getBalance();
+            BigDecimal exchangeRate = transactionRequestDTO.getExchangeRate();
+            BigDecimal transactionValue = calculateTransactionValue(transactionRequestDTO);
 
-            if (transactionDTO.getExchangeRate().equals(BigDecimal.ZERO)) {
-                BigDecimal transactionValue = transactionDTO.getSinglePrice().multiply(BigDecimal.valueOf(transactionDTO.getQuantity()));
-                if (balanceValue.compareTo(transactionValue) >= 0) {
-                    Transaction transaction = createTransaction(transactionDTO);
-                    this.transactionRepository.save(transaction);
-                    log.info("Creating [{}] transaction for [Product: {} | Single price: {} | Quantity {} | ]", transaction.getTransactionType());
+            if (balanceValue.compareTo(transactionValue) >= 0) {
+                Transaction transaction = createTransaction(transactionRequestDTO);
+                this.transactionRepository.save(transaction);
+                log.info("Creating [{}] transaction for date [{}] for product [{}]", transaction.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
 
-                    Balance newBalance = createNewBalance(currentBalance.get(), transaction);
-                    this.balanceRepository.save(newBalance);
+                Balance newBalance = createNewBalance(currentBalance.get(), transaction);
+                this.balanceRepository.save(newBalance);
 
-                    // Update portfolio
+                // Update portfolio
 
-                    return createBalanceResponseDTO(newBalance);
-                } else {
-                    log.info("Transaction cannot be created because there is not enough balance.");
-                    return createBalanceResponseDTO(null);
-                }
+                return createBalanceResponseDTO(newBalance);
             } else {
-                // Use exchange rate
-
+                log.info("Transaction cannot be created because there is not enough balance.");
                 return createBalanceResponseDTO(null);
             }
+
+
+
+       
+
+
+        }
+    }
+
+    private static BigDecimal calculateTransactionValue(TransactionRequestDTO transactionRequestDTO) {
+        BigDecimal exchangeRate = transactionRequestDTO.getExchangeRate();
+        BigDecimal singlePrice = transactionRequestDTO.getSinglePrice();
+        int quantity = transactionRequestDTO.getQuantity();
+        BigDecimal calculationWithoutExchangeRate = singlePrice.multiply(BigDecimal.valueOf(quantity));
+
+        if (exchangeRate.equals(BigDecimal.ZERO)) {
+            return calculationWithoutExchangeRate;
+        } else {
+            return calculationWithoutExchangeRate.divide(exchangeRate, 2, BigDecimal.ROUND_HALF_UP);
         }
     }
 
@@ -74,6 +88,8 @@ public class TransactionServiceImpl implements TransactionService {
                 .exchangeRate(transactionDTO.getExchangeRate()) // Keep in mind the exchange rate if there is one
                 .totalAmount(transactionDTO.getSinglePrice().multiply(BigDecimal.valueOf(transactionDTO.getQuantity())))
                 .currency(transactionDTO.getCurrency())
+                .description("")
+                .fee()
                 .build();
     }
 

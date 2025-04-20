@@ -6,12 +6,10 @@ import com.investments.tracker.model.Dividend;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.model.dto.dividend.DividendResponseDTO;
-import com.investments.tracker.model.enums.Currency;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.repository.DividendRepository;
 import com.investments.tracker.service.DividendService;
-import com.investments.tracker.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +34,8 @@ public class DividendServiceImpl implements DividendService {
     @Autowired
     public DividendServiceImpl(
             CashTransactionRepository cashTransactionRepository,
-            BalanceRepository balanceRepository, DividendRepository dividendRepository) {
+            BalanceRepository balanceRepository,
+            DividendRepository dividendRepository) {
         this.cashTransactionRepository = cashTransactionRepository;
         this.balanceRepository = balanceRepository;
         this.dividendRepository = dividendRepository;
@@ -46,19 +45,15 @@ public class DividendServiceImpl implements DividendService {
     public BalanceResponseDTO insertDividend(DividendRequestDTO dividendRequestDTO) {
         BigDecimal exchangeRate = dividendRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequestDTO.getExchangeRate();
         BigDecimal dividendAmountBeforeConversion = calculateDividendAmount(dividendRequestDTO);
-        BigDecimal dividendAmountAfterConversion = null;
+        BigDecimal dividendAmountAfterConversion = dividendConversion(exchangeRate, dividendAmountBeforeConversion);
+        Balance newBalance;
 
-        if (!exchangeRate.equals(BigDecimal.ZERO)) {
-            dividendAmountAfterConversion = dividendAmountBeforeConversion.divide(exchangeRate, 10, CEILING).setScale(2, CEILING);
-        }
-
-        CashTransaction dividend = createCashtransaction(dividendRequestDTO, dividendAmountAfterConversion == null ? dividendAmountBeforeConversion : dividendAmountAfterConversion);
+        CashTransaction dividend = createCashtransaction(dividendRequestDTO, dividendAmountAfterConversion);
         this.cashTransactionRepository.save(dividend);
 
         Dividend dividendEntity = creteDividend(dividendRequestDTO);
         this.dividendRepository.save(dividendEntity);
 
-        Balance newBalance;
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             newBalance = createNewBalance(latestBalance.get(), dividend);
@@ -67,7 +62,7 @@ public class DividendServiceImpl implements DividendService {
         }
 
         this.balanceRepository.save(newBalance);
-        log.info("Dividend for [{}] successful", dividendRequestDTO.getProductName());
+        log.info("Dividend for product [{}] created successfully", dividendRequestDTO.getProductName());
         return createBalanceResponseDTO(newBalance);
     }
 
@@ -75,6 +70,14 @@ public class DividendServiceImpl implements DividendService {
         BigDecimal dividendAmountBeforeConversion = dividendRequestDTO.getDividendAmount();
         BigDecimal dividendTaxBeforeConversion = dividendRequestDTO.getDividendTax();
         return dividendAmountBeforeConversion.subtract(dividendTaxBeforeConversion);
+    }
+
+    private static BigDecimal dividendConversion(BigDecimal exchangeRate, BigDecimal dividendAmountBeforeConversion) {
+        if (!exchangeRate.equals(BigDecimal.ZERO)) {
+            return dividendAmountBeforeConversion.divide(exchangeRate, 10, CEILING).setScale(2, CEILING);
+        } else {
+            return dividendAmountBeforeConversion;
+        }
     }
 
     private static CashTransaction createCashtransaction(DividendRequestDTO dividendRequestDTO, BigDecimal dividendAmount) {
@@ -130,6 +133,7 @@ public class DividendServiceImpl implements DividendService {
                 .build();
     }
 
+    // TODO: Implement methods
     @Override
     public List<DividendResponseDTO> getAllDividendsFromTo(LocalDate from, LocalDate to) {
         return List.of();

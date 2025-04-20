@@ -10,6 +10,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,6 +41,8 @@ public class TransactionRequestDTO {
 
     @NotNull(message = "Exchange rate cannot be NULL!")
     private BigDecimal exchangeRate;
+
+    private List<Map<String, BigDecimal>> fees;
 
     @NotNull(message = "Currency cannot be NULL!")
     @ValidCurrency
