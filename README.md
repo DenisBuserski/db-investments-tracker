@@ -121,6 +121,7 @@ Login Page
 <summary><h3>Future Improvements</h3></summary>
 
 - Add Swagger-ui
+- Add email notification for weekly portfolio view
 
 </details>
 

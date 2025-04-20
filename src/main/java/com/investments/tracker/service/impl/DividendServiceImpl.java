@@ -2,13 +2,16 @@ package com.investments.tracker.service.impl;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
+import com.investments.tracker.model.Dividend;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.model.dto.dividend.DividendResponseDTO;
 import com.investments.tracker.model.enums.Currency;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
+import com.investments.tracker.repository.DividendRepository;
 import com.investments.tracker.service.DividendService;
+import com.investments.tracker.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,30 +31,34 @@ import static java.math.RoundingMode.CEILING;
 public class DividendServiceImpl implements DividendService {
     private final CashTransactionRepository cashTransactionRepository;
     private final BalanceRepository balanceRepository;
+    private final DividendRepository dividendRepository;
 
     @Autowired
     public DividendServiceImpl(
             CashTransactionRepository cashTransactionRepository,
-            BalanceRepository balanceRepository) {
+            BalanceRepository balanceRepository, DividendRepository dividendRepository) {
         this.cashTransactionRepository = cashTransactionRepository;
         this.balanceRepository = balanceRepository;
+        this.dividendRepository = dividendRepository;
     }
 
     @Override
     public BalanceResponseDTO insertDividend(DividendRequestDTO dividendRequestDTO) {
-        BigDecimal dividendAmountBeforeConversion = dividendRequestDTO.getDividendAmount();
-        BigDecimal dividendTax = dividendRequestDTO.getDividendTax();
         BigDecimal exchangeRate = dividendRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequestDTO.getExchangeRate();
-        BigDecimal dividendAmount = dividendAmountBeforeConversion.subtract(dividendTax);
+        BigDecimal dividendAmountBeforeConversion = calculateDividendAmount(dividendRequestDTO);
+        BigDecimal dividendAmountAfterConversion = null;
 
         if (!exchangeRate.equals(BigDecimal.ZERO)) {
-            dividendAmount = dividendAmount.divide(exchangeRate, 10, CEILING).setScale(2, CEILING);
+            dividendAmountAfterConversion = dividendAmountBeforeConversion.divide(exchangeRate, 10, CEILING).setScale(2, CEILING);
         }
 
-        CashTransaction dividend = createCashtransaction(dividendRequestDTO, dividendAmount, dividendTax, exchangeRate);
+        CashTransaction dividend = createCashtransaction(dividendRequestDTO, dividendAmountAfterConversion == null ? dividendAmountBeforeConversion : dividendAmountAfterConversion);
         this.cashTransactionRepository.save(dividend);
-        Balance newBalance;
 
+        Dividend dividendEntity = creteDividend(dividendRequestDTO);
+        this.dividendRepository.save(dividendEntity);
+
+        Balance newBalance;
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             newBalance = createNewBalance(latestBalance.get(), dividend);
@@ -64,20 +71,42 @@ public class DividendServiceImpl implements DividendService {
         return createBalanceResponseDTO(newBalance);
     }
 
-    private static CashTransaction createCashtransaction(DividendRequestDTO dividendRequestDTO, BigDecimal dividendAmount, BigDecimal dividendTax, BigDecimal exchangeRate) {
-        String productName = dividendRequestDTO.getProductName();
-        int quantity = dividendRequestDTO.getQuantity();
-        Currency dividendCurrency = dividendRequestDTO.getDividendCurrency();
-        String productDescription = String.format("Product:[%s]; Quantity:[%d]; DividendTax[%.2f]; ExchangeRate:[%.4f]; DividendCurrency[%s]",
-                productName, quantity, dividendTax, exchangeRate, dividendCurrency.name());
+    private static BigDecimal calculateDividendAmount(DividendRequestDTO dividendRequestDTO) {
+        BigDecimal dividendAmountBeforeConversion = dividendRequestDTO.getDividendAmount();
+        BigDecimal dividendTaxBeforeConversion = dividendRequestDTO.getDividendTax();
+        return dividendAmountBeforeConversion.subtract(dividendTaxBeforeConversion);
+    }
 
+    private static CashTransaction createCashtransaction(DividendRequestDTO dividendRequestDTO, BigDecimal dividendAmount) {
+        String cashtransactionDescription = String.format("Dividend for product [%s]", dividendRequestDTO.getProductName());
         return CashTransaction.builder()
                 .date(dividendRequestDTO.getDate())
                 .cashTransactionType(DIVIDEND)
                 .amount(dividendAmount)
                 .currency(EUR)
-                .description(productDescription)
+                .description(cashtransactionDescription)
                 .build();
+    }
+
+    private static Dividend creteDividend(DividendRequestDTO dividendRequestDTO) {
+        int quantity = dividendRequestDTO.getQuantity();
+        BigDecimal dividendAmount = dividendRequestDTO.getDividendAmount();
+        BigDecimal dividendTaxAmount = dividendRequestDTO.getDividendTax();
+        BigDecimal dividendAmountPerShare = dividendAmount.divide(BigDecimal.valueOf(quantity), 10, CEILING);
+        BigDecimal dividendTaxPerShare = dividendTaxAmount.divide(BigDecimal.valueOf(quantity), 10, CEILING);
+
+        return Dividend.builder()
+                .date(dividendRequestDTO.getDate())
+                .productName(dividendRequestDTO.getProductName())
+                .quantity(quantity)
+                .dividendAmount(dividendAmount)
+                .dividendTaxAmount(dividendTaxAmount)
+                .dividendAmountPerShare(dividendAmountPerShare)
+                .dividendTaxAmountPerShare(dividendTaxPerShare)
+                .exchangeRate(dividendRequestDTO.getExchangeRate())
+                .currency(dividendRequestDTO.getDividendCurrency())
+                .build();
+
     }
 
     private static Balance createNewBalance(Balance balance, CashTransaction dividend) {
