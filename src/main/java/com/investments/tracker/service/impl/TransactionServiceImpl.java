@@ -1,10 +1,14 @@
 package com.investments.tracker.service.impl;
 
 import com.investments.tracker.model.Balance;
+import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.transaction.TransactionRequestDTO;
+import com.investments.tracker.model.enums.CashTransactionType;
+import com.investments.tracker.model.enums.FeeType;
 import com.investments.tracker.repository.BalanceRepository;
+import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.repository.TransactionRepository;
 import com.investments.tracker.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,20 +17,29 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
+import static com.investments.tracker.model.enums.CashTransactionType.FEE;
 
 @Service
 @Slf4j
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final BalanceRepository balanceRepository;
+    private final CashTransactionRepository cashTransactionRepository;
 
     @Autowired
     public TransactionServiceImpl(
             TransactionRepository transactionRepository,
-            BalanceRepository balanceRepository) {
+            BalanceRepository balanceRepository,
+            CashTransactionRepository cashTransactionRepository) {
         this.transactionRepository = transactionRepository;
         this.balanceRepository = balanceRepository;
+        this.cashTransactionRepository = cashTransactionRepository;
     }
 
     @Override
@@ -37,13 +50,20 @@ public class TransactionServiceImpl implements TransactionService {
             return createBalanceResponseDTO(null);
         } else {
             BigDecimal balanceValue = currentBalance.get().getBalance();
-            BigDecimal exchangeRate = transactionRequestDTO.getExchangeRate();
+
             BigDecimal transactionValue = calculateTransactionValue(transactionRequestDTO);
 
             if (balanceValue.compareTo(transactionValue) >= 0) {
-                Transaction transaction = createTransaction(transactionRequestDTO);
+                Transaction transaction = createTransaction(transactionRequestDTO, transactionValue);
                 this.transactionRepository.save(transaction);
                 log.info("Creating [{}] transaction for date [{}] for product [{}]", transaction.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
+
+                // Insert fees in cashtransaction table and connected them with the transaction id
+                if (!transactionRequestDTO.getFees().isEmpty()) {
+                    List<CashTransaction> fees = createFees(transactionRequestDTO, transaction.getId());
+                    this.cashTransactionRepository.saveAll(fees);
+                }
+
 
                 Balance newBalance = createNewBalance(currentBalance.get(), transaction);
                 this.balanceRepository.save(newBalance);
@@ -57,15 +77,11 @@ public class TransactionServiceImpl implements TransactionService {
             }
 
 
-
-       
-
-
         }
     }
 
     private static BigDecimal calculateTransactionValue(TransactionRequestDTO transactionRequestDTO) {
-        BigDecimal exchangeRate = transactionRequestDTO.getExchangeRate();
+        BigDecimal exchangeRate = transactionRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : transactionRequestDTO.getExchangeRate();
         BigDecimal singlePrice = transactionRequestDTO.getSinglePrice();
         int quantity = transactionRequestDTO.getQuantity();
         BigDecimal calculationWithoutExchangeRate = singlePrice.multiply(BigDecimal.valueOf(quantity));
@@ -77,19 +93,48 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    private static Transaction createTransaction(TransactionRequestDTO transactionDTO) {
+    private static List<CashTransaction> createFees(TransactionRequestDTO transactionRequestDTO, long transactionId) {
+        List<CashTransaction> fees = new ArrayList<>();
+        Map<FeeType, BigDecimal> feesMap = transactionRequestDTO.getFees();
+
+        for (Map.Entry<FeeType, BigDecimal> feeEntry : feesMap.entrySet()) {
+            FeeType feeType = feeEntry.getKey();
+            BigDecimal feeValue = feeEntry.getValue();
+
+            CashTransactionType cashTransactionType = getCashtransactionType(feeType);
+
+            CashTransaction fee = CashTransaction.builder()
+                    .date(transactionRequestDTO.getDate())
+                    .cashTransactionType(cashTransactionType)
+                    .amount(feeValue)
+                    .currency(transactionRequestDTO.getCurrency())
+                    .description("Reference to 'transaction' table")
+                    .referenceId(transactionId)
+                    .build();
+            fees.add(fee);
+        }
+        return fees;
+    }
+
+    private static CashTransactionType getCashtransactionType(FeeType feeType) {
+
+        return null;
+    }
+
+    private static Transaction createTransaction(TransactionRequestDTO transactionRequestDTO, BigDecimal transactionValue) {
+        BigDecimal exchangeRate = transactionRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : transactionRequestDTO.getExchangeRate();
+        String description = transactionRequestDTO.getFees().isEmpty() ? "No fees related to this transaction" : "Check 'cashtransaction' table for related fees";
         return Transaction.builder()
-                .date(transactionDTO.getDate())
-                .transactionType(transactionDTO.getTransactionType())
-                .productType(transactionDTO.getProductType())
-                .productName(transactionDTO.getProductName())
-                .singlePrice(transactionDTO.getSinglePrice())
-                .quantity(transactionDTO.getQuantity())
-                .exchangeRate(transactionDTO.getExchangeRate()) // Keep in mind the exchange rate if there is one
-                .totalAmount(transactionDTO.getSinglePrice().multiply(BigDecimal.valueOf(transactionDTO.getQuantity())))
-                .currency(transactionDTO.getCurrency())
-                .description("")
-                .fee()
+                .date(transactionRequestDTO.getDate())
+                .transactionType(transactionRequestDTO.getTransactionType())
+                .productType(transactionRequestDTO.getProductType())
+                .productName(transactionRequestDTO.getProductName())
+                .singlePrice(transactionRequestDTO.getSinglePrice())
+                .quantity(transactionRequestDTO.getQuantity())
+                .exchangeRate(exchangeRate)
+                .totalAmount(transactionValue)
+                .currency(transactionRequestDTO.getCurrency())
+                .description(description)
                 .build();
     }
 

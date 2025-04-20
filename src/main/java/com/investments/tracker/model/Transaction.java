@@ -56,7 +56,5 @@ public class Transaction {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "transaction", targetEntity = Fee.class)
-    private List<Fee> fee = new ArrayList<>();
 
 }

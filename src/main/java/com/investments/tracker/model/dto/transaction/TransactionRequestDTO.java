@@ -1,12 +1,14 @@
 package com.investments.tracker.model.dto.transaction;
 
 import com.investments.tracker.model.enums.Currency;
+import com.investments.tracker.model.enums.FeeType;
 import com.investments.tracker.model.enums.ProductType;
 import com.investments.tracker.model.enums.TransactionType;
 import com.investments.tracker.model.validation.ValidCurrency;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+import org.springframework.data.util.Pair;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,7 +44,7 @@ public class TransactionRequestDTO {
     @NotNull(message = "Exchange rate cannot be NULL!")
     private BigDecimal exchangeRate;
 
-    private List<Map<String, BigDecimal>> fees;
+    private Map<FeeType, BigDecimal> fees;
 
     @NotNull(message = "Currency cannot be NULL!")
     @ValidCurrency

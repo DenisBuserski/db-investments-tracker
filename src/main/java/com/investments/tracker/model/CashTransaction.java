@@ -36,4 +36,7 @@ public class CashTransaction {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "reference_id")
+    private Long referenceId;
 }
