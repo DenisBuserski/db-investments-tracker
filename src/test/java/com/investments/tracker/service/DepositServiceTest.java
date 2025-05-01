@@ -29,7 +29,6 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test-unit")
 public class DepositServiceTest {
 
     @InjectMocks
@@ -84,7 +83,7 @@ public class DepositServiceTest {
     }
 
     @Test
-    @DisplayName("Test should create a successful deposit for the first time")
+    @DisplayName("Test should insert a successful deposit for the first time")
     public void testInsertSuccessfulDepositForTheFirstTime() {
         when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(cashTransaction);
         // This line tells Mockito that whenever the "save()" method of cashTransactionRepository is called with any CashTransaction object,
@@ -129,7 +128,7 @@ public class DepositServiceTest {
         List<DepositResponseDTO> result = depositService.getAllDepositsFromTo(date, date);
         assertEquals(1, result.size());
 
-        verify(cashTransactionRepository).getCashTransactionsFromTo(date, date, DEPOSIT);
+        verify(cashTransactionRepository, times(1)).getCashTransactionsFromTo(date, date, DEPOSIT);
     }
 
     @Test

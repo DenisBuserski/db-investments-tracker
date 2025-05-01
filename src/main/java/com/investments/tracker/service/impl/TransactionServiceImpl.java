@@ -52,7 +52,6 @@ public class TransactionServiceImpl implements TransactionService {
             return createBalanceResponseDTO(null);
         } else {
             BigDecimal balanceValue = currentBalance.get().getBalance();
-
             BigDecimal transactionValue = calculateTransactionValue(transactionRequestDTO);
 
             if (balanceValue.compareTo(transactionValue) >= 0) {

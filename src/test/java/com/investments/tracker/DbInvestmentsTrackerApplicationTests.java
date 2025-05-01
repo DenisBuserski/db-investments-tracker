@@ -1,20 +1,36 @@
 package com.investments.tracker;
 
 import com.investments.tracker.controller.DepositController;
+import com.investments.tracker.controller.WithdrawalController;
+import com.investments.tracker.service.DepositService;
+import com.investments.tracker.service.WithdrawalService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 
 @SpringBootTest
 class DbInvestmentsTrackerApplicationTests {
 	@Autowired
 	private DepositController depositController;
 
+	@Autowired
+	private DepositService depositService;
+
+	@Autowired
+	private WithdrawalController withdrawalController;
+
+	@Autowired
+	private WithdrawalService withdrawalService;
+
 	@Test
 	void contextLoads() {
-		assertNotNull(depositController);
+		assertThat(depositController).isNotNull();
+		assertThat(depositService).isNotNull();
+		assertThat(withdrawalController).isNotNull();
+		assertThat(withdrawalService).isNotNull();
 	}
 
 }

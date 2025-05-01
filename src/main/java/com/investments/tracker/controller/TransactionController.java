@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping("/api/transaction")
 @Slf4j
 public class TransactionController {
     private final TransactionService transactionService;

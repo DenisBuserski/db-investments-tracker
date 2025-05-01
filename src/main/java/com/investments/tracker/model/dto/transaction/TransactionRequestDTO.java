@@ -5,7 +5,9 @@ import com.investments.tracker.model.enums.FeeType;
 import com.investments.tracker.model.enums.ProductType;
 import com.investments.tracker.model.enums.TransactionType;
 import com.investments.tracker.model.validation.ValidCurrency;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.springframework.data.util.Pair;
@@ -21,7 +23,8 @@ import java.util.Map;
 @Builder
 @ToString
 public class TransactionRequestDTO {
-    @NotNull(message = "Date cannot be NULL!")
+    @NotNull(message = "Transaction date cannot be NULL!")
+    @PastOrPresent(message = "Transaction date cannot be in the future!")
     private LocalDate date;
 
     @NotNull(message = "Transaction type cannot be NULL!")
@@ -30,14 +33,13 @@ public class TransactionRequestDTO {
     @NotNull(message = "Product type cannot be NULL!")
     private ProductType productType;
 
-    @NotNull(message = "Product name cannot be NULL!")
+    @NotBlank(message = "Product name cannot be NULL or empty!")
     private String productName;
 
-    @NotNull(message = "Single price cannot be NULL!")
-    @Positive(message = "Single price must be more than 0!")
+    @NotNull(message = "Transaction price cannot be NULL!")
+    @Positive(message = "Transaction price must be more than 0!")
     private BigDecimal singlePrice;
 
-    @NotNull(message = "Quantity cannot be NULL!")
     @Positive(message = "Quantity must be more than 0!")
     private int quantity;
 
@@ -46,7 +48,7 @@ public class TransactionRequestDTO {
 
     private Map<FeeType, BigDecimal> fees;
 
-    @NotNull(message = "Currency cannot be NULL!")
+    @NotNull(message = "Transaction currency cannot be NULL!")
     @ValidCurrency
     private Currency currency;
 }
