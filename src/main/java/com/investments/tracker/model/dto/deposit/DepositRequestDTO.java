@@ -14,11 +14,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Builder
 public class DepositRequestDTO {
-    @NotNull(message = "Date cannot be NULL!")
-    @PastOrPresent(message = "Date cannot be in the future!")
+    @NotNull(message = "Deposit date cannot be NULL!")
+    @PastOrPresent(message = "Deposit date cannot be in the future!")
     private LocalDate date;
 
     @NotNull(message = "Deposit amount cannot be NULL!")
@@ -29,6 +28,6 @@ public class DepositRequestDTO {
     @ValidCurrency
     private Currency currency;
 
-    @NotBlank(message = "Description cannot be blank or NULL!")
+    @NotBlank(message = "Deposit description cannot be blank or NULL!")
     private String description;
 }

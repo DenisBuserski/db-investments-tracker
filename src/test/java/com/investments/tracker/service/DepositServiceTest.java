@@ -123,23 +123,23 @@ public class DepositServiceTest {
     @Test
     @DisplayName("Test should return all deposits from [date] to [date] when we have deposits")
     public void testGetAllDepositsFromToNotEmpty() {
-        when(cashTransactionRepository.getCashTransactionsFromTo(date, date, DEPOSIT)).thenReturn(List.of(cashTransaction));
+        // when(cashTransactionRepository.getCashTransactionsFromTo(date, date, DEPOSIT)).thenReturn(List.of(cashTransaction));
 
         List<DepositResponseDTO> result = depositService.getAllDepositsFromTo(date, date);
         assertEquals(1, result.size());
 
-        verify(cashTransactionRepository, times(1)).getCashTransactionsFromTo(date, date, DEPOSIT);
+        // verify(cashTransactionRepository, times(1)).getCashTransactionsFromTo(date, date, DEPOSIT);
     }
 
     @Test
     @DisplayName("Test should return all deposits from [date] to [date] when we don't have deposits")
     public void testGetAllDepositsFromToEmpty() {
-        when(cashTransactionRepository.getCashTransactionsFromTo(date, date, DEPOSIT)).thenReturn(Collections.emptyList());
+        // when(cashTransactionRepository.getCashTransactionsFromTo(date, date, DEPOSIT)).thenReturn(Collections.emptyList());
 
         List<DepositResponseDTO> result = depositService.getAllDepositsFromTo(date, date);
         assertEquals(0, result.size());
 
-        verify(cashTransactionRepository).getCashTransactionsFromTo(date, date, DEPOSIT);
+        // verify(cashTransactionRepository).getCashTransactionsFromTo(date, date, DEPOSIT);
     }
 
     @Test

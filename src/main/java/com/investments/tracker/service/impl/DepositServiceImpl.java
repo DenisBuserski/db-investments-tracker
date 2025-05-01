@@ -5,8 +5,11 @@ import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
 import com.investments.tracker.model.dto.deposit.DepositResponseDTO;
+import com.investments.tracker.model.mapper.CashTransactionMapper;
+import com.investments.tracker.model.mapper.DepositMapper;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
+import com.investments.tracker.service.BalanceService;
 import com.investments.tracker.service.DepositService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,79 +29,45 @@ import static com.investments.tracker.model.enums.CashTransactionType.*;
 public class DepositServiceImpl implements DepositService {
     private final CashTransactionRepository cashTransactionRepository;
     private final BalanceRepository balanceRepository;
+    private final CashTransactionMapper cashTransactionMapper;
+    private final DepositMapper depositMapper;
+    private final BalanceService balanceService;
 
     @Autowired
     public DepositServiceImpl(
             CashTransactionRepository cashTransactionRepository,
-            BalanceRepository balanceRepository) {
+            BalanceRepository balanceRepository,
+            CashTransactionMapper cashTransactionMapper,
+            DepositMapper depositMapper, BalanceService balanceService) {
         this.cashTransactionRepository = cashTransactionRepository;
         this.balanceRepository = balanceRepository;
+        this.cashTransactionMapper = cashTransactionMapper;
+        this.depositMapper = depositMapper;
+        this.balanceService = balanceService;
     }
 
     @Override
     public BalanceResponseDTO insertDeposit(DepositRequestDTO depositRequestDTO) {
-        CashTransaction deposit = createCashtransaction(depositRequestDTO);
+        CashTransaction deposit = this.cashTransactionMapper.createCashTransaction(depositRequestDTO, depositMapper);
         this.cashTransactionRepository.save(deposit);
         Balance newBalance;
 
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
-            newBalance = createNewBalance(latestBalance.get(), deposit);
+            newBalance = this.balanceService.createNewBalanceFromDeposit(latestBalance.get(), deposit);
         } else {
-            newBalance = createNewBalance(null, deposit);
+            newBalance = this.balanceService.createNewBalanceFromDeposit(null, deposit);
         }
         this.balanceRepository.save(newBalance);
-        log.info("Deposit for [{} {}] successful", deposit.getAmount(), deposit.getCurrency());
+        log.info("Deposit for [{} {}] successful", String.format("%.2f", deposit.getAmount()), deposit.getCurrency());
         return createBalanceResponseDTO(newBalance);
-    }
-
-    private static CashTransaction createCashtransaction(DepositRequestDTO depositRequestDTO) {
-        return CashTransaction.builder()
-                .date(depositRequestDTO.getDate())
-                .cashTransactionType(DEPOSIT)
-                .amount(depositRequestDTO.getAmount())
-                .currency(depositRequestDTO.getCurrency())
-                .description(depositRequestDTO.getDescription())
-                .referenceId(null)
-                .build();
-    }
-
-    private static Balance createNewBalance(Balance balance, CashTransaction deposit) {
-        BigDecimal newBalanceAmount = balance == null ? deposit.getAmount() : balance.getBalance().add(deposit.getAmount());
-        BigDecimal newTotalInvestments = balance == null ? BigDecimal.ZERO : balance.getTotalInvestments();
-        BigDecimal newTotalDeposits = balance == null ? deposit.getAmount() : balance.getTotalDeposits().add(deposit.getAmount());
-        BigDecimal newTotalWithdrawals = balance == null ? BigDecimal.ZERO : balance.getTotalWithdrawals();
-        BigDecimal newTotalDividends = balance == null ? BigDecimal.ZERO : balance.getTotalDividends();
-        BigDecimal newTotalFees = balance == null ? BigDecimal.ZERO : balance.getTotalFees();
-        BigDecimal newLastPortfolioValue = balance == null ? BigDecimal.ZERO : balance.getLastPortfolioValue();
-
-        return Balance.builder()
-                .date(deposit.getDate())
-                .balance(newBalanceAmount)
-                .totalInvestments(newTotalInvestments)
-                .totalDeposits(newTotalDeposits)
-                .totalWithdrawals(newTotalWithdrawals)
-                .totalDividends(newTotalDividends)
-                .totalFees(newTotalFees)
-                .lastPortfolioValue(newLastPortfolioValue)
-                .build();
     }
 
     @Override
     public List<DepositResponseDTO> getAllDepositsFromTo(LocalDate from, LocalDate to) {
-        List<CashTransaction> depositsResult = this.cashTransactionRepository.getCashTransactionsFromTo(from, to, DEPOSIT);
+        List<CashTransaction> depositsResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, from, to);
         if (!depositsResult.isEmpty()) {
-            List<DepositResponseDTO> deposits = new ArrayList<>();
-            depositsResult.stream().forEach(deposit -> {
-                DepositResponseDTO depositDTO = DepositResponseDTO.builder()
-                        .date(deposit.getDate())
-                        .amount(deposit.getAmount())
-                        .currency(deposit.getCurrency())
-                        .description(deposit.getDescription())
-                        .build();
-                deposits.add(depositDTO);
-            });
-            return deposits;
+            return depositMapper.mapToResponseDTOList(depositsResult);
         }
         return Collections.emptyList();
     }

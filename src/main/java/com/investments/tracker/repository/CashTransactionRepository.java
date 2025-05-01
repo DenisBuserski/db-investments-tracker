@@ -14,15 +14,7 @@ import java.util.Optional;
 @Repository
 public interface CashTransactionRepository extends JpaRepository<CashTransaction, Long> {
 
-    @Query("""
-           SELECT t
-           FROM CashTransaction t
-           WHERE
-           t.cashTransactionType = :cashTransactionType
-           AND t.date >= :from
-           AND t.date <= :to
-           """)
-    List<CashTransaction> getCashTransactionsFromTo(LocalDate from, LocalDate to, CashTransactionType cashTransactionType);
+    List<CashTransaction> findByCashTransactionTypeAndDateBetween(CashTransactionType cashTransactionType, LocalDate from, LocalDate to);
 
     @Query("""
            SELECT SUM(ct.amount) FROM CashTransaction ct WHERE ct.cashTransactionType = 'DEPOSIT'

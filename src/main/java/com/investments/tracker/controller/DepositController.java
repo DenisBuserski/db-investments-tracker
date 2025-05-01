@@ -19,7 +19,7 @@ import java.util.List;
 import static com.investments.tracker.utils.Constants.START_DATE;
 
 @RestController
-@RequestMapping("/deposit")
+@RequestMapping("/api/deposit")
 @Slf4j
 public class DepositController {
     private final DepositService depositService;

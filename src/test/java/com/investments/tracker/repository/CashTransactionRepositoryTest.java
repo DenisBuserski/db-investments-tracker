@@ -53,14 +53,14 @@ public class CashTransactionRepositoryTest {
     @Test
     @DisplayName("Get all deposits from [date] to [date]")
     public void testGetCashTransactionsFromToDeposits() {
-        List<CashTransaction> result = this.cashTransactionRepository.getCashTransactionsFromTo(LocalDate.now(), LocalDate.now(), DEPOSIT);
+        List<CashTransaction> result = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, LocalDate.now(), LocalDate.now());
         Assertions.assertEquals(0, result.size());
     }
 
     @Test
     @DisplayName("Get all withdrawals from [date] to [date]")
     public void testGetCashTransactionsFromToWithdrawals() {
-        List<CashTransaction> result = this.cashTransactionRepository.getCashTransactionsFromTo(LocalDate.now(), LocalDate.now(), WITHDRAWAL);
+        List<CashTransaction> result = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(WITHDRAWAL, LocalDate.now(), LocalDate.now());
         Assertions.assertEquals(0, result.size());
     }
 

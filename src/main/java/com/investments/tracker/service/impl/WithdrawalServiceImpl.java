@@ -110,7 +110,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     @Override
     public List<WithdrawalResponseDTO> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
         log.info("Getting all withdrawals from [{}] to [{}]", from, to);
-        List<CashTransaction> withdrawalResult = this.cashTransactionRepository.getCashTransactionsFromTo(from, to, WITHDRAWAL);
+        List<CashTransaction> withdrawalResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(WITHDRAWAL, from, to);
         if (!withdrawalResult.isEmpty()) {
             List<WithdrawalResponseDTO> withdrawals = new ArrayList<>();
             withdrawalResult.stream().forEach(withdrawal -> {
