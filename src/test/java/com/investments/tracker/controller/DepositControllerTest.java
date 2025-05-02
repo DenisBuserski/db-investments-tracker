@@ -3,7 +3,7 @@ package com.investments.tracker.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
-import com.investments.tracker.service.impl.DepositServiceImpl;
+import com.investments.tracker.service.DepositServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;

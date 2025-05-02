@@ -3,12 +3,10 @@ package com.investments.tracker.service;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.deposit.DepositResponseDTO;
 import com.investments.tracker.model.dto.withdraw.WithdrawalRequestDTO;
 import com.investments.tracker.model.dto.withdraw.WithdrawalResponseDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
-import com.investments.tracker.service.impl.WithdrawalServiceImpl;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
 import static com.investments.tracker.model.enums.CashTransactionType.WITHDRAWAL;
 import static com.investments.tracker.model.enums.Currency.EUR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class WithdrawalServiceTest {
 
     @Autowired
-    private WithdrawalServiceImpl withdrawalService;
+    private WithdrawalService withdrawalService;
 
     @Autowired
     private CashTransactionRepository cashTransactionRepository;

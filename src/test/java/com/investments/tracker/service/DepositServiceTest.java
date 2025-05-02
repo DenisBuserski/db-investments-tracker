@@ -7,18 +7,15 @@ import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
 import com.investments.tracker.model.dto.deposit.DepositResponseDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
-import com.investments.tracker.service.impl.DepositServiceImpl;
 import org.junit.jupiter.api.*;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
