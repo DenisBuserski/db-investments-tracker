@@ -27,7 +27,7 @@ public class TransactionController {
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<BalanceResponseDTO> insertTransaction(@RequestBody @Valid TransactionRequestDTO transactionRequestDTO) {
-        log.info("Inserting transaction for date [{}] and product [{}]", transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
+        log.info("Creating [{}] transaction for date [{}] and product [{}]", transactionRequestDTO.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
         BalanceResponseDTO balanceResponseDTO = this.transactionService.insertTransaction(transactionRequestDTO);
         return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
     }

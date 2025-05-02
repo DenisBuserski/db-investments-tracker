@@ -1,15 +1,10 @@
 package com.investments.tracker.service.impl;
 
 import com.investments.tracker.model.Balance;
-import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.transaction.TransactionRequestDTO;
-import com.investments.tracker.model.enums.CashTransactionType;
-import com.investments.tracker.model.enums.Currency;
-import com.investments.tracker.model.enums.FeeType;
 import com.investments.tracker.repository.BalanceRepository;
-import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.repository.PortfolioRepository;
 import com.investments.tracker.repository.TransactionRepository;
 import com.investments.tracker.service.BalanceService;
@@ -62,7 +57,7 @@ public class TransactionServiceImpl implements TransactionService {
             if (balanceValue.compareTo(transactionValue) >= 0) {
                 Transaction transaction = createTransaction(transactionRequestDTO, transactionValue);
                 this.transactionRepository.save(transaction);
-                log.info("Creating [{}] transaction for date [{}] and product [{}]", transaction.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
+
 
                 BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequestDTO, transaction.getId());
 
@@ -70,6 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
 
                 Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance.get(), transaction, totalAmountOfInsertedFees);
                 this.balanceRepository.save(newBalance);
+                log.info("Successful [{}] transaction for date [{}] and product [{}]", transaction.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
 
                 return createBalanceResponseDTO(newBalance);
             } else {

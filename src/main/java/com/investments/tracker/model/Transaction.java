@@ -56,6 +56,4 @@ public class Transaction {
 
     @Column(name = "description")
     private String description;
-
-
 }
