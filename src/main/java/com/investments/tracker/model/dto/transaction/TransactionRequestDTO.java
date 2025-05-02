@@ -43,7 +43,6 @@ public class TransactionRequestDTO {
     @NotNull(message = "Exchange rate cannot be NULL!")
     private BigDecimal exchangeRate;
 
-    // Check if validation is needed
     private Map<FeeType, BigDecimal> fees;
 
     @NotNull(message = "Currency cannot be NULL!")

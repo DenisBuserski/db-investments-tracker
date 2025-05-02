@@ -5,10 +5,10 @@ import com.investments.tracker.model.Transaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.repository.BalanceRepository;
-import com.investments.tracker.repository.PortfolioRepository;
 import com.investments.tracker.repository.TransactionRepository;
 import com.investments.tracker.service.BalanceService;
 import com.investments.tracker.service.FeeService;
+import com.investments.tracker.service.PortfolioService;
 import com.investments.tracker.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final BalanceRepository balanceRepository;
     private final FeeService feeService;
     private final BalanceService balanceService;
-    private final PortfolioRepository portfolioRepository;
+    private final PortfolioService portfolioService;
 
     @Autowired
     public TransactionServiceImpl(
@@ -36,12 +36,12 @@ public class TransactionServiceImpl implements TransactionService {
             BalanceRepository balanceRepository,
             FeeService feeService,
             BalanceService balanceService,
-            PortfolioRepository portfolioRepository) {
+            PortfolioService portfolioService) {
         this.transactionRepository = transactionRepository;
         this.balanceRepository = balanceRepository;
         this.feeService = feeService;
         this.balanceService = balanceService;
-        this.portfolioRepository = portfolioRepository;
+        this.portfolioService = portfolioService;
     }
 
     @Override
@@ -62,6 +62,7 @@ public class TransactionServiceImpl implements TransactionService {
                 BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequestDTO, transaction.getId());
 
                 // Update or create portfolio
+                this.portfolioService.updatePortfolioWithTransaction(transactionRequestDTO, transactionValue, BigDecimal.ZERO);
 
                 Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance.get(), transaction, totalAmountOfInsertedFees);
                 this.balanceRepository.save(newBalance);
