@@ -52,8 +52,7 @@ public class FeeService {
             CashTransaction fee = this.cashTransactionService.createCashTransactionForFee(transactionRequestDTO.getDate(), cashTransactionType, feeValue, transactionId);
             fees.add(fee);
         }
-        this.cashTransactionRepository.saveAll(fees);
-        return fees;
+        return this.cashTransactionRepository.saveAll(fees);
     }
 
     private static CashTransactionType getCashtransactionType(FeeType feeType) {
@@ -74,7 +73,4 @@ public class FeeService {
                 .map(CashTransaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
-
-
 }

@@ -4,6 +4,7 @@ import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.transaction.TransactionRequestDTO;
+import com.investments.tracker.model.enums.TransactionType;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.TransactionRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -46,29 +47,44 @@ public class TransactionService{
             log.error("Transaction cannot be created because there is no current balance!");
             return createBalanceResponseDTO(null);
         } else {
+            TransactionType transactionType = transactionRequestDTO.getTransactionType();
             BigDecimal balanceValue = currentBalance.get().getBalance();
             BigDecimal transactionValue = calculateTransactionValue(transactionRequestDTO);
 
-            if (balanceValue.compareTo(transactionValue) >= 0) {
-                Transaction transaction = createTransaction(transactionRequestDTO, transactionValue);
-                this.transactionRepository.save(transaction);
-
-
-                BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequestDTO, transaction.getId());
-
-                // Update or create portfolio
-                this.portfolioService.updatePortfolioWithTransaction(transactionRequestDTO, transactionValue, BigDecimal.ZERO);
-
-                Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance.get(), transaction, totalAmountOfInsertedFees);
-                this.balanceRepository.save(newBalance);
-                log.info("Successful [{}] transaction for date [{}] and product [{}]", transaction.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
-
-                return createBalanceResponseDTO(newBalance);
-            } else {
-                log.info("Transaction cannot be created because there is not enough balance.");
-                return createBalanceResponseDTO(null);
+            if (transactionType == TransactionType.BUY) {
+                return buyTransaction(currentBalance.get(), balanceValue, transactionValue, transactionRequestDTO);
+            } else if (transactionType == TransactionType.SELL) {
+                return sellTransaction();
             }
+            return null;
         }
+    }
+
+
+
+    private BalanceResponseDTO buyTransaction(Balance currentBalance, BigDecimal balanceValue, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
+        if (balanceValue.compareTo(transactionValue) >= 0) {
+            Transaction transaction = createTransaction(transactionRequestDTO, transactionValue);
+            this.transactionRepository.save(transaction);
+
+            BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequestDTO, transaction.getId());
+
+            // Update or create portfolio
+            this.portfolioService.updatePortfolioWithBuyTransaction(transactionRequestDTO, transactionValue);
+
+            Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance, transaction, totalAmountOfInsertedFees);
+            this.balanceRepository.save(newBalance);
+            log.info("Successful [{}] transaction for date [{}] and product [{}]", transaction.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
+
+            return createBalanceResponseDTO(newBalance);
+        } else {
+            log.info("Transaction cannot be created because there is not enough balance.");
+            return createBalanceResponseDTO(null);
+        }
+    }
+
+    private BalanceResponseDTO sellTransaction() {
+        return null;
     }
 
     private static BigDecimal calculateTransactionValue(TransactionRequestDTO transactionRequestDTO) {

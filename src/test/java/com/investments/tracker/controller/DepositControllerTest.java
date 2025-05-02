@@ -3,7 +3,7 @@ package com.investments.tracker.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
-import com.investments.tracker.service.DepositServiceImpl;
+import com.investments.tracker.service.DepositService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class DepositControllerTest {
     private MockMvc mockMvc;
 
     @MockBean // Works, but is deprecated
-    private DepositServiceImpl depositService;
+    private DepositService depositService;
 
     @Autowired
     private ObjectMapper objectMapper;

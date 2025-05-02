@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class DepositServiceTest {
 
     @InjectMocks
-    private DepositServiceImpl depositService;
+    private DepositService depositService;
 
     @Mock
     private CashTransactionRepository cashTransactionRepository;
