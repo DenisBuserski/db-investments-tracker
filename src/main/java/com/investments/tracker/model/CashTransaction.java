@@ -8,9 +8,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.function.Function;
-
-import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
 
 @Entity
 @Table(name = "cash_transactions")
@@ -43,7 +40,4 @@ public class CashTransaction {
 
     @Column(name = "reference_id")
     private Long referenceId;
-
-
-
 }

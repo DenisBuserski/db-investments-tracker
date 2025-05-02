@@ -5,10 +5,7 @@ import com.investments.tracker.model.enums.FeeType;
 import com.investments.tracker.model.enums.ProductType;
 import com.investments.tracker.model.enums.TransactionType;
 import com.investments.tracker.model.validation.ValidCurrency;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.data.util.Pair;
 
@@ -33,7 +30,7 @@ public class TransactionRequestDTO {
     @NotNull(message = "Product type cannot be NULL!")
     private ProductType productType;
 
-    @NotBlank(message = "Product name cannot be NULL or empty!")
+    @NotBlank(message = "Product name cannot be blank or NULL!")
     private String productName;
 
     @NotNull(message = "Transaction price cannot be NULL!")
@@ -46,9 +43,10 @@ public class TransactionRequestDTO {
     @NotNull(message = "Exchange rate cannot be NULL!")
     private BigDecimal exchangeRate;
 
+    // Check if validation is needed
     private Map<FeeType, BigDecimal> fees;
 
-    @NotNull(message = "Transaction currency cannot be NULL!")
+    @NotNull(message = "Currency cannot be NULL!")
     @ValidCurrency
     private Currency currency;
 }

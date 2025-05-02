@@ -44,13 +44,14 @@ public class DividendServiceImpl implements DividendService {
         this.balanceService = balanceService;
     }
 
+    // TODO: Check the scaling with the exchange rate
     @Override
     public BalanceResponseDTO insertDividend(DividendRequestDTO dividendRequestDTO) {
         BigDecimal exchangeRate = dividendRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequestDTO.getExchangeRate();
         BigDecimal dividendAmountBeforeConversion = calculateDividendAmount(dividendRequestDTO);
         BigDecimal dividendAmountAfterConversion = dividendConversion(exchangeRate, dividendAmountBeforeConversion);
 
-        CashTransaction dividend = this.cashtransactionService.createCashtransaction(dividendRequestDTO, dividendAmountAfterConversion);
+        CashTransaction dividend = this.cashtransactionService.createCashTransactionForDividend(dividendRequestDTO, dividendAmountAfterConversion);
         this.cashTransactionRepository.save(dividend);
 
         Dividend dividendEntity = creteDividend(dividendRequestDTO);

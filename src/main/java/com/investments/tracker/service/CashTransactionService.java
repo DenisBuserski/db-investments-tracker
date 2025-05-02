@@ -11,7 +11,7 @@ import static com.investments.tracker.model.enums.Currency.EUR;
 
 @Service
 public class CashTransactionService {
-    public static CashTransaction createCashtransaction(DividendRequestDTO dividendRequestDTO, BigDecimal dividendAmount) {
+    public static CashTransaction createCashTransactionForDividend(DividendRequestDTO dividendRequestDTO, BigDecimal dividendAmount) {
         String dividendDescription = String.format("Dividend for product [%s]", dividendRequestDTO.getProductName());
         return CashTransaction.builder()
                 .date(dividendRequestDTO.getDate())
@@ -23,4 +23,5 @@ public class CashTransactionService {
                 .build();
 
     }
+
 }

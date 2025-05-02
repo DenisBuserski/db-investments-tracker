@@ -50,6 +50,10 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
+    @Column(name = "base_currency", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Currency baseCurrency;
+
     @Column(name = "description")
     private String description;
 
