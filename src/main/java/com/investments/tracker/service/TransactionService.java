@@ -83,8 +83,19 @@ public class TransactionService{
         }
     }
 
-    private BalanceResponseDTO sellTransaction() {
-        return null;
+    private BalanceResponseDTO sellTransaction(Balance currentBalance, BigDecimal balanceValue, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
+        Transaction transaction = createTransaction(transactionRequestDTO, transactionValue);
+        this.transactionRepository.save(transaction);
+
+        BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequestDTO, transaction.getId());
+        
+        this.portfolioService.updatePortfolioWithSellTransaction(transactionRequestDTO, transactionValue);
+
+        Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance, transaction, totalAmountOfInsertedFees);
+        this.balanceRepository.save(newBalance);
+        log.info("Successful [{}] transaction for date [{}] and product [{}]", transaction.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
+
+        return createBalanceResponseDTO(newBalance);
     }
 
     private static BigDecimal calculateTransactionValue(TransactionRequestDTO transactionRequestDTO) {

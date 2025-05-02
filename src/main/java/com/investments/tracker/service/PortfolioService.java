@@ -52,5 +52,10 @@ public class PortfolioService{
             this.portfolioRepository.save(portfolio);
         }
     }
+
+    public void updatePortfolioWithSellTransaction(TransactionRequestDTO transactionRequestDTO, BigDecimal transactionValue) {
+
+
+    }
 }
 
