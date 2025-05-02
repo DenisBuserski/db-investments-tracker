@@ -48,7 +48,7 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public BalanceResponseDTO insertDeposit(DepositRequestDTO depositRequestDTO) {
-        CashTransaction deposit = this.cashTransactionMapper.createCashTransaction(depositRequestDTO, depositMapper);
+        CashTransaction deposit = this.cashTransactionMapper.createCashtransaction(depositRequestDTO, depositMapper);
         this.cashTransactionRepository.save(deposit);
         Balance newBalance;
 

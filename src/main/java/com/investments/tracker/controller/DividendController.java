@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/dividend")
+@RequestMapping("/api/dividend")
 @Slf4j
 public class DividendController {
     private final DividendService dividendService;

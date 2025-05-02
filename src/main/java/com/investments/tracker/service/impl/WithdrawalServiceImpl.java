@@ -5,7 +5,6 @@ import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.dto.*;
 import com.investments.tracker.model.dto.withdraw.WithdrawalRequestDTO;
 import com.investments.tracker.model.dto.withdraw.WithdrawalResponseDTO;
-import com.investments.tracker.model.enums.CashTransactionType;
 import com.investments.tracker.model.mapper.CashTransactionMapper;
 import com.investments.tracker.model.mapper.WithdrawalMapper;
 import com.investments.tracker.repository.BalanceRepository;
@@ -60,7 +59,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
                 return createBalanceResponseDTO(balance);
             } else {
                 if (balance.getBalance().compareTo(withdrawalRequestDTO.getAmount()) >= 0) {
-                    CashTransaction withdrawal = this.cashTransactionMapper.createCashTransaction(withdrawalRequestDTO, withdrawalMapper);
+                    CashTransaction withdrawal = this.cashTransactionMapper.createCashtransaction(withdrawalRequestDTO, withdrawalMapper);
                     this.cashTransactionRepository.save(withdrawal);
 
                     Balance newBalance = this.balanceService.createNewBalanceFromWithdrawal(balance, withdrawal);

@@ -11,11 +11,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Builder
 public class DividendRequestDTO {
-    @NotNull(message = "Date cannot be NULL!")
-    @PastOrPresent(message = "Date cannot be in the future!")
+    @NotNull(message = "Dividend date cannot be NULL!")
+    @PastOrPresent(message = "Dividend date cannot be in the future!")
     private LocalDate date;
 
     @NotBlank(message = "Product name cannot be blank or NULL!")
@@ -35,7 +34,7 @@ public class DividendRequestDTO {
     @NotNull(message = "Exchange rate cannot be NULL!")
     private BigDecimal exchangeRate;
 
-    @NotNull(message = "Dividend currency cannot be NULL!")
+    @NotNull(message = "Currency cannot be NULL!")
     @ValidCurrency
-    private Currency dividendCurrency;
+    private Currency currency;
 }
