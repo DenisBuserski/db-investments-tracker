@@ -7,6 +7,8 @@ import com.investments.tracker.service.WithdrawalService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -15,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/withdrawal")
+@RequestMapping("/api/withdrawal")
 @Slf4j
 public class WithdrawalController {
     private final WithdrawalService withdrawalService;
@@ -26,9 +28,11 @@ public class WithdrawalController {
     }
 
     @PostMapping("/out")
-    public BalanceResponseDTO withdrawCash(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
-        log.info("Making withdrawal for [{} {}]", withdrawalRequestDTO.getAmount(), withdrawalRequestDTO.getCurrency());
-        return this.withdrawalService.withdrawCash(withdrawalRequestDTO);
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<BalanceResponseDTO> withdrawCash(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
+        log.info("Making withdrawal for [{} {}]", String.format("%.2f", withdrawalRequestDTO.getAmount()), withdrawalRequestDTO.getCurrency());
+        BalanceResponseDTO balanceResponseDTO = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
+        return new ResponseEntity<>(balanceResponseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/get/from/{fromDate}/to/{toDate}")

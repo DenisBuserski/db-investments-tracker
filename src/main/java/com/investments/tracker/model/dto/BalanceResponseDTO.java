@@ -22,15 +22,24 @@ public class BalanceResponseDTO {
     private BigDecimal lastPortfolioValue;
 
     public static BalanceResponseDTO createBalanceResponseDTO(Balance newBalance) {
+        LocalDate newBalanceDate = newBalance == null ? LocalDate.now() : newBalance.getDate();
+        BigDecimal newBalanceAmount = newBalance == null ? BigDecimal.ZERO : newBalance.getBalance();
+        BigDecimal newTotalInvestments = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalInvestments();
+        BigDecimal newTotalDeposits = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalDeposits();
+        BigDecimal newTotalWithdrawals = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalWithdrawals();
+        BigDecimal newTotalDividends = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalDividends();
+        BigDecimal newTotalFees = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalFees();
+        BigDecimal newLastPortfolioValue = newBalance == null ? BigDecimal.ZERO : newBalance.getLastPortfolioValue();
+
         return BalanceResponseDTO.builder()
-                .date(newBalance.getDate())
-                .balance(newBalance.getBalance())
-                .totalInvestments(newBalance.getTotalInvestments())
-                .totalDeposits(newBalance.getTotalDeposits())
-                .totalWithdrawals(newBalance.getTotalWithdrawals())
-                .totalDividends(newBalance.getTotalDividends())
-                .totalFees(newBalance.getTotalFees())
-                .lastPortfolioValue(newBalance.getLastPortfolioValue())
+                .date(newBalanceDate)
+                .balance(newBalanceAmount)
+                .totalInvestments(newTotalInvestments)
+                .totalDeposits(newTotalDeposits)
+                .totalWithdrawals(newTotalWithdrawals)
+                .totalDividends(newTotalDividends)
+                .totalFees(newTotalFees)
+                .lastPortfolioValue(newLastPortfolioValue)
                 .build();
     }
 }
