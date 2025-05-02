@@ -32,7 +32,7 @@ public class DepositController {
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<BalanceResponseDTO> insertDeposit(@RequestBody @Valid DepositRequestDTO depositRequestDTO) {
-        log.info("Making deposit for [{} {}]", depositRequestDTO.getAmount(), depositRequestDTO.getCurrency());
+        log.info("Making deposit for [{} {}]", String.format("%.2f", depositRequestDTO.getAmount()), depositRequestDTO.getCurrency());
         BalanceResponseDTO balanceResponseDTO = this.depositService.insertDeposit(depositRequestDTO);
         return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
     }
@@ -44,20 +44,26 @@ public class DepositController {
             @PathVariable(name = "toDate") LocalDate to) {
         log.info("Getting deposits from [{}] to [{}]", from, to);
         List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(from, to);
-        if (deposits.isEmpty()) {
-            log.info("No deposits found");
-            return new ResponseEntity(Collections.EMPTY_LIST, HttpStatus.OK);
-        } else {
-            log.info("Found deposits - [{}]", deposits.size());
-            return new ResponseEntity<>(deposits, HttpStatus.OK);
-        }
+        return returnDepositList(deposits);
     }
+
+
 
     @GetMapping("/get/all")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<DepositResponseDTO>>  getAllDeposits() {
         log.info("Getting all deposits");
         List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(START_DATE, LocalDate.now());
+        return returnDepositList(deposits);
+    }
+
+    @GetMapping("/get/total/amount")
+    public BigDecimal getTotalDepositAmount() {
+        log.info("Getting total amount of deposits");
+        return this.depositService.getTotalDepositsAmount();
+    }
+
+    private static ResponseEntity returnDepositList(List<DepositResponseDTO> deposits) {
         if (deposits.isEmpty()) {
             log.info("No deposits found");
             return new ResponseEntity(Collections.EMPTY_LIST, HttpStatus.OK);
@@ -65,12 +71,6 @@ public class DepositController {
             log.info("Found deposits - [{}]", deposits.size());
             return new ResponseEntity<>(deposits, HttpStatus.OK);
         }
-    }
-
-    @GetMapping("/get/total/amount")
-    public BigDecimal getTotalDepositAmount() {
-        log.info("Getting total amount of deposits");
-        return this.depositService.getTotalDepositsAmount();
     }
 
 }
