@@ -16,6 +16,8 @@ import java.util.Optional;
 
 import static com.investments.tracker.model.dto.BalanceResponseDTO.createBalanceResponseDTO;
 import static com.investments.tracker.model.enums.Currency.EUR;
+import static com.investments.tracker.model.enums.TransactionType.*;
+import static com.investments.tracker.model.enums.TransactionType.BUY;
 
 
 @Service
@@ -51,16 +53,15 @@ public class TransactionService{
             BigDecimal balanceValue = currentBalance.get().getBalance();
             BigDecimal transactionValue = calculateTransactionValue(transactionRequestDTO);
 
-            if (transactionType == TransactionType.BUY) {
-                return buyTransaction(currentBalance.get(), balanceValue, transactionValue, transactionRequestDTO);
-            } else if (transactionType == TransactionType.SELL) {
-                return sellTransaction();
+            BalanceResponseDTO balanceResponseDTO = null;
+            if (transactionType == BUY) {
+                balanceResponseDTO = buyTransaction(currentBalance.get(), balanceValue, transactionValue, transactionRequestDTO);
+            } else if (transactionType == SELL) {
+                balanceResponseDTO = sellTransaction();
             }
-            return null;
+            return balanceResponseDTO;
         }
     }
-
-
 
     private BalanceResponseDTO buyTransaction(Balance currentBalance, BigDecimal balanceValue, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
         if (balanceValue.compareTo(transactionValue) >= 0) {
@@ -69,7 +70,6 @@ public class TransactionService{
 
             BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequestDTO, transaction.getId());
 
-            // Update or create portfolio
             this.portfolioService.updatePortfolioWithBuyTransaction(transactionRequestDTO, transactionValue);
 
             Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance, transaction, totalAmountOfInsertedFees);

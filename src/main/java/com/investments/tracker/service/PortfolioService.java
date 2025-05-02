@@ -14,8 +14,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static com.investments.tracker.model.enums.Status.ACTIVE;
-import static com.investments.tracker.model.enums.TransactionType.BUY;
-import static com.investments.tracker.model.enums.TransactionType.SELL;
 
 @Service
 @Slf4j
@@ -28,23 +26,20 @@ public class PortfolioService{
     }
 
     public void updatePortfolioWithBuyTransaction(TransactionRequestDTO transactionRequestDTO, BigDecimal totalTransactionValue) {
-        // Check if product exists
         LocalDate transactionDate = transactionRequestDTO.getDate();
         String productName = transactionRequestDTO.getProductName();
 
         Optional<Portfolio> portfolioForProduct = this.portfolioRepository.findByProductName(productName);
         if (!portfolioForProduct.isEmpty()) {
-            // Insert product transaction for existing product
             int newQuantity = portfolioForProduct.get().getQuantity() + transactionRequestDTO.getQuantity();
             BigDecimal newInvestedMoney = portfolioForProduct.get().getInvestedMoney().add(totalTransactionValue);
             int updatedResult = this.portfolioRepository.updatePortfolio(transactionDate, productName, newQuantity, newInvestedMoney);
             if (updatedResult == 1) {
-                log.info("Portfolio updated successfully");
+                log.info("Portfolio updated successfully for product [{}]", productName);
             } else {
-                log.warn("Portfolio was not updated");
+                log.warn("Portfolio for product [{}] was not updated", productName);
             }
         } else {
-            // Insert product transaction for the first time
             Portfolio portfolio = Portfolio.builder()
                     .lastUpdated(transactionDate)
                     .productName(productName)
@@ -53,13 +48,9 @@ public class PortfolioService{
                     .dividendsAmount(BigDecimal.ZERO)
                     .status(ACTIVE)
                     .build();
+            log.info("Inserted product [{}] in portfolio for the first time", productName);
             this.portfolioRepository.save(portfolio);
         }
-
-
-
-
-
     }
 }
 
