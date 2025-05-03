@@ -1,6 +1,5 @@
 package com.investments.tracker.model;
 
-import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
 import com.investments.tracker.model.enums.CashTransactionType;
 import com.investments.tracker.model.enums.Currency;
 import jakarta.persistence.*;
@@ -14,7 +13,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Builder
 public class CashTransaction {
     @Id

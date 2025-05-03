@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Builder
 @ToString
 public class Balance {
@@ -22,7 +21,7 @@ public class Balance {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @Column(precision = 10, scale = 2) // 10 total digits, 2 after the decimal
+    @Column(name = "balance", nullable = false, precision = 10, scale = 2) // 10 total digits, 2 after the decimal
     private BigDecimal balance;
 
     @Column(name = "total_investments", nullable = false, precision = 10, scale = 3)
