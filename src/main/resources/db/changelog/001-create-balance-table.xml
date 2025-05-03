@@ -18,7 +18,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="total_investments" type="DECIMAL(10,3)">
+            <column name="total_investments" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
 

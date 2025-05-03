@@ -10,7 +10,9 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
-            <column name="date" type="DATE"/>
+            <column name="date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
 
             <column name="product_name" type="VARCHAR(255)">
                 <constraints nullable="false"/>

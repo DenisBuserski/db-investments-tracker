@@ -24,6 +24,7 @@ public class Portfolio {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
+    @Column(name = "quantity")
     private int quantity;
 
     @Column(name = "invested_money", nullable = false)

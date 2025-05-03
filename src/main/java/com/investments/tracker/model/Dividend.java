@@ -18,6 +18,7 @@ public class Dividend {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "date", nullable = false)
     private LocalDate date;
 
     @Column(name = "product_name", nullable = false)

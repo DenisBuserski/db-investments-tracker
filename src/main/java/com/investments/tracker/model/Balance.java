@@ -24,7 +24,7 @@ public class Balance {
     @Column(name = "balance", nullable = false, precision = 10, scale = 2) // 10 total digits, 2 after the decimal
     private BigDecimal balance;
 
-    @Column(name = "total_investments", nullable = false, precision = 10, scale = 3)
+    @Column(name = "total_investments", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalInvestments;
 
     @Column(name = "total_deposits", nullable = false, precision = 10, scale = 2)
