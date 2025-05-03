@@ -57,7 +57,7 @@ public class TransactionService{
             if (transactionType == BUY) {
                 balanceResponseDTO = buyTransaction(currentBalance.get(), balanceValue, transactionValue, transactionRequestDTO);
             } else if (transactionType == SELL) {
-                balanceResponseDTO = sellTransaction();
+                balanceResponseDTO = sellTransaction(currentBalance.get(), transactionValue, transactionRequestDTO);
             }
             return balanceResponseDTO;
         }
@@ -83,12 +83,13 @@ public class TransactionService{
         }
     }
 
-    private BalanceResponseDTO sellTransaction(Balance currentBalance, BigDecimal balanceValue, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
+    // Check if product is present and then maybe transaction cannot be made so rollback
+    private BalanceResponseDTO sellTransaction(Balance currentBalance, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
         Transaction transaction = createTransaction(transactionRequestDTO, transactionValue);
         this.transactionRepository.save(transaction);
 
         BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequestDTO, transaction.getId());
-        
+
         this.portfolioService.updatePortfolioWithSellTransaction(transactionRequestDTO, transactionValue);
 
         Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance, transaction, totalAmountOfInsertedFees);

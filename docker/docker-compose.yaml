@@ -1,0 +1,12 @@
+services:
+
+  mariadb:
+    image: mysql:9.2.0
+    container_name: mysql-test-container
+    environment:
+      - MYSQL_ROOT_PASSWORD=my-secret-pw
+      - MYSQL_DATABASE=db_investments_tracker_local
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+    ports:
+      - "3307:3306"

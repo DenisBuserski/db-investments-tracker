@@ -74,20 +74,21 @@ Frontend installation
 
 Create an openapi.json file and automatically generate API docs using Swagger.
 
-| Method | Endpoint                                      | Description                     | Auth required |
-|--------|-----------------------------------------------|---------------------------------|---------------|
-| `POST` | `/deposit/in`                                 | Make a deposit                  |               |
-| `GET`  | `/deposit/get/from/{fromDate}/to/{toDate}`    | Get deposits in range           |               |
-| `GET`  | `/deposit/get/all`                            | Get all deposits                |               |
-| `GET`  | `/deposit/get/total/amount`                   | Get total amount of deposits    |               |
-| `POST` | `/withdrawal/out`                             | Make a withdrawal               |               |
-| `GET`  | `/withdrawal/get/from/{fromDate}/to/{toDate}` | Get withdrawals in range        |               |
-| `GET`  | `/withdrawal/get/all`                         | Get all withdrawals             |               |
-| `GET`  | `/withdrawal/get/total/amount`                | Get total amount of withdrawals |               |
-| `POST` | `/dividend/in`                                | Insert a dividend               |               |
-| `GET`  | `/dividend/get/from/{fromDate}/to/{toDate}`   | Get dividends in range          |               |
-| `GET`  | `/dividend/get/all`                           | Get all dividends               |               |
-| `GET`  | `/dividend/get/total/amount`                  | Get total amount of dividends   |               |
+| Method | Endpoint                                       | Description                     | Auth required |
+|--------|------------------------------------------------|---------------------------------|---------------|
+| `POST` | `/api/deposit/in`                              | Make a deposit                  |               |
+| `GET`  | `/api/deposit/get/from/{fromDate}/to/{toDate}` | Get deposits in range           |               |
+| `GET`  | `/api/deposit/get/all`                         | Get all deposits                |               |
+| `GET`  | `/api/deposit/get/total/amount`                | Get total amount of deposits    |               |
+| `POST` | `/withdrawal/out`                              | Make a withdrawal               |               |
+| `GET`  | `/withdrawal/get/from/{fromDate}/to/{toDate}`  | Get withdrawals in range        |               |
+| `GET`  | `/withdrawal/get/all`                          | Get all withdrawals             |               |
+| `GET`  | `/withdrawal/get/total/amount`                 | Get total amount of withdrawals |               |
+| `POST` | `/dividend/in`                                 | Insert a dividend               |               |
+| `GET`  | `/dividend/get/from/{fromDate}/to/{toDate}`    | Get dividends in range          |               |
+| `GET`  | `/dividend/get/all`                            | Get all dividends               |               |
+| `GET`  | `/dividend/get/total/amount`                   | Get total amount of dividends   |               |
+| `POST` | `/api/transaction/in`                          | Insert a transaction            |               |
 
 </details> 
 
@@ -122,6 +123,7 @@ Login Page
 
 - Add Swagger-ui
 - Add email notification for weekly portfolio view
+- Docker
 
 </details>
 
@@ -130,8 +132,8 @@ Login Page
 <summary><h3>Author</h3></summary>
 
 #### Your Name: Denis Buserski 
-#### LinkedIn: LINK 
-#### GitHub: LINK 
+#### [LinkedIn](https://www.linkedin.com/in/denis-buserski/) 
+#### [GitHub](https://github.com/DenisBuserski) 
 
 </details>
 
