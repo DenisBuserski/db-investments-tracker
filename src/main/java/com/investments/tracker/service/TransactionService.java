@@ -1,11 +1,13 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.model.Balance;
+import com.investments.tracker.model.Portfolio;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.model.dto.BalanceResponseDTO;
 import com.investments.tracker.model.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.model.enums.TransactionType;
 import com.investments.tracker.repository.BalanceRepository;
+import com.investments.tracker.repository.PortfolioRepository;
 import com.investments.tracker.repository.TransactionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.util.Optional;
 
 import static com.investments.tracker.model.dto.BalanceResponseDTO.createBalanceResponseDTO;
 import static com.investments.tracker.model.enums.Currency.EUR;
+import static com.investments.tracker.model.enums.Status.ACTIVE;
 import static com.investments.tracker.model.enums.TransactionType.*;
 import static com.investments.tracker.model.enums.TransactionType.BUY;
 
@@ -25,6 +28,7 @@ import static com.investments.tracker.model.enums.TransactionType.BUY;
 public class TransactionService{
     private final TransactionRepository transactionRepository;
     private final BalanceRepository balanceRepository;
+    private final PortfolioRepository portfolioRepository;
     private final FeeService feeService;
     private final BalanceService balanceService;
     private final PortfolioService portfolioService;
@@ -33,11 +37,13 @@ public class TransactionService{
     public TransactionService(
             TransactionRepository transactionRepository,
             BalanceRepository balanceRepository,
+            PortfolioRepository portfolioRepository,
             FeeService feeService,
             BalanceService balanceService,
             PortfolioService portfolioService) {
         this.transactionRepository = transactionRepository;
         this.balanceRepository = balanceRepository;
+        this.portfolioRepository = portfolioRepository;
         this.feeService = feeService;
         this.balanceService = balanceService;
         this.portfolioService = portfolioService;
@@ -83,20 +89,34 @@ public class TransactionService{
         }
     }
 
-    // Check if product is present and then maybe transaction cannot be made so rollback
+    // TODO: Checking selling
     private BalanceResponseDTO sellTransaction(Balance currentBalance, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
-        Transaction transaction = createTransaction(transactionRequestDTO, transactionValue);
-        this.transactionRepository.save(transaction);
+        String productName = transactionRequestDTO.getProductName();
+        Optional<Portfolio> portfolioForProduct = this.portfolioRepository.findByProductName(productName);
+        if (!portfolioForProduct.isEmpty()) {
+            Portfolio portfolio = portfolioForProduct.get();
+            int currentQuantity = portfolio.getQuantity();
+            if (currentQuantity >= transactionRequestDTO.getQuantity()) {
+                Transaction transaction = createTransaction(transactionRequestDTO, transactionValue);
+                this.transactionRepository.save(transaction);
 
-        BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequestDTO, transaction.getId());
+                BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequestDTO, transaction.getId());
 
-        this.portfolioService.updatePortfolioWithSellTransaction(transactionRequestDTO, transactionValue);
+                this.portfolioService.updatePortfolioWithSellTransaction(transactionRequestDTO, transactionValue);
 
-        Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance, transaction, totalAmountOfInsertedFees);
-        this.balanceRepository.save(newBalance);
-        log.info("Successful [{}] transaction for date [{}] and product [{}]", transaction.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
+                Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance, transaction, totalAmountOfInsertedFees);
+                this.balanceRepository.save(newBalance);
+                log.info("Successful [{}] transaction for date [{}] and product [{}]", transaction.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
 
-        return createBalanceResponseDTO(newBalance);
+                return createBalanceResponseDTO(newBalance);
+            } else {
+                log.info("Transaction cannot be created because there is not enough quantity of product [{}]", productName);
+                return createBalanceResponseDTO(null);
+            }
+        } else {
+            log.info("Transaction cannot be created because product [{}] does not exist in the portfolio", productName);
+            return createBalanceResponseDTO(null);
+        }
     }
 
     private static BigDecimal calculateTransactionValue(TransactionRequestDTO transactionRequestDTO) {

@@ -33,7 +33,7 @@ public class PortfolioService{
         if (!portfolioForProduct.isEmpty()) {
             int newQuantity = portfolioForProduct.get().getQuantity() + transactionRequestDTO.getQuantity();
             BigDecimal newInvestedMoney = portfolioForProduct.get().getInvestedMoney().add(totalTransactionValue);
-            int updatedResult = this.portfolioRepository.updatePortfolio(transactionDate, productName, newQuantity, newInvestedMoney);
+            int updatedResult = this.portfolioRepository.updatePortfolioWithBuyTransaction(transactionDate, productName, newQuantity, newInvestedMoney);
             if (updatedResult == 1) {
                 log.info("Portfolio updated successfully for product [{}]", productName);
             } else {
@@ -54,6 +54,7 @@ public class PortfolioService{
     }
 
     public void updatePortfolioWithSellTransaction(TransactionRequestDTO transactionRequestDTO, BigDecimal transactionValue) {
+
 
 
     }

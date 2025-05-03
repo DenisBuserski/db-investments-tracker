@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -31,27 +32,26 @@ public class FeeService {
     public BigDecimal getTotalAmountOfInsertedFees(TransactionRequestDTO transactionRequestDTO, long transactionId) {
         if (!transactionRequestDTO.getFees().isEmpty()) {
             List<CashTransaction> fees = createFees(transactionRequestDTO, transactionId);
-            log.info("Total fees for TransactionId={} are [{}]", transactionId, fees.size());
+            log.info("Total number of applied fees for transaction_id={} -> [{}]", transactionId, fees.size());
             return calculateTotalFees(fees);
         } else {
-            log.info("No related fees for TransactionId={}", transactionId);
+            log.info("No related fees for transaction_id={}", transactionId);
             return BigDecimal.ZERO;
         }
     }
 
     private List<CashTransaction> createFees(TransactionRequestDTO transactionRequestDTO, long transactionId) {
-        List<CashTransaction> fees = new ArrayList<>();
         Map<FeeType, BigDecimal> feesMap = transactionRequestDTO.getFees();
 
-        for (Map.Entry<FeeType, BigDecimal> feeEntry : feesMap.entrySet()) {
-            FeeType feeType = feeEntry.getKey();
-            BigDecimal feeValue = feeEntry.getValue();
-
-            CashTransactionType cashTransactionType = getCashtransactionType(feeType);
-
-            CashTransaction fee = this.cashTransactionService.createCashTransactionForFee(transactionRequestDTO.getDate(), cashTransactionType, feeValue, transactionId);
-            fees.add(fee);
-        }
+        List<CashTransaction> fees = feesMap.entrySet()
+                .stream()
+                .map(entry -> {
+                    FeeType feeType = entry.getKey();
+                    BigDecimal feeValue = entry.getValue();
+                    CashTransactionType cashTransactionType = getCashtransactionType(feeType);
+                    return this.cashTransactionService.createCashTransactionForFee(transactionRequestDTO.getDate(), cashTransactionType, feeValue, transactionId);
+                })
+                .collect(Collectors.toList());
         return this.cashTransactionRepository.saveAll(fees);
     }
 

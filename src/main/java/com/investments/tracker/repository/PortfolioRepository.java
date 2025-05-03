@@ -26,7 +26,7 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
             p.investedMoney = :newInvestedMoney 
             WHERE p.productName = :productName
             """)
-    int updatePortfolio(@Param("transactionDate") LocalDate transactionDate,
+    int updatePortfolioWithBuyTransaction(@Param("transactionDate") LocalDate transactionDate,
                          @Param("productName") String productName,
                          @Param("newQuantity") int newQuantity,
                          @Param("newInvestedMoney") BigDecimal newInvestedMoney);
