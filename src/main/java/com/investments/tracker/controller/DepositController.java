@@ -18,8 +18,9 @@ import java.util.List;
 
 import static com.investments.tracker.utils.Constants.START_DATE;
 
+// TODO: Add Swagger-ui
 @RestController
-@RequestMapping("/api/deposit")
+@RequestMapping("/api/v1/deposits")
 @Slf4j
 public class DepositController {
     private final DepositService depositService;
@@ -49,6 +50,7 @@ public class DepositController {
 
 
 
+    // TODO: Use Pagination
     @GetMapping("/get/all")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<DepositResponseDTO>>  getAllDeposits() {
