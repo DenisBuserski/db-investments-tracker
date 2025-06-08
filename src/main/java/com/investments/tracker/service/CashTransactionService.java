@@ -1,15 +1,15 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.model.dto.dividend.DividendRequestDTO;
-import com.investments.tracker.model.enums.CashTransactionType;
+import com.investments.tracker.dto.dividend.DividendRequestDTO;
+import com.investments.tracker.enums.CashTransactionType;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.investments.tracker.model.enums.CashTransactionType.DIVIDEND;
-import static com.investments.tracker.model.enums.Currency.EUR;
+import static com.investments.tracker.enums.CashTransactionType.DIVIDEND;
+import static com.investments.tracker.enums.Currency.EUR;
 
 @Service
 public class CashTransactionService {

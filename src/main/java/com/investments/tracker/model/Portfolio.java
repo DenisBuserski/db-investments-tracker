@@ -1,6 +1,6 @@
 package com.investments.tracker.model;
 
-import com.investments.tracker.model.enums.Status;
+import com.investments.tracker.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 

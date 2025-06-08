@@ -1,4 +1,4 @@
-package com.investments.tracker.model.dto;
+package com.investments.tracker.dto;
 
 import com.investments.tracker.model.WeeklyPosition;
 import lombok.AllArgsConstructor;

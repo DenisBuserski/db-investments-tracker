@@ -1,15 +1,15 @@
-package com.investments.tracker.model.mapper;
+package com.investments.tracker.mapper;
 
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
-import com.investments.tracker.model.dto.deposit.DepositResponseDTO;
+import com.investments.tracker.dto.deposit.DepositRequestDTO;
+import com.investments.tracker.dto.deposit.DepositResponseDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
+import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
 
 @Component
 public class DepositMapper implements Function<DepositRequestDTO, CashTransaction> {

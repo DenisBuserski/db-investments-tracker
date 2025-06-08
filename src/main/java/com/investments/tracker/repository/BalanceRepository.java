@@ -17,5 +17,7 @@ public interface BalanceRepository extends JpaRepository<Balance, Long> {
            """)
     Optional<Balance> getLatestBalance();
 
+    Optional<Balance> findTopByOrderByIdDesc();
+
 
 }

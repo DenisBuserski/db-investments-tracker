@@ -1,7 +1,7 @@
 package com.investments.tracker.model;
 
-import com.investments.tracker.model.enums.CashTransactionType;
-import com.investments.tracker.model.enums.Currency;
+import com.investments.tracker.enums.CashTransactionType;
+import com.investments.tracker.enums.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 

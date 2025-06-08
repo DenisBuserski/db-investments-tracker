@@ -1,16 +1,15 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.model.dto.transaction.TransactionRequestDTO;
-import com.investments.tracker.model.enums.CashTransactionType;
-import com.investments.tracker.model.enums.FeeType;
+import com.investments.tracker.dto.transaction.TransactionRequestDTO;
+import com.investments.tracker.enums.CashTransactionType;
+import com.investments.tracker.enums.FeeType;
 import com.investments.tracker.repository.CashTransactionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

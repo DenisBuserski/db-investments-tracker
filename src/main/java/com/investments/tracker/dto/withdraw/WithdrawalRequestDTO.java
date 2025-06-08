@@ -1,7 +1,7 @@
-package com.investments.tracker.model.dto.withdraw;
+package com.investments.tracker.dto.withdraw;
 
-import com.investments.tracker.model.enums.Currency;
-import com.investments.tracker.model.validation.ValidCurrency;
+import com.investments.tracker.enums.Currency;
+import com.investments.tracker.validation.ValidCurrency;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;

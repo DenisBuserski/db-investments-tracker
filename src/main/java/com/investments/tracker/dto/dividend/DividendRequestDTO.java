@@ -1,7 +1,7 @@
-package com.investments.tracker.model.dto.dividend;
+package com.investments.tracker.dto.dividend;
 
-import com.investments.tracker.model.enums.Currency;
-import com.investments.tracker.model.validation.ValidCurrency;
+import com.investments.tracker.enums.Currency;
+import com.investments.tracker.validation.ValidCurrency;
 import jakarta.validation.constraints.*;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.investments.tracker.model.mapper;
+package com.investments.tracker.mapper;
 
 import com.investments.tracker.model.CashTransaction;
 import org.springframework.stereotype.Component;

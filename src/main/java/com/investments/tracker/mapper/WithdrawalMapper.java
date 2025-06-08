@@ -1,12 +1,12 @@
-package com.investments.tracker.model.mapper;
+package com.investments.tracker.mapper;
 
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.model.dto.withdraw.WithdrawalRequestDTO;
+import com.investments.tracker.dto.withdraw.WithdrawalRequestDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
 
-import static com.investments.tracker.model.enums.CashTransactionType.*;
+import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 
 @Component
 public class WithdrawalMapper implements Function<WithdrawalRequestDTO, CashTransaction> {

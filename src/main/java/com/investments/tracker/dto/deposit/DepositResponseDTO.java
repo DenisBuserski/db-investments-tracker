@@ -1,6 +1,6 @@
-package com.investments.tracker.model.dto.deposit;
+package com.investments.tracker.dto.deposit;
 
-import com.investments.tracker.model.enums.Currency;
+import com.investments.tracker.enums.Currency;
 import lombok.*;
 
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package com.investments.tracker.model.enums;
+package com.investments.tracker.enums;
 
 public enum Currency {
     EUR("EUR"),

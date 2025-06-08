@@ -2,9 +2,9 @@ package com.investments.tracker.service;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
-import com.investments.tracker.model.dto.deposit.DepositResponseDTO;
+import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.deposit.DepositRequestDTO;
+import com.investments.tracker.dto.deposit.DepositResponseDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import org.junit.jupiter.api.*;
@@ -19,8 +19,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
-import static com.investments.tracker.model.enums.Currency.EUR;
+import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
+import static com.investments.tracker.enums.Currency.EUR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;

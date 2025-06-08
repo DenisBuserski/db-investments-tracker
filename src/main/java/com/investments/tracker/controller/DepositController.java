@@ -1,9 +1,16 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
-import com.investments.tracker.model.dto.deposit.DepositResponseDTO;
+import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.deposit.DepositRequestDTO;
+import com.investments.tracker.dto.deposit.DepositResponseDTO;
 import com.investments.tracker.service.DepositService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +25,10 @@ import java.util.List;
 
 import static com.investments.tracker.utils.Constants.START_DATE;
 
-// TODO: Add Swagger-ui
 @RestController
 @RequestMapping("/api/v1/deposits")
 @Slf4j
+@Tag(name = "Deposit Controller", description = "REST methods for deposits")
 public class DepositController {
     private final DepositService depositService;
 
@@ -32,37 +39,90 @@ public class DepositController {
 
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            operationId = "insertDeposit",
+            summary = "Insert new deposit in the database",
+            description = "Insert new deposit in the database")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Deposit created",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = BalanceResponseDTO.class))
+                    })
+    })
     public ResponseEntity<BalanceResponseDTO> insertDeposit(@RequestBody @Valid DepositRequestDTO depositRequestDTO) {
-        log.info("Making deposit for [{} {}]", String.format("%.2f", depositRequestDTO.getAmount()), depositRequestDTO.getCurrency());
+        log.info("Inserting deposit for [{} {}]", String.format("%.2f", depositRequestDTO.getAmount()), depositRequestDTO.getCurrency());
         BalanceResponseDTO balanceResponseDTO = this.depositService.insertDeposit(depositRequestDTO);
         return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/get/from/{fromDate}/to/{toDate}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            operationId = "getDepositsFromTo",
+            summary = "Get deposits in range",
+            description = "Get deposits in range")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Got deposits in range",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = DepositResponseDTO.class))
+                    })
+    })
     public ResponseEntity<List<DepositResponseDTO>> getDepositsFromTo(
-            @PathVariable(name = "fromDate") LocalDate from,
-            @PathVariable(name = "toDate") LocalDate to) {
+            @Parameter(description = "The start date of the range", required = true) @PathVariable(name = "fromDate") LocalDate from,
+            @Parameter(description = "The end date of the range", required = true) @PathVariable(name = "toDate") LocalDate to) {
         log.info("Getting deposits from [{}] to [{}]", from, to);
         List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(from, to);
         return returnDepositList(deposits);
     }
 
 
-
-    // TODO: Use Pagination
+    // TODO: Add Pagination
     @GetMapping("/get/all")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<DepositResponseDTO>>  getAllDeposits() {
+    @Operation(
+            operationId = "geAllDeposits",
+            summary = "Get all deposits",
+            description = "Get all deposits")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Got all deposits",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = DepositResponseDTO.class))
+                    })
+    })
+    public ResponseEntity<List<DepositResponseDTO>> getAllDeposits() {
         log.info("Getting all deposits");
         List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(START_DATE, LocalDate.now());
         return returnDepositList(deposits);
     }
 
     @GetMapping("/get/total/amount")
-    public BigDecimal getTotalDepositAmount() {
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            operationId = "getTotalDepositsAmount",
+            summary = "Get total deposits amount",
+            description = "Get total deposits amount")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Got total deposits amount",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = BigDecimal.class))
+                    })
+    })
+    public ResponseEntity<BigDecimal> getTotalDepositsAmount() {
         log.info("Getting total amount of deposits");
-        return this.depositService.getTotalDepositsAmount();
+        BigDecimal totalDepositsAmount = this.depositService.getTotalDepositsAmount();
+        return new ResponseEntity<>(totalDepositsAmount, HttpStatus.OK);
     }
 
     private static ResponseEntity returnDepositList(List<DepositResponseDTO> deposits) {

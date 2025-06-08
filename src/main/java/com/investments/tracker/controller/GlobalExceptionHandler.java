@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 // TODO: Fix me
-@ControllerAdvice
+// @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler()
-    public ResponseEntity<?> handleValidationErrors() {
-        return null;
-
-    }
+//    @ExceptionHandler()
+//    public ResponseEntity<?> handleValidationErrors() {
+//        return null;
+//
+//    }
 }

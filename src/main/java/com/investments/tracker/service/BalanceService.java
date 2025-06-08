@@ -63,7 +63,14 @@ public class BalanceService {
         return balanceBuilder(newBalanceDate, newBalanceAmount, newTotalInvestments, newTotalDeposits, newTotalWithdrawals, newTotalDividends, newTotalFees, newLastPortfolioValue);
     }
 
-    private static Balance balanceBuilder(LocalDate newBalanceDate, BigDecimal newBalanceAmount, BigDecimal newTotalInvestments, BigDecimal newTotalDeposits, BigDecimal newTotalWithdrawals, BigDecimal newTotalDividends, BigDecimal newTotalFees, BigDecimal newLastPortfolioValue) {
+    private static Balance balanceBuilder(LocalDate newBalanceDate,
+                                          BigDecimal newBalanceAmount,
+                                          BigDecimal newTotalInvestments,
+                                          BigDecimal newTotalDeposits,
+                                          BigDecimal newTotalWithdrawals,
+                                          BigDecimal newTotalDividends,
+                                          BigDecimal newTotalFees,
+                                          BigDecimal newLastPortfolioValue) {
         return Balance.builder()
                 .date(newBalanceDate)
                 .balance(newBalanceAmount)

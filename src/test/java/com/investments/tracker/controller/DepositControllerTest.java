@@ -1,8 +1,8 @@
 package com.investments.tracker.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.deposit.DepositRequestDTO;
+import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.deposit.DepositRequestDTO;
 import com.investments.tracker.service.DepositService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.investments.tracker.model.enums.Currency.EUR;
+import static com.investments.tracker.enums.Currency.EUR;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

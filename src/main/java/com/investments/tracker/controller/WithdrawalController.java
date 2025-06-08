@@ -1,8 +1,8 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.withdraw.WithdrawalRequestDTO;
-import com.investments.tracker.model.dto.withdraw.WithdrawalResponseDTO;
+import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.withdraw.WithdrawalRequestDTO;
+import com.investments.tracker.dto.withdraw.WithdrawalResponseDTO;
 import com.investments.tracker.service.WithdrawalService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

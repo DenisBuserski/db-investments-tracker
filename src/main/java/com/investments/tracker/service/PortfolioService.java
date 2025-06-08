@@ -1,9 +1,7 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.model.Portfolio;
-import com.investments.tracker.model.dto.transaction.TransactionRequestDTO;
-import com.investments.tracker.model.enums.Status;
-import com.investments.tracker.model.enums.TransactionType;
+import com.investments.tracker.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.repository.PortfolioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static com.investments.tracker.model.enums.Status.ACTIVE;
+import static com.investments.tracker.enums.Status.ACTIVE;
 
 @Service
 @Slf4j

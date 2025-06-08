@@ -15,9 +15,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.investments.tracker.model.enums.CashTransactionType.DEPOSIT;
-import static com.investments.tracker.model.enums.CashTransactionType.WITHDRAWAL;
-import static com.investments.tracker.model.enums.Currency.EUR;
+import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
+import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
+import static com.investments.tracker.enums.Currency.EUR;
 
 @DataJpaTest
 @TestPropertySource(locations = "classpath:application-test.properties")

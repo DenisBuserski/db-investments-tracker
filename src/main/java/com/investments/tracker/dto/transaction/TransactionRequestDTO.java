@@ -1,17 +1,15 @@
-package com.investments.tracker.model.dto.transaction;
+package com.investments.tracker.dto.transaction;
 
-import com.investments.tracker.model.enums.Currency;
-import com.investments.tracker.model.enums.FeeType;
-import com.investments.tracker.model.enums.ProductType;
-import com.investments.tracker.model.enums.TransactionType;
-import com.investments.tracker.model.validation.ValidCurrency;
+import com.investments.tracker.enums.Currency;
+import com.investments.tracker.enums.FeeType;
+import com.investments.tracker.enums.ProductType;
+import com.investments.tracker.enums.TransactionType;
+import com.investments.tracker.validation.ValidCurrency;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.springframework.data.util.Pair;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor

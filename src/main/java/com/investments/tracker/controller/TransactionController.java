@@ -1,7 +1,7 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.model.dto.BalanceResponseDTO;
-import com.investments.tracker.model.dto.transaction.TransactionRequestDTO;
+import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

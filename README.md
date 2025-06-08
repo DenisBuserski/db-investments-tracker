@@ -72,6 +72,8 @@ Frontend installation
 <details>
 <summary><h3>API Endpoints</h3></summary>
 
+http://localhost:8080/swagger-ui/index.html
+
 Create an openapi.json file and automatically generate API docs using Swagger.
 
 | Method | Endpoint                                       | Description                     | Auth required |
