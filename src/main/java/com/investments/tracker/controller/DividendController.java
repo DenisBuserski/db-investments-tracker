@@ -28,4 +28,9 @@ public class DividendController {
         BalanceResponseDTO balanceResponseDTO = this.dividendService.insertDividend(dividendRequestDTO);
         return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
     }
+
+    // TODO:
+    // getDividendsFromTo
+    // getAllDividend
+    // getTotalDividendsAmount
 }

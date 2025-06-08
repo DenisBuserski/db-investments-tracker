@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/withdrawal")
+@RequestMapping("/api/v1/withdrawals")
 @Slf4j
 public class WithdrawalController {
     private final WithdrawalService withdrawalService;
@@ -29,7 +29,7 @@ public class WithdrawalController {
 
     @PostMapping("/out")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<BalanceResponseDTO> withdrawCash(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
+    public ResponseEntity<BalanceResponseDTO> makeWithdraw(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
         log.info("Making withdrawal for [{} {}]", String.format("%.2f", withdrawalRequestDTO.getAmount()), withdrawalRequestDTO.getCurrency());
         BalanceResponseDTO balanceResponseDTO = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
         return new ResponseEntity<>(balanceResponseDTO, HttpStatus.OK);
@@ -62,7 +62,7 @@ public class WithdrawalController {
     }
 
     @GetMapping("/get/total/amount")
-    public BigDecimal getTotalDepositAmount() {
+    public BigDecimal getTotalWithdrawalsAmount() {
         log.info("Getting total amount of withdrawals");
         return this.withdrawalService.getTotalWithdrawalsAmount();
     }
