@@ -1,6 +1,6 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.BalanceResponse;
 import com.investments.tracker.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.service.DividendService;
 import jakarta.validation.Valid;
@@ -23,10 +23,10 @@ public class DividendController {
 
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<BalanceResponseDTO> insertDividend(@RequestBody @Valid DividendRequestDTO dividendRequestDTO) {
+    public ResponseEntity<BalanceResponse> insertDividend(@RequestBody @Valid DividendRequestDTO dividendRequestDTO) {
         log.info("Inserting dividend for [{}]", dividendRequestDTO.getProductName());
-        BalanceResponseDTO balanceResponseDTO = this.dividendService.insertDividend(dividendRequestDTO);
-        return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
+        BalanceResponse balanceResponse = this.dividendService.insertDividend(dividendRequestDTO);
+        return new ResponseEntity<>(balanceResponse, HttpStatus.CREATED);
     }
 
     // TODO:

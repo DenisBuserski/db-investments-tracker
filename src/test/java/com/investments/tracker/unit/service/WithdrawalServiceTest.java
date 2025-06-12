@@ -1,12 +1,13 @@
-package com.investments.tracker.service;
+package com.investments.tracker.unit.service;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.BalanceResponse;
 import com.investments.tracker.dto.withdraw.WithdrawalRequestDTO;
 import com.investments.tracker.dto.withdraw.WithdrawalResponseDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
+import com.investments.tracker.service.WithdrawalService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,9 +82,9 @@ public class WithdrawalServiceTest {
     @DisplayName("Test should create a successful withdrawal")
     public void testSuccessfulWithdrawal() {
         this.balanceRepository.save(balance);
-        BalanceResponseDTO balanceResponseDTO = withdrawalService.withdrawCash(withdrawalRequestDTO);
-        assertEquals(balanceResponseDTO.getBalance(), BigDecimal.ZERO);
-        assertEquals(balanceResponseDTO.getTotalWithdrawals(), BigDecimal.valueOf(1000));
+        BalanceResponse balanceResponse = withdrawalService.withdrawCash(withdrawalRequestDTO);
+        assertEquals(balanceResponse.getBalance(), BigDecimal.ZERO);
+        assertEquals(balanceResponse.getTotalWithdrawals(), BigDecimal.valueOf(1000));
     }
 
     @Test
@@ -91,17 +92,17 @@ public class WithdrawalServiceTest {
     public void testUnsuccessfulWithdrawal() {
         this.balanceRepository.save(balance);
         withdrawalService.withdrawCash(withdrawalRequestDTO);
-        BalanceResponseDTO balanceResponseDTO = withdrawalService.withdrawCash(withdrawalRequestDTO);
-        assertEquals(balanceResponseDTO.getBalance(), BigDecimal.ZERO);
-        assertEquals(balanceResponseDTO.getTotalWithdrawals(), BigDecimal.valueOf(1000));
+        BalanceResponse balanceResponse = withdrawalService.withdrawCash(withdrawalRequestDTO);
+        assertEquals(balanceResponse.getBalance(), BigDecimal.ZERO);
+        assertEquals(balanceResponse.getTotalWithdrawals(), BigDecimal.valueOf(1000));
     }
 
     @Test
     @DisplayName("Test should return empty BalanceDTO when there is no current balance")
     public void testIncorrectWithdrawal() {
-        BalanceResponseDTO balanceResponseDTO = withdrawalService.withdrawCash(withdrawalRequestDTO);
-        assertEquals(balanceResponseDTO.getBalance(), BigDecimal.ZERO);
-        assertEquals(balanceResponseDTO.getTotalWithdrawals(), BigDecimal.ZERO);
+        BalanceResponse balanceResponse = withdrawalService.withdrawCash(withdrawalRequestDTO);
+        assertEquals(balanceResponse.getBalance(), BigDecimal.ZERO);
+        assertEquals(balanceResponse.getTotalWithdrawals(), BigDecimal.ZERO);
     }
 
 

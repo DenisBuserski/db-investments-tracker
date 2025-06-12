@@ -1,6 +1,6 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.BalanceResponse;
 import com.investments.tracker.dto.withdraw.WithdrawalRequestDTO;
 import com.investments.tracker.dto.withdraw.WithdrawalResponseDTO;
 import com.investments.tracker.service.WithdrawalService;
@@ -29,10 +29,10 @@ public class WithdrawalController {
 
     @PostMapping("/out")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<BalanceResponseDTO> makeWithdraw(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
+    public ResponseEntity<BalanceResponse> makeWithdraw(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
         log.info("Making withdrawal for [{} {}]", String.format("%.2f", withdrawalRequestDTO.getAmount()), withdrawalRequestDTO.getCurrency());
-        BalanceResponseDTO balanceResponseDTO = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
-        return new ResponseEntity<>(balanceResponseDTO, HttpStatus.OK);
+        BalanceResponse balanceResponse = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
+        return new ResponseEntity<>(balanceResponse, HttpStatus.OK);
     }
 
     @GetMapping("/get/from/{fromDate}/to/{toDate}")

@@ -1,6 +1,6 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.BalanceResponse;
 import com.investments.tracker.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.service.TransactionService;
 import jakarta.validation.Valid;
@@ -23,10 +23,10 @@ public class TransactionController {
 
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<BalanceResponseDTO> insertTransaction(@RequestBody @Valid TransactionRequestDTO transactionRequestDTO) {
+    public ResponseEntity<BalanceResponse> insertTransaction(@RequestBody @Valid TransactionRequestDTO transactionRequestDTO) {
         log.info("Creating [{}] transaction for date [{}] and product [{}]", transactionRequestDTO.getTransactionType(), transactionRequestDTO.getDate(), transactionRequestDTO.getProductName());
-        BalanceResponseDTO balanceResponseDTO = this.transactionService.insertTransaction(transactionRequestDTO);
-        return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
+        BalanceResponse balanceResponse = this.transactionService.insertTransaction(transactionRequestDTO);
+        return new ResponseEntity<>(balanceResponse, HttpStatus.CREATED);
     }
 
     // TODO:

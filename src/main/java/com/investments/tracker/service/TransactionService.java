@@ -3,7 +3,7 @@ package com.investments.tracker.service;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Portfolio;
 import com.investments.tracker.model.Transaction;
-import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.BalanceResponse;
 import com.investments.tracker.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.enums.TransactionType;
 import com.investments.tracker.repository.BalanceRepository;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static com.investments.tracker.dto.BalanceResponseDTO.createBalanceResponseDTO;
+import static com.investments.tracker.dto.BalanceResponse.createBalanceResponseDTO;
 import static com.investments.tracker.enums.Currency.EUR;
 import static com.investments.tracker.enums.TransactionType.BUY;
 import static com.investments.tracker.enums.TransactionType.SELL;
@@ -48,7 +48,7 @@ public class TransactionService{
         this.portfolioService = portfolioService;
     }
 
-    public BalanceResponseDTO insertTransaction(TransactionRequestDTO transactionRequestDTO) {
+    public BalanceResponse insertTransaction(TransactionRequestDTO transactionRequestDTO) {
         Optional<Balance> currentBalance = this.balanceRepository.getLatestBalance();
         if (!currentBalance.isPresent()) {
             log.error("Transaction cannot be created because there is no current balance!");
@@ -58,17 +58,17 @@ public class TransactionService{
             BigDecimal balanceValue = currentBalance.get().getBalance();
             BigDecimal transactionValue = calculateTransactionValue(transactionRequestDTO);
 
-            BalanceResponseDTO balanceResponseDTO = null;
+            BalanceResponse balanceResponse = null;
             if (transactionType == BUY) {
-                balanceResponseDTO = buyTransaction(currentBalance.get(), balanceValue, transactionValue, transactionRequestDTO);
+                balanceResponse = buyTransaction(currentBalance.get(), balanceValue, transactionValue, transactionRequestDTO);
             } else if (transactionType == SELL) {
-                balanceResponseDTO = sellTransaction(currentBalance.get(), transactionValue, transactionRequestDTO);
+                balanceResponse = sellTransaction(currentBalance.get(), transactionValue, transactionRequestDTO);
             }
-            return balanceResponseDTO;
+            return balanceResponse;
         }
     }
 
-    private BalanceResponseDTO buyTransaction(Balance currentBalance, BigDecimal balanceValue, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
+    private BalanceResponse buyTransaction(Balance currentBalance, BigDecimal balanceValue, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
         if (balanceValue.compareTo(transactionValue) >= 0) {
             Transaction transaction = createTransaction(transactionRequestDTO, transactionValue);
             this.transactionRepository.save(transaction);
@@ -89,7 +89,7 @@ public class TransactionService{
     }
 
     // TODO: Checking selling
-    private BalanceResponseDTO sellTransaction(Balance currentBalance, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
+    private BalanceResponse sellTransaction(Balance currentBalance, BigDecimal transactionValue, TransactionRequestDTO transactionRequestDTO) {
         String productName = transactionRequestDTO.getProductName();
         Optional<Portfolio> portfolioForProduct = this.portfolioRepository.findByProductName(productName);
         if (!portfolioForProduct.isEmpty()) {

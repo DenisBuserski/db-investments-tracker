@@ -1,0 +1,9 @@
+,------.  ,-----.             ,---.  ,------. ,------.
+|  .-.  \ |  |) /_  ,-----.  /  O  \ |  .--. '|  .--. '
+|  |  \  :|  .-.  \ '-----' |  .-.  ||  '--' ||  '--' |
+|  '--'  /|  '--' /         |  | |  ||  | --' |  | --'
+`-------' `------'          `--' `--'`--'     `--'
+
+Application Name: ${spring.application.name}
+Java Version    : ${java.version}
+Spring Version  : ${spring-boot.version}

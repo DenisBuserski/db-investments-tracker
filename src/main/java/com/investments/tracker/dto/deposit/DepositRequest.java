@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Builder
-public class DepositRequestDTO {
+public class DepositRequest {
     @NotNull(message = "Deposit date cannot be NULL!")
     @PastOrPresent(message = "Deposit date cannot be in the future!")
     private LocalDate date;

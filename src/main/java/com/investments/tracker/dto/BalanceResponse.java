@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Builder
-public class BalanceResponseDTO {
+public class BalanceResponse {
     private LocalDate date;
     private BigDecimal balance;
     private BigDecimal totalInvestments;
@@ -20,7 +20,7 @@ public class BalanceResponseDTO {
     private BigDecimal totalFees;
     private BigDecimal lastPortfolioValue;
 
-    public static BalanceResponseDTO createBalanceResponseDTO(Balance newBalance) {
+    public static BalanceResponse createBalanceResponseDTO(Balance newBalance) {
         LocalDate newBalanceDate = newBalance == null ? LocalDate.now() : newBalance.getDate();
         BigDecimal newBalanceAmount = newBalance == null ? BigDecimal.ZERO : newBalance.getBalance();
         BigDecimal newTotalInvestments = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalInvestments();
@@ -30,7 +30,7 @@ public class BalanceResponseDTO {
         BigDecimal newTotalFees = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalFees();
         BigDecimal newLastPortfolioValue = newBalance == null ? BigDecimal.ZERO : newBalance.getLastPortfolioValue();
 
-        return BalanceResponseDTO.builder()
+        return BalanceResponse.builder()
                 .date(newBalanceDate)
                 .balance(newBalanceAmount)
                 .totalInvestments(newTotalInvestments)

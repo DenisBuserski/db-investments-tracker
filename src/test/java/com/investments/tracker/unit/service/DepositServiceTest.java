@@ -1,12 +1,16 @@
-package com.investments.tracker.service;
+package com.investments.tracker.unit.service;
 
+import com.investments.tracker.mapper.CashTransactionMapper;
+import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.BalanceResponseDTO;
-import com.investments.tracker.dto.deposit.DepositRequestDTO;
-import com.investments.tracker.dto.deposit.DepositResponseDTO;
+import com.investments.tracker.dto.BalanceResponse;
+import com.investments.tracker.dto.deposit.DepositRequest;
+import com.investments.tracker.dto.deposit.DepositResponse;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
+import com.investments.tracker.service.BalanceService;
+import com.investments.tracker.service.DepositService;
 import org.junit.jupiter.api.*;
 
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,22 +37,37 @@ public class DepositServiceTest {
     private DepositService depositService;
 
     @Mock
+    private BalanceService balanceService;
+
+    @Mock
     private CashTransactionRepository cashTransactionRepository;
 
     @Mock
     private BalanceRepository balanceRepository;
 
-    private DepositRequestDTO depositRequestDTO;
+    @Mock
+    private CashTransactionMapper cashTransactionMapper;
 
+    @Mock
+    private DepositMapper depositMapper;
+
+    private DepositRequest depositRequest;
+    private DepositResponse depositResponse;
     private CashTransaction cashTransaction;
-
     private Balance balance;
-
+    private Balance balance2;
     private final LocalDate date = LocalDate.of(2025, 1, 1);
 
     @BeforeEach
     public void setUp() {
-        depositRequestDTO = DepositRequestDTO.builder()
+        depositRequest = DepositRequest.builder()
+                .date(date)
+                .amount(BigDecimal.valueOf(1000))
+                .currency(EUR)
+                .description("TEST DESCRIPTION")
+                .build();
+
+        depositResponse = DepositResponse.builder()
                 .date(date)
                 .amount(BigDecimal.valueOf(1000))
                 .currency(EUR)
@@ -72,93 +92,103 @@ public class DepositServiceTest {
                 .totalFees(BigDecimal.ZERO)
                 .lastPortfolioValue(BigDecimal.ZERO)
                 .build();
-    }
 
-    @AfterEach
-    public void cleanUp() {
-        cashTransactionRepository.deleteAll();
+        balance2 = Balance.builder()
+                .date(date)
+                .balance(BigDecimal.valueOf(2000))
+                .totalInvestments(BigDecimal.ZERO)
+                .totalDeposits(BigDecimal.valueOf(2000))
+                .totalWithdrawals(BigDecimal.ZERO)
+                .totalDividends(BigDecimal.ZERO)
+                .totalFees(BigDecimal.ZERO)
+                .lastPortfolioValue(BigDecimal.ZERO)
+                .build();
     }
 
     @Test
     @DisplayName("Test should insert a successful deposit for the first time")
     public void testInsertSuccessfulDepositForTheFirstTime() {
+        when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(cashTransaction);
         when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(cashTransaction);
-        // This line tells Mockito that whenever the "save()" method of cashTransactionRepository is called with any CashTransaction object,
-        // it should return the predefined CashTransaction object(Which you would define elsewhere in your test).
-        // In other words, you're mocking the repository to simulate that when you save a CashTransaction, it successfully returns the mock object cashTransaction.
-        // Since you are testing the "insertDeposit()" method, which interacts with the cashTransactionRepository, you want to simulate the behavior of saving a
-        // CashTransaction to avoid needing a real database or performing a real save operation. By mocking it, you can control its return value.
-        when(balanceRepository.getLatestBalance()).thenReturn(Optional.empty());
+        when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.empty());
+        when(balanceService.createNewBalanceFromDeposit(isNull(), eq(cashTransaction))).thenReturn(balance);
 
-        BalanceResponseDTO balanceResponseDTO = depositService.insertDeposit(depositRequestDTO);
-        assertEquals(balanceResponseDTO.getBalance(), BigDecimal.valueOf(1000));
-        assertEquals(balanceResponseDTO.getTotalDeposits(), BigDecimal.valueOf(1000));
+        BalanceResponse balanceResponse = depositService.insertDeposit(depositRequest);
+        assertEquals(balanceResponse.getBalance(), BigDecimal.valueOf(1000));
+        assertEquals(balanceResponse.getTotalDeposits(), BigDecimal.valueOf(1000));
 
+        verify(cashTransactionMapper).createCashtransaction(eq(depositRequest), eq(depositMapper));
         verify(cashTransactionRepository).save(any(CashTransaction.class));
-        // This line verifies that the "save()" method on cashTransactionRepository was called exactly once with any CashTransaction object.
-        // The goal is to ensure that the service method interacts with the cashTransactionRepository as expected, performing a save operation on the CashTransaction.
-        verify(balanceRepository).getLatestBalance();
+        verify(balanceRepository).findTopByOrderByIdDesc();
+        verify(balanceService).createNewBalanceFromDeposit(isNull(), eq(cashTransaction));
         verify(balanceRepository).save(any(Balance.class));
     }
-
 
     @Test
     @DisplayName("Test should create a successful deposit")
     public void testInsertSuccessfulDeposit() {
+        when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(cashTransaction);
         when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(cashTransaction);
-        when(balanceRepository.getLatestBalance()).thenReturn(Optional.of(balance));
+        when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(balance));
+        when(balanceService.createNewBalanceFromDeposit(eq(balance), eq(cashTransaction))).thenReturn(balance2);
 
-        BalanceResponseDTO balanceResponseDTO = depositService.insertDeposit(depositRequestDTO);
-        assertEquals(0, balanceResponseDTO.getBalance().compareTo(BigDecimal.valueOf(2000)));
-        assertEquals(0, balanceResponseDTO.getTotalDeposits().compareTo(BigDecimal.valueOf(2000)));
+        BalanceResponse balanceResponse = depositService.insertDeposit(depositRequest);
+        assertEquals(0, balanceResponse.getBalance().compareTo(BigDecimal.valueOf(2000)));
+        assertEquals(0, balanceResponse.getTotalDeposits().compareTo(BigDecimal.valueOf(2000)));
 
+        verify(cashTransactionMapper).createCashtransaction(eq(depositRequest), eq(depositMapper));
         verify(cashTransactionRepository).save(any(CashTransaction.class));
-        verify(balanceRepository).getLatestBalance();
+        verify(balanceRepository).findTopByOrderByIdDesc();
+        verify(balanceService).createNewBalanceFromDeposit(eq(balance), eq(cashTransaction));
         verify(balanceRepository).save(any(Balance.class));
     }
 
     @Test
     @DisplayName("Test should return all deposits from [date] to [date] when we have deposits")
     public void testGetAllDepositsFromToNotEmpty() {
-        // when(cashTransactionRepository.getCashTransactionsFromTo(date, date, DEPOSIT)).thenReturn(List.of(cashTransaction));
+        when(cashTransactionRepository.findByCashTransactionTypeAndDateBetween(eq(DEPOSIT), eq(date), eq(date))).thenReturn(List.of(cashTransaction));
+        when(depositMapper.mapToResponseDTOList(eq(List.of(cashTransaction)))).thenReturn(List.of(depositResponse));
 
-        List<DepositResponseDTO> result = depositService.getAllDepositsFromTo(date, date);
+        List<DepositResponse> result = depositService.getAllDepositsFromTo(date, date);
         assertEquals(1, result.size());
+        assertEquals(result.get(0).amount(), BigDecimal.valueOf(1000));
 
-        // verify(cashTransactionRepository, times(1)).getCashTransactionsFromTo(date, date, DEPOSIT);
+        verify(cashTransactionRepository).findByCashTransactionTypeAndDateBetween(DEPOSIT, date, date);
+        verify(depositMapper).mapToResponseDTOList(List.of(cashTransaction));
     }
 
     @Test
     @DisplayName("Test should return all deposits from [date] to [date] when we don't have deposits")
     public void testGetAllDepositsFromToEmpty() {
-        // when(cashTransactionRepository.getCashTransactionsFromTo(date, date, DEPOSIT)).thenReturn(Collections.emptyList());
+        when(cashTransactionRepository.findByCashTransactionTypeAndDateBetween(eq(DEPOSIT), eq(date), eq(date))).thenReturn(Collections.emptyList());
 
-        List<DepositResponseDTO> result = depositService.getAllDepositsFromTo(date, date);
+        List<DepositResponse> result = depositService.getAllDepositsFromTo(date, date);
         assertEquals(0, result.size());
 
-        // verify(cashTransactionRepository).getCashTransactionsFromTo(date, date, DEPOSIT);
+        verify(cashTransactionRepository).findByCashTransactionTypeAndDateBetween(DEPOSIT, date, date);
+        verifyNoInteractions(depositMapper);
     }
 
     @Test
     @DisplayName("Test should return total amount of all deposits when we have deposits")
     public void testGetTotalDepositsAmountNotEmpty() {
-        // when(balanceRepository.getTotalDepositsAmount()).thenReturn(Optional.of(balance.getTotalDeposits()));
+        when(cashTransactionRepository.getTotalDepositsAmount()).thenReturn(Optional.of(balance.getTotalDeposits()));
 
         BigDecimal result = depositService.getTotalDepositsAmount();
         assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
 
-        // verify(balanceRepository).getTotalDepositsAmount();
+        verify(cashTransactionRepository).getTotalDepositsAmount();
     }
 
     @Test
     @DisplayName("Test should return total amount of all deposits when we don't have deposits")
     public void testGetTotalDepositsAmountEmpty() {
-        // when(balanceRepository.getTotalDepositsAmount()).thenReturn(Optional.empty());
+        when(cashTransactionRepository.getTotalDepositsAmount()).thenReturn(Optional.empty());
 
         BigDecimal result = depositService.getTotalDepositsAmount();
         assertEquals(0, result.compareTo(BigDecimal.ZERO));
 
-        // verify(balanceRepository).getTotalDepositsAmount();
+        verify(cashTransactionRepository).getTotalDepositsAmount();
     }
 
 }

@@ -2,9 +2,9 @@ package com.investments.tracker.service;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.BalanceResponseDTO;
-import com.investments.tracker.dto.deposit.DepositRequestDTO;
-import com.investments.tracker.dto.deposit.DepositResponseDTO;
+import com.investments.tracker.dto.BalanceResponse;
+import com.investments.tracker.dto.deposit.DepositRequest;
+import com.investments.tracker.dto.deposit.DepositResponse;
 import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.repository.BalanceRepository;
@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.dto.BalanceResponseDTO.createBalanceResponseDTO;
+import static com.investments.tracker.dto.BalanceResponse.createBalanceResponseDTO;
 import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
 
 @Service
@@ -44,8 +44,8 @@ public class DepositService {
         this.balanceService = balanceService;
     }
 
-    public BalanceResponseDTO insertDeposit(DepositRequestDTO depositRequestDTO) {
-        CashTransaction deposit = this.cashTransactionMapper.createCashtransaction(depositRequestDTO, depositMapper);
+    public BalanceResponse insertDeposit(DepositRequest depositRequest) {
+        CashTransaction deposit = this.cashTransactionMapper.createCashtransaction(depositRequest, depositMapper);
         this.cashTransactionRepository.save(deposit);
         Balance newBalance;
 
@@ -60,7 +60,7 @@ public class DepositService {
         return createBalanceResponseDTO(newBalance);
     }
 
-    public List<DepositResponseDTO> getAllDepositsFromTo(LocalDate from, LocalDate to) {
+    public List<DepositResponse> getAllDepositsFromTo(LocalDate from, LocalDate to) {
         List<CashTransaction> depositsResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, from, to);
         if (!depositsResult.isEmpty()) {
             return depositMapper.mapToResponseDTOList(depositsResult);
@@ -71,5 +71,4 @@ public class DepositService {
     public BigDecimal getTotalDepositsAmount() {
         return this.cashTransactionRepository.getTotalDepositsAmount().orElse(BigDecimal.ZERO);
     }
-
 }

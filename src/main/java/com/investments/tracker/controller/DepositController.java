@@ -1,11 +1,12 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.dto.BalanceResponseDTO;
-import com.investments.tracker.dto.deposit.DepositRequestDTO;
-import com.investments.tracker.dto.deposit.DepositResponseDTO;
+import com.investments.tracker.dto.BalanceResponse;
+import com.investments.tracker.dto.deposit.DepositRequest;
+import com.investments.tracker.dto.deposit.DepositResponse;
 import com.investments.tracker.service.DepositService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.investments.tracker.utils.Constants.START_DATE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/api/v1/deposits")
@@ -37,7 +39,7 @@ public class DepositController {
         this.depositService = depositService;
     }
 
-    @PostMapping("/in")
+    @PostMapping(value = "/in", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             operationId = "insertDeposit",
@@ -49,16 +51,19 @@ public class DepositController {
                     description = "Deposit created",
                     content = {
                             @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = BalanceResponseDTO.class))
-                    })
+                                    schema = @Schema(implementation = BalanceResponse.class))
+                    }),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<BalanceResponseDTO> insertDeposit(@RequestBody @Valid DepositRequestDTO depositRequestDTO) {
-        log.info("Inserting deposit for [{} {}]", String.format("%.2f", depositRequestDTO.getAmount()), depositRequestDTO.getCurrency());
-        BalanceResponseDTO balanceResponseDTO = this.depositService.insertDeposit(depositRequestDTO);
-        return new ResponseEntity<>(balanceResponseDTO, HttpStatus.CREATED);
+    public ResponseEntity<BalanceResponse> insertDeposit(@RequestBody @Valid DepositRequest depositRequest) {
+        log.info("Inserting deposit for [{} {}]", String.format("%.2f", depositRequest.getAmount()), depositRequest.getCurrency());
+        BalanceResponse balanceResponse = this.depositService.insertDeposit(depositRequest);
+        return new ResponseEntity<>(balanceResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/get/from/{fromDate}/to/{toDate}")
+    // TODO: Add Pagination
+    @GetMapping(value = "/get/from/{fromDate}/to/{toDate}", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             operationId = "getDepositsFromTo",
@@ -70,20 +75,22 @@ public class DepositController {
                     description = "Got deposits in range",
                     content = {
                             @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = DepositResponseDTO.class))
-                    })
+                                    schema = @Schema(implementation = DepositResponse.class))
+                    }),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<List<DepositResponseDTO>> getDepositsFromTo(
+    public ResponseEntity<List<DepositResponse>> getDepositsFromTo(
             @Parameter(description = "The start date of the range", required = true) @PathVariable(name = "fromDate") LocalDate from,
             @Parameter(description = "The end date of the range", required = true) @PathVariable(name = "toDate") LocalDate to) {
         log.info("Getting deposits from [{}] to [{}]", from, to);
-        List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(from, to);
+        List<DepositResponse> deposits = this.depositService.getAllDepositsFromTo(from, to);
         return returnDepositList(deposits);
     }
 
 
     // TODO: Add Pagination
-    @GetMapping("/get/all")
+    @GetMapping(value = "/get/all", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             operationId = "geAllDeposits",
@@ -95,16 +102,18 @@ public class DepositController {
                     description = "Got all deposits",
                     content = {
                             @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = DepositResponseDTO.class))
-                    })
+                                    array = @ArraySchema(schema = @Schema(implementation = DepositResponse.class)))
+                    }),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<List<DepositResponseDTO>> getAllDeposits() {
+    public ResponseEntity<List<DepositResponse>> getAllDeposits() {
         log.info("Getting all deposits");
-        List<DepositResponseDTO> deposits = this.depositService.getAllDepositsFromTo(START_DATE, LocalDate.now());
+        List<DepositResponse> deposits = this.depositService.getAllDepositsFromTo(START_DATE, LocalDate.now());
         return returnDepositList(deposits);
     }
 
-    @GetMapping("/get/total/amount")
+    @GetMapping(value = "/get/total/amount", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             operationId = "getTotalDepositsAmount",
@@ -117,7 +126,9 @@ public class DepositController {
                     content = {
                             @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = BigDecimal.class))
-                    })
+                    }),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     public ResponseEntity<BigDecimal> getTotalDepositsAmount() {
         log.info("Getting total amount of deposits");
@@ -125,7 +136,7 @@ public class DepositController {
         return new ResponseEntity<>(totalDepositsAmount, HttpStatus.OK);
     }
 
-    private static ResponseEntity returnDepositList(List<DepositResponseDTO> deposits) {
+    private static ResponseEntity returnDepositList(List<DepositResponse> deposits) {
         if (deposits.isEmpty()) {
             log.info("No deposits found");
             return new ResponseEntity(Collections.EMPTY_LIST, HttpStatus.OK);

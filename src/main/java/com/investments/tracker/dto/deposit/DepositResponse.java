@@ -6,13 +6,10 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
+
 @Builder
-public record DepositResponseDTO (
-    private BigDecimal amount,
-    private Currency currency,
-    private LocalDate date,
-    private String description) {
-}
+public record DepositResponse(
+        BigDecimal amount,
+        Currency currency,
+        LocalDate date,
+        String description) {}

@@ -3,7 +3,7 @@ package com.investments.tracker.service;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Dividend;
-import com.investments.tracker.dto.BalanceResponseDTO;
+import com.investments.tracker.dto.BalanceResponse;
 import com.investments.tracker.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static com.investments.tracker.dto.BalanceResponseDTO.createBalanceResponseDTO;
+import static com.investments.tracker.dto.BalanceResponse.createBalanceResponseDTO;
 import static java.math.RoundingMode.CEILING;
 
 @Service
@@ -42,7 +42,7 @@ public class DividendService {
     }
 
     // TODO: Check the scaling with the exchange rate
-    public BalanceResponseDTO insertDividend(DividendRequestDTO dividendRequestDTO) {
+    public BalanceResponse insertDividend(DividendRequestDTO dividendRequestDTO) {
         BigDecimal exchangeRate = dividendRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequestDTO.getExchangeRate();
         BigDecimal dividendAmountBeforeConversion = calculateDividendAmount(dividendRequestDTO);
         BigDecimal dividendAmountAfterConversion = dividendConversion(exchangeRate, dividendAmountBeforeConversion);

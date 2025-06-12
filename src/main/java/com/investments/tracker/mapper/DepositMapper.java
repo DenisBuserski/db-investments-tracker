@@ -1,8 +1,8 @@
 package com.investments.tracker.mapper;
 
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.deposit.DepositRequestDTO;
-import com.investments.tracker.dto.deposit.DepositResponseDTO;
+import com.investments.tracker.dto.deposit.DepositRequest;
+import com.investments.tracker.dto.deposit.DepositResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,21 +12,21 @@ import java.util.stream.Collectors;
 import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
 
 @Component
-public class DepositMapper implements Function<DepositRequestDTO, CashTransaction> {
+public class DepositMapper implements Function<DepositRequest, CashTransaction> {
     @Override
-    public CashTransaction apply(DepositRequestDTO depositRequestDTO) {
+    public CashTransaction apply(DepositRequest depositRequest) {
         return CashTransaction.builder()
-                .date(depositRequestDTO.getDate())
+                .date(depositRequest.getDate())
                 .cashTransactionType(DEPOSIT)
-                .amount(depositRequestDTO.getAmount())
-                .currency(depositRequestDTO.getCurrency())
-                .description(depositRequestDTO.getDescription())
+                .amount(depositRequest.getAmount())
+                .currency(depositRequest.getCurrency())
+                .description(depositRequest.getDescription())
                 .referenceId(null)
                 .build();
     }
 
-    public DepositResponseDTO mapToResponseDTO(CashTransaction deposit) {
-        return DepositResponseDTO.builder()
+    public DepositResponse mapToResponseDTO(CashTransaction deposit) {
+        return DepositResponse.builder()
                 .date(deposit.getDate())
                 .amount(deposit.getAmount())
                 .currency(deposit.getCurrency())
@@ -34,7 +34,7 @@ public class DepositMapper implements Function<DepositRequestDTO, CashTransactio
                 .build();
     }
 
-    public List<DepositResponseDTO> mapToResponseDTOList(List<CashTransaction> deposits) {
+    public List<DepositResponse> mapToResponseDTOList(List<CashTransaction> deposits) {
         return deposits.stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
