@@ -1,6 +1,7 @@
-package com.investments.tracker.repository;
+package com.investments.tracker.integration.repository;
 
 import com.investments.tracker.model.CashTransaction;
+import com.investments.tracker.repository.CashTransactionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,10 +15,12 @@ import org.springframework.test.context.TestPropertySource;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
 import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 import static com.investments.tracker.enums.Currency.EUR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -25,16 +28,16 @@ import static com.investments.tracker.enums.Currency.EUR;
 public class CashTransactionRepositoryTest {
 
     @Autowired
-    CashTransactionRepository cashTransactionRepository;
+    private CashTransactionRepository cashTransactionRepository;
 
     CashTransaction cashTransactionDeposit;
-
     CashTransaction cashTransactionWithdrawal;
+    private final LocalDate DATE = LocalDate.of(2025, 1, 1);
 
     @BeforeEach
     public void setUp() {
         cashTransactionDeposit = CashTransaction.builder()
-                .date(LocalDate.now())
+                .date(DATE)
                 .cashTransactionType(DEPOSIT)
                 .amount(BigDecimal.valueOf(1000))
                 .currency(EUR)
@@ -42,27 +45,41 @@ public class CashTransactionRepositoryTest {
                 .build();
 
         cashTransactionWithdrawal = CashTransaction.builder()
-                .date(LocalDate.now())
+                .date(DATE)
                 .cashTransactionType(WITHDRAWAL)
                 .amount(BigDecimal.valueOf(1000))
                 .currency(EUR)
                 .description("TEST DESCRIPTION")
                 .build();
+
+        cashTransactionRepository.save(cashTransactionDeposit);
+        cashTransactionRepository.save(cashTransactionWithdrawal);
     }
 
     @Test
     @DisplayName("Get all deposits from [date] to [date]")
     public void testGetCashTransactionsFromToDeposits() {
-        List<CashTransaction> result = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, LocalDate.now(), LocalDate.now());
-        Assertions.assertEquals(0, result.size());
+        List<CashTransaction> result = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, DATE, DATE);
+        assertEquals(1, result.size());
+        assertEquals(DEPOSIT, result.get(0).getCashTransactionType());
     }
 
     @Test
     @DisplayName("Get all withdrawals from [date] to [date]")
     public void testGetCashTransactionsFromToWithdrawals() {
-        List<CashTransaction> result = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(WITHDRAWAL, LocalDate.now(), LocalDate.now());
-        Assertions.assertEquals(0, result.size());
+        List<CashTransaction> result = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(WITHDRAWAL, DATE, DATE);
+        assertEquals(1, result.size());
+        assertEquals(WITHDRAWAL, result.get(0).getCashTransactionType());
     }
+
+    @Test
+    @DisplayName("Get all total deposit amount")
+    public void testGetAllTotalDepositAmount() {
+        Optional<BigDecimal> totalDepositsAmount = this.cashTransactionRepository.getTotalDepositsAmount();
+        BigDecimal result = totalDepositsAmount.get();
+        assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
+    }
+
 
 
 }
