@@ -1,8 +1,9 @@
-package com.investments.tracker.controller;
+package com.investments.tracker.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.investments.tracker.dto.BalanceResponseDTO;
-import com.investments.tracker.dto.deposit.DepositRequestDTO;
+import com.investments.tracker.controller.DepositController;
+import com.investments.tracker.dto.BalanceResponse;
+import com.investments.tracker.dto.deposit.DepositRequest;
 import com.investments.tracker.service.DepositService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,21 +42,21 @@ public class DepositControllerTest {
 
     // private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-    DepositRequestDTO depositRequestDTO;
+    DepositRequest depositRequest;
 
-    BalanceResponseDTO balanceResponseDTO;
+    BalanceResponse balanceResponse;
 
 
     @BeforeEach
     void setUp() {
-        depositRequestDTO = DepositRequestDTO.builder()
+        depositRequest = DepositRequest.builder()
                 .date(LocalDate.of(2025, 3, 16))
                 .amount(BigDecimal.valueOf(1000))
                 .currency(EUR)
                 .description("TEST DESCRIPTION")
                 .build();
 
-        balanceResponseDTO = BalanceResponseDTO.builder()
+        balanceResponse = BalanceResponse.builder()
                 .date(LocalDate.of(2025, 3, 16))
                 .balance(BigDecimal.valueOf(1000))
                 .totalInvestments(BigDecimal.ZERO)
@@ -70,10 +71,10 @@ public class DepositControllerTest {
     @Test
     @DisplayName("Test should create a successful deposit")
     public void testInsertSuccessfulDeposit() throws Exception {
-        when(depositService.insertDeposit(any(DepositRequestDTO.class))).thenReturn(balanceResponseDTO);
+        when(depositService.insertDeposit(any(DepositRequest.class))).thenReturn(balanceResponse);
 
         mockMvc.perform(post("/deposit/in")
-                        .content(objectMapper.writeValueAsString(depositRequestDTO))
+                        .content(objectMapper.writeValueAsString(depositRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.date").value("2025-03-16"))
@@ -85,7 +86,7 @@ public class DepositControllerTest {
                 .andExpect(jsonPath("$.totalFees").value(BigDecimal.ZERO))
                 .andExpect(jsonPath("$.lastPortfolioValue").value(BigDecimal.ZERO));
 
-        verify(depositService, times(1)).insertDeposit(any(DepositRequestDTO.class));
+        verify(depositService, times(1)).insertDeposit(any(DepositRequest.class));
     }
 
     // Unit test

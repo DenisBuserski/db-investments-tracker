@@ -10,9 +10,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Builder
-public class DepositResponseDTO {
-    private BigDecimal amount;
-    private Currency currency;
-    private LocalDate date;
-    private String description;
+public record DepositResponseDTO (
+    private BigDecimal amount,
+    private Currency currency,
+    private LocalDate date,
+    private String description) {
 }
