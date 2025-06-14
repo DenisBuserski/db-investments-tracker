@@ -2,7 +2,6 @@ package com.investments.tracker.mapper;
 
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.dto.deposit.DepositRequest;
-import com.investments.tracker.dto.deposit.DepositResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.investments.tracker.controller.DepositController;
 import com.investments.tracker.dto.BalanceResponse;
 import com.investments.tracker.dto.deposit.DepositRequest;
-import com.investments.tracker.dto.deposit.DepositResponse;
 import com.investments.tracker.service.DepositService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

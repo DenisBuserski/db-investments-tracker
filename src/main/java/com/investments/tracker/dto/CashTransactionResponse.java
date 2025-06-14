@@ -1,14 +1,11 @@
-package com.investments.tracker.dto.deposit;
+package com.investments.tracker.dto;
 
 import com.investments.tracker.enums.Currency;
-import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
-@Builder
-public record DepositResponse(
+public record CashTransactionResponse (
         BigDecimal amount,
         Currency currency,
         LocalDate date,

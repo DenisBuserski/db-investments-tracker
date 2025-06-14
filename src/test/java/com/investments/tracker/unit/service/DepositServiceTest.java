@@ -6,7 +6,6 @@ import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.dto.BalanceResponse;
 import com.investments.tracker.dto.deposit.DepositRequest;
-import com.investments.tracker.dto.deposit.DepositResponse;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.service.BalanceService;
