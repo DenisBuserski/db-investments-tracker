@@ -29,6 +29,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/api/v1/deposits")
+@CrossOrigin(
+        origins = "http://localhost:3000",
+        methods = { RequestMethod.POST, RequestMethod.GET }
+)
 @Slf4j
 @Tag(name = "Deposit Controller", description = "REST methods for deposits")
 public class DepositController {

@@ -51,6 +51,7 @@ public class WithdrawalService {
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             Balance balance = latestBalance.get();
+            // FIX THIS IS VERY WRONG
             if (balance.getDate().isBefore(withdrawalRequestDTO.getDate())) {
                 log.error("Withdrawal date cannot be before the latest balance date");
                 return createBalanceResponseDTO(balance);

@@ -18,6 +18,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/withdrawals")
+@CrossOrigin(
+        origins = "http://localhost:3000",
+        methods = { RequestMethod.POST, RequestMethod.GET }
+)
 @Slf4j
 public class WithdrawalController {
     private final WithdrawalService withdrawalService;

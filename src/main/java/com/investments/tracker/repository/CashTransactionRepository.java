@@ -16,10 +16,10 @@ public interface CashTransactionRepository extends JpaRepository<CashTransaction
 
     List<CashTransaction> findByCashTransactionTypeAndDateBetween(CashTransactionType cashTransactionType, LocalDate from, LocalDate to);
 
-    @Query("""
+    @Query(""" 
             SELECT SUM(ct.amount) 
             FROM CashTransaction ct 
-            WHERE ct.cashTransactionType = 'DEPOSIT'
-            """)
-    Optional<BigDecimal> getTotalDepositsAmount();
+            WHERE ct.cashTransactionType = :cashTransactionType
+           """)
+    Optional<BigDecimal> getTotalAmountOf(CashTransactionType cashTransactionType);
 }

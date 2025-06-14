@@ -2,7 +2,6 @@ package com.investments.tracker.integration.repository;
 
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.repository.CashTransactionRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,7 +74,7 @@ public class CashTransactionRepositoryTest {
     @Test
     @DisplayName("Get all total deposit amount")
     public void testGetAllTotalDepositAmount() {
-        Optional<BigDecimal> totalDepositsAmount = this.cashTransactionRepository.getTotalDepositsAmount();
+        Optional<BigDecimal> totalDepositsAmount = this.cashTransactionRepository.getTotalAmountOf(DEPOSIT);
         BigDecimal result = totalDepositsAmount.get();
         assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
     }

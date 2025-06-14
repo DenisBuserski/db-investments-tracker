@@ -44,6 +44,7 @@ public class DepositService {
         this.balanceService = balanceService;
     }
 
+    // TODO: Check what is the currency of the Deposit, based on that decide how to save in the balance
     public BalanceResponse insertDeposit(DepositRequest depositRequest) {
         CashTransaction deposit = this.cashTransactionMapper.createCashtransaction(depositRequest, depositMapper);
         this.cashTransactionRepository.save(deposit);
@@ -60,6 +61,7 @@ public class DepositService {
         return createBalanceResponseDTO(newBalance);
     }
 
+    // TODO: What if we have deposits in 2 currencies
     public List<DepositResponse> getAllDepositsFromTo(LocalDate from, LocalDate to) {
         List<CashTransaction> depositsResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, from, to);
         if (!depositsResult.isEmpty()) {
@@ -68,7 +70,8 @@ public class DepositService {
         return Collections.emptyList();
     }
 
+    // TODO: What if we have deposits in 2 currencies
     public BigDecimal getTotalDepositsAmount() {
-        return this.cashTransactionRepository.getTotalDepositsAmount().orElse(BigDecimal.ZERO);
+        return this.cashTransactionRepository.getTotalAmountOf(DEPOSIT).orElse(BigDecimal.ZERO);
     }
 }
