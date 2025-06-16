@@ -38,21 +38,19 @@ public class CashTransactionController {
     private final WithdrawalService withdrawalService;
     private final DividendService dividendService;
     private final FeeService feeService;
-    private final CashTransactionService cashTransactionService;
 
     public CashTransactionController(DepositService depositService,
                                      WithdrawalService withdrawalService,
                                      DividendService dividendService,
-                                     FeeService feeService, CashTransactionService cashTransactionService) {
+                                     FeeService feeService) {
         this.depositService = depositService;
         this.withdrawalService = withdrawalService;
         this.dividendService = dividendService;
         this.feeService = feeService;
-        this.cashTransactionService = cashTransactionService;
     }
 
     // TODO: Add Pagination
-    @GetMapping(value = "/get/all", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/get", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             operationId = "getCashTransactions",
@@ -73,12 +71,8 @@ public class CashTransactionController {
             @Parameter(description = "The type of cash transaction", required = true) @RequestParam("CashTransactionType") CashTransactionType type, // TODO: Fix only 1 type of fee,
             @Parameter(description = "The start date of the range. Format YYYY-MM-DD") @RequestParam(name = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @Parameter(description = "The end date of the range Format YYYY-MM-DD") @RequestParam(name = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        if (from == null) {
-            from = START_DATE;
-        }
-        if (to == null) {
-            to = LocalDate.now();
-        }
+        from = from == null ? START_DATE : from;
+        to = to == null ? LocalDate.now() : to;
         log.info("Getting cash transactions type: {} from [{}] to [{}]", type.name().toUpperCase(), from, to);
         List<CashTransactionResponse> result = switch (type) {
             case DEPOSIT -> this.depositService.getAllDepositsFromTo(from, to);
@@ -87,7 +81,7 @@ public class CashTransactionController {
             case FEE -> this.feeService.getAllFeesFromTo(from, to);
         };
 
-        return returnCashTransactionsResponseList(result);
+        return returnCashTransactionsResponseList(result, type);
     }
 
 
@@ -121,12 +115,12 @@ public class CashTransactionController {
     }
 
     // TODO: Add the type of cash transaction returned
-    private static ResponseEntity returnCashTransactionsResponseList(List<CashTransactionResponse> cashTransactionResponses) {
+    private static ResponseEntity<List<CashTransactionResponse>> returnCashTransactionsResponseList(List<CashTransactionResponse> cashTransactionResponses, CashTransactionType type) {
         if (cashTransactionResponses.isEmpty()) {
-            log.info("No cash transactions found found");
-            return new ResponseEntity(Collections.EMPTY_LIST, HttpStatus.OK);
+            log.info("No cash transactions found");
+            return new ResponseEntity<>(Collections.EMPTY_LIST, HttpStatus.OK);
         } else {
-            log.info("Found cash transactions - [{}]", cashTransactionResponses.size());
+            log.info("Found [{}] cash transactions of type: {}", cashTransactionResponses.size(), type.name().toUpperCase());
             return new ResponseEntity<>(cashTransactionResponses, HttpStatus.OK);
         }
     }
