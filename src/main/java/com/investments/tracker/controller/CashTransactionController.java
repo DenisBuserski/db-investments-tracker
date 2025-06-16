@@ -1,11 +1,8 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.dto.CashTransactionResponse;
+import com.investments.tracker.dto.response.CashTransactionResponse;
 import com.investments.tracker.enums.CashTransactionType;
-import com.investments.tracker.service.DepositService;
-import com.investments.tracker.service.DividendService;
-import com.investments.tracker.service.FeeService;
-import com.investments.tracker.service.WithdrawalService;
+import com.investments.tracker.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -15,13 +12,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,23 +38,24 @@ public class CashTransactionController {
     private final WithdrawalService withdrawalService;
     private final DividendService dividendService;
     private final FeeService feeService;
+    private final CashTransactionService cashTransactionService;
 
     public CashTransactionController(DepositService depositService,
                                      WithdrawalService withdrawalService,
                                      DividendService dividendService,
-                                     FeeService feeService) {
+                                     FeeService feeService, CashTransactionService cashTransactionService) {
         this.depositService = depositService;
         this.withdrawalService = withdrawalService;
         this.dividendService = dividendService;
         this.feeService = feeService;
+        this.cashTransactionService = cashTransactionService;
     }
-    // Used for deposits, withdrawals, dividends, fees
 
     // TODO: Add Pagination
-    @GetMapping(value = "/get/from/{fromDate}/to/{toDate}", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/get/all", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(
-            operationId = "getCashTransactionsFromTo",
+            operationId = "getCashTransactions",
             summary = "Get cash transactions in range",
             description = "Get cash transactions in range")
     @ApiResponses(value = {
@@ -66,68 +64,43 @@ public class CashTransactionController {
                     description = "Got cash transactions in range",
                     content = {
                             @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = CashTransactionResponse.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = CashTransactionResponse.class)))
                     }),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     public ResponseEntity<List<CashTransactionResponse>> getCashTransactionsFromTo(
-            @Parameter(description = "The type of cash transaction", required = true) @RequestParam("type") CashTransactionType type, // TODO: Fix only 1 type of fee
-            @Parameter(description = "The start date of the range", required = true) @PathVariable(name = "fromDate") LocalDate from,
-            @Parameter(description = "The end date of the range", required = true) @PathVariable(name = "toDate") LocalDate to) {
-        log.info("Getting cashtransaction[{}] from [{}] to [{}]", type.name(), from, to);
-        List<CashTransactionResponse> result = new ArrayList<>();
-        switch (type) {
-            case DEPOSIT:
-                // result = this.depositService.getAllDepositsFromTo(from, to);
-            case WITHDRAWAL:
-                // result = this.withdrawalService.getAllWithdrawalsFromTo(from, to);
-            case DIVIDEND:
-                // result = this.dividendService.getAllDividendsFromTo(from, to);
-            case FEE:
-                // result = this.feeService.getAllFeesFromTo(from, to);
-            default:
-                return null;
+            @Parameter(description = "The type of cash transaction", required = true) @RequestParam("CashTransactionType") CashTransactionType type, // TODO: Fix only 1 type of fee,
+            @Parameter(description = "The start date of the range. Format YYYY-MM-DD") @RequestParam(name = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @Parameter(description = "The end date of the range Format YYYY-MM-DD") @RequestParam(name = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        if (from == null) {
+            from = START_DATE;
         }
+        if (to == null) {
+            to = LocalDate.now();
+        }
+        log.info("Getting cash transactions type: {} from [{}] to [{}]", type.name().toUpperCase(), from, to);
+        List<CashTransactionResponse> result = switch (type) {
+            case DEPOSIT -> this.depositService.getAllDepositsFromTo(from, to);
+            case WITHDRAWAL -> this.withdrawalService.getAllWithdrawalsFromTo(from, to);
+            case DIVIDEND -> this.dividendService.getAllDividendsFromTo(from, to);
+            case FEE -> this.feeService.getAllFeesFromTo(from, to);
+        };
 
-        return returnDepositList(result);
+        return returnCashTransactionsResponseList(result);
     }
 
-
-    // TODO: Add Pagination
-    @GetMapping(value = "/get/all", produces = APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(
-            operationId = "geAllDeposits",
-            summary = "Get all deposits",
-            description = "Get all deposits")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Got all deposits",
-                    content = {
-                            @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = DepositResponse.class)))
-                    }),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
-    })
-    public ResponseEntity<List<DepositResponse>> getAllDeposits() {
-        log.info("Getting all deposits");
-        List<DepositResponse> deposits = this.depositService.getAllDepositsFromTo(START_DATE, LocalDate.now());
-        return returnDepositList(deposits);
-    }
 
     @GetMapping(value = "/get/total/amount", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(
-            operationId = "getTotalDepositsAmount",
-            summary = "Get total deposits amount",
-            description = "Get total deposits amount")
+            operationId = "getTotalCashTransactionsAmount",
+            summary = "Get total cash transactions amount",
+            description = "Get total cash transactions amount")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Got total deposits amount",
+                    description = "Got total cash transactions amount",
                     content = {
                             @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = BigDecimal.class))
@@ -135,19 +108,26 @@ public class CashTransactionController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<BigDecimal> getTotalDepositsAmount() {
-        log.info("Getting total amount of deposits");
-        BigDecimal totalDepositsAmount = this.depositService.getTotalDepositsAmount();
-        return new ResponseEntity<>(totalDepositsAmount, HttpStatus.OK);
+    public ResponseEntity<BigDecimal> getTotalCashTransactionsAmount(
+            @Parameter(description = "The type of cash transaction", required = true) @RequestParam("CashTransactionType") CashTransactionType type) {
+        log.info("Getting total amount of cash transactions with type: {}", type.name().toUpperCase());
+        BigDecimal totalAmount = switch (type) {
+            case DEPOSIT -> this.depositService.getTotalDepositsAmount();
+            case WITHDRAWAL -> this.withdrawalService.getTotalWithdrawalsAmount();
+            case DIVIDEND -> this.dividendService.getTotalDividendsAmount();
+            case FEE -> this.feeService.getTotalFeesAmount();
+        };
+        return new ResponseEntity<>(totalAmount, HttpStatus.OK);
     }
 
-    private static ResponseEntity returnDepositList(List<DepositResponse> deposits) {
-        if (deposits.isEmpty()) {
-            log.info("No deposits found");
+    // TODO: Add the type of cash transaction returned
+    private static ResponseEntity returnCashTransactionsResponseList(List<CashTransactionResponse> cashTransactionResponses) {
+        if (cashTransactionResponses.isEmpty()) {
+            log.info("No cash transactions found found");
             return new ResponseEntity(Collections.EMPTY_LIST, HttpStatus.OK);
         } else {
-            log.info("Found deposits - [{}]", deposits.size());
-            return new ResponseEntity<>(deposits, HttpStatus.OK);
+            log.info("Found cash transactions - [{}]", cashTransactionResponses.size());
+            return new ResponseEntity<>(cashTransactionResponses, HttpStatus.OK);
         }
     }
 }

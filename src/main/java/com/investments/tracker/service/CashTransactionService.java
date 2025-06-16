@@ -1,5 +1,6 @@
 package com.investments.tracker.service;
 
+import com.investments.tracker.dto.response.CashTransactionResponse;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.enums.CashTransactionType;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.investments.tracker.enums.CashTransactionType.DIVIDEND;
 import static com.investments.tracker.enums.Currency.EUR;
@@ -36,4 +38,11 @@ public class CashTransactionService {
                 .build();
     }
 
+    public List<CashTransactionResponse> getAllCashTransactionsFromTo(LocalDate from, LocalDate to) {
+        return null;
+    }
+
+    public BigDecimal getAllCashTransactionsAmount() {
+        return null;
+    }
 }

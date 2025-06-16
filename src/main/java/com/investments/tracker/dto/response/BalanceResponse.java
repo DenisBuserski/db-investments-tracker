@@ -1,4 +1,4 @@
-package com.investments.tracker.dto;
+package com.investments.tracker.dto.response;
 
 import com.investments.tracker.model.Balance;
 import lombok.*;

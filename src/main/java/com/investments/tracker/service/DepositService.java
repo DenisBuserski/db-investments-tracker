@@ -1,9 +1,10 @@
 package com.investments.tracker.service;
 
+import com.investments.tracker.dto.response.CashTransactionResponse;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.BalanceResponse;
-import com.investments.tracker.dto.deposit.DepositRequest;
+import com.investments.tracker.dto.response.BalanceResponse;
+import com.investments.tracker.dto.request.DepositRequest;
 import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.repository.BalanceRepository;
@@ -18,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.dto.BalanceResponse.createBalanceResponseDTO;
+import static com.investments.tracker.dto.response.BalanceResponse.createBalanceResponseDTO;
 import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
 
 @Service
@@ -61,7 +62,7 @@ public class DepositService {
     }
 
     // TODO: What if we have deposits in 2 currencies
-    public List<DepositResponse> getAllDepositsFromTo(LocalDate from, LocalDate to) {
+    public List<CashTransactionResponse> getAllDepositsFromTo(LocalDate from, LocalDate to) {
         List<CashTransaction> depositsResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, from, to);
         if (!depositsResult.isEmpty()) {
             return depositMapper.mapToResponseDTOList(depositsResult);

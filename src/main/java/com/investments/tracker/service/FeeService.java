@@ -1,5 +1,6 @@
 package com.investments.tracker.service;
 
+import com.investments.tracker.dto.response.CashTransactionResponse;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.enums.CashTransactionType;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,16 +62,25 @@ public class FeeService {
         }
 
         switch (feeType.name()) {
-            case "TRANSACTION_EXECUTION_FEE":
-                return CashTransactionType.TRANSACTION_EXECUTION_FEE;
-            default:
-                throw new IllegalArgumentException("Unknown FeeType: " + feeType);
+//            case "TRANSACTION_EXECUTION_FEE":
+//                return CashTransactionType.TRANSACTION_EXECUTION_FEE;
+//            default:
+//                throw new IllegalArgumentException("Unknown FeeType: " + feeType);
         }
+        return null;
     }
 
     private BigDecimal calculateTotalFees(List<CashTransaction> fees) {
         return fees.stream()
                 .map(CashTransaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal getTotalFeesAmount() {
+        return null;
+    }
+
+    public List<CashTransactionResponse> getAllFeesFromTo(LocalDate startDate, LocalDate now) {
+        return null;
     }
 }

@@ -1,9 +1,10 @@
 package com.investments.tracker.service;
 
+import com.investments.tracker.dto.response.CashTransactionResponse;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Dividend;
-import com.investments.tracker.dto.BalanceResponse;
+import com.investments.tracker.dto.response.BalanceResponse;
 import com.investments.tracker.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
@@ -13,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.dto.BalanceResponse.createBalanceResponseDTO;
+import static com.investments.tracker.dto.response.BalanceResponse.createBalanceResponseDTO;
 import static java.math.RoundingMode.CEILING;
 
 @Service
@@ -102,4 +105,11 @@ public class DividendService {
     }
 
 
+    public BigDecimal getTotalDividendsAmount() {
+        return null;
+    }
+
+    public List<CashTransactionResponse> getAllDividendsFromTo(LocalDate startDate, LocalDate now) {
+        return null;
+    }
 }

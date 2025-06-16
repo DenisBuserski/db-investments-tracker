@@ -1,7 +1,7 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.dto.BalanceResponse;
-import com.investments.tracker.dto.deposit.DepositRequest;
+import com.investments.tracker.dto.response.BalanceResponse;
+import com.investments.tracker.dto.request.DepositRequest;
 import com.investments.tracker.service.DepositService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +25,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
         methods = { RequestMethod.POST, RequestMethod.GET }
 )
 @Slf4j
-@Tag(name = "Deposit Controller", description = "REST methods for deposits")
+@Tag(name = "Deposit Controller", description = "Contains REST POST method for inserting a deposit in DB")
 public class DepositController {
     private final DepositService depositService;
 

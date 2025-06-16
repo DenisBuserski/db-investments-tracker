@@ -1,7 +1,8 @@
 package com.investments.tracker.mapper;
 
+import com.investments.tracker.dto.response.CashTransactionResponse;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.deposit.DepositRequest;
+import com.investments.tracker.dto.request.DepositRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,16 +25,16 @@ public class DepositMapper implements Function<DepositRequest, CashTransaction> 
                 .build();
     }
 
-    public DepositResponse mapToResponseDTO(CashTransaction deposit) {
-        return DepositResponse.builder()
-                .date(deposit.getDate())
-                .amount(deposit.getAmount())
-                .currency(deposit.getCurrency())
-                .description(deposit.getDescription())
-                .build();
+    public CashTransactionResponse mapToResponseDTO(CashTransaction deposit) {
+        return new CashTransactionResponse(
+                deposit.getDate(),
+                deposit.getAmount(),
+                deposit.getCurrency(),
+                deposit.getDescription()
+        );
     }
 
-    public List<DepositResponse> mapToResponseDTOList(List<CashTransaction> deposits) {
+    public List<CashTransactionResponse> mapToResponseDTOList(List<CashTransaction> deposits) {
         return deposits.stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());

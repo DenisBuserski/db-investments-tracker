@@ -1,4 +1,4 @@
-package com.investments.tracker.dto.deposit;
+package com.investments.tracker.dto.request;
 
 import com.investments.tracker.enums.Currency;
 import com.investments.tracker.validation.ValidCurrency;

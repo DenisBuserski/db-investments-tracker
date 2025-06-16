@@ -3,7 +3,7 @@ package com.investments.tracker.service;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Portfolio;
 import com.investments.tracker.model.Transaction;
-import com.investments.tracker.dto.BalanceResponse;
+import com.investments.tracker.dto.response.BalanceResponse;
 import com.investments.tracker.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.enums.TransactionType;
 import com.investments.tracker.repository.BalanceRepository;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static com.investments.tracker.dto.BalanceResponse.createBalanceResponseDTO;
+import static com.investments.tracker.dto.response.BalanceResponse.createBalanceResponseDTO;
 import static com.investments.tracker.enums.Currency.EUR;
 import static com.investments.tracker.enums.TransactionType.BUY;
 import static com.investments.tracker.enums.TransactionType.SELL;
