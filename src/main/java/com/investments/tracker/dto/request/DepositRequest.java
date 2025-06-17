@@ -11,23 +11,25 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.investments.tracker.utils.ValidationMessages.*;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
 public class DepositRequest {
-    @NotNull(message = "Deposit date cannot be NULL!")
-    @PastOrPresent(message = "Deposit date cannot be in the future!")
+    @NotNull(message = DEPOSIT_DATE_NOT_NULL)
+    @PastOrPresent(message = DEPOSIT_DATE__NOT_IN_FUTURE)
     private LocalDate date;
 
-    @NotNull(message = "Deposit amount cannot be NULL!")
-    @Positive(message = "Deposit amount must be more than 0!")
+    @NotNull(message = DEPOSIT_AMOUNT_NOT_NULL)
+    @Positive(message = DEPOSIT_AMOUNT_MORE_THAN_ZERO)
     private BigDecimal amount;
 
-    @NotNull(message = "Currency cannot be NULL!")
+    @NotNull(message = CURRENCY_NOT_NULL)
     @ValidCurrency
     private Currency currency;
 
-    @NotBlank(message = "Deposit description cannot be blank or NULL!")
+    @NotBlank(message = DEPOSIT_DESCRIPTION_NOT_BLANK_OR_NULL)
     private String description;
 }
