@@ -2,7 +2,7 @@ package com.investments.tracker.service;
 
 import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.transaction.TransactionRequestDTO;
+import com.investments.tracker.controller.request.TransactionRequest;
 import com.investments.tracker.enums.CashTransactionType;
 import com.investments.tracker.enums.FeeType;
 import com.investments.tracker.repository.CashTransactionRepository;
@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.investments.tracker.enums.CashTransactionType.FEE;
 
 
 @Service
@@ -30,9 +32,9 @@ public class FeeService {
         this.cashTransactionService = cashTransactionService;
     }
 
-    public BigDecimal getTotalAmountOfInsertedFees(TransactionRequestDTO transactionRequestDTO, long transactionId) {
-        if (!transactionRequestDTO.getFees().isEmpty()) {
-            List<CashTransaction> fees = createFees(transactionRequestDTO, transactionId);
+    public BigDecimal getTotalAmountOfInsertedFees(TransactionRequest transactionRequest, long transactionId) {
+        if (!transactionRequest.getFees().isEmpty()) {
+            List<CashTransaction> fees = createFees(transactionRequest, transactionId);
             log.info("Total number of applied fees for transaction_id={} -> [{}]", transactionId, fees.size());
             return calculateTotalFees(fees);
         } else {
@@ -41,33 +43,18 @@ public class FeeService {
         }
     }
 
-    private List<CashTransaction> createFees(TransactionRequestDTO transactionRequestDTO, long transactionId) {
-        Map<FeeType, BigDecimal> feesMap = transactionRequestDTO.getFees();
+    private List<CashTransaction> createFees(TransactionRequest transactionRequest, long transactionId) {
+        Map<FeeType, BigDecimal> feesMap = transactionRequest.getFees();
 
         List<CashTransaction> fees = feesMap.entrySet()
                 .stream()
                 .map(entry -> {
-                    FeeType feeType = entry.getKey();
+                    FeeType feeType = entry.getKey(); // Check if fee tpe is real
                     BigDecimal feeValue = entry.getValue();
-                    CashTransactionType cashTransactionType = getCashtransactionType(feeType);
-                    return this.cashTransactionService.createCashTransactionForFee(transactionRequestDTO.getDate(), cashTransactionType, feeValue, transactionId);
+                    return this.cashTransactionService.createCashTransactionForFee(transactionRequest.getDate(), FEE, feeType, feeValue, transactionId);
                 })
                 .collect(Collectors.toList());
         return this.cashTransactionRepository.saveAll(fees);
-    }
-
-    private static CashTransactionType getCashtransactionType(FeeType feeType) {
-        if (feeType == null) {
-            throw new NullPointerException("Fee type is NULL");
-        }
-
-        switch (feeType.name()) {
-//            case "TRANSACTION_EXECUTION_FEE":
-//                return CashTransactionType.TRANSACTION_EXECUTION_FEE;
-//            default:
-//                throw new IllegalArgumentException("Unknown FeeType: " + feeType);
-        }
-        return null;
     }
 
     private BigDecimal calculateTotalFees(List<CashTransaction> fees) {

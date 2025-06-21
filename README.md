@@ -76,21 +76,20 @@ http://localhost:8080/swagger-ui/index.html
 
 Create an openapi.json file and automatically generate API docs using Swagger.
 
-| Method | Endpoint                                       | Description                     | Auth required |
-|--------|------------------------------------------------|---------------------------------|---------------|
-| `POST` | `/api/deposit/in`                              | Make a deposit                  |               |
-| `GET`  | `/api/deposit/get/from/{fromDate}/to/{toDate}` | Get deposits in range           |               |
-| `GET`  | `/api/deposit/get/all`                         | Get all deposits                |               |
-| `GET`  | `/api/deposit/get/total/amount`                | Get total amount of deposits    |               |
-| `POST` | `/withdrawal/out`                              | Make a withdrawal               |               |
-| `GET`  | `/withdrawal/get/from/{fromDate}/to/{toDate}`  | Get withdrawals in range        |               |
-| `GET`  | `/withdrawal/get/all`                          | Get all withdrawals             |               |
-| `GET`  | `/withdrawal/get/total/amount`                 | Get total amount of withdrawals |               |
-| `POST` | `/dividend/in`                                 | Insert a dividend               |               |
-| `GET`  | `/dividend/get/from/{fromDate}/to/{toDate}`    | Get dividends in range          |               |
-| `GET`  | `/dividend/get/all`                            | Get all dividends               |               |
-| `GET`  | `/dividend/get/total/amount`                   | Get total amount of dividends   |               |
-| `POST` | `/api/transaction/in`                          | Insert a transaction            |               |
+| Method | Endpoint                                                                                      | Description                                                   | Auth required |
+|--------|-----------------------------------------------------------------------------------------------|---------------------------------------------------------------|---------------|
+| `POST` | `api/v1/deposits/in`                                                                          | Insert a deposit                                              | N/A           |
+| `GET`  | `/api/v1/cashtransactions/get?CashTransactionType={Type}&fromDate={fromDate}&toDate={toDate}` | Get deposits / withdrawals / dividends / fees in range        | N/A           |
+| `GET`  | `/api/v1/cashtransactions/get/total/amount?CashTransactionType={type}`                        | Get total amount of deposits / withdrawals / dividends / fees | N/A           |
+| `POST` | `/withdrawal/out`                                                                             | Make a withdrawal                                             |               |
+| `GET`  | `/withdrawal/get/from/{fromDate}/to/{toDate}`                                                 | Get withdrawals in range                                      |               |
+| `GET`  | `/withdrawal/get/all`                                                                         | Get all withdrawals                                           |               |
+| `GET`  | `/withdrawal/get/total/amount`                                                                | Get total amount of withdrawals                               |               |
+| `POST` | `/dividend/in`                                                                                | Insert a dividend                                             |               |
+| `GET`  | `/dividend/get/from/{fromDate}/to/{toDate}`                                                   | Get dividends in range                                        |               |
+| `GET`  | `/dividend/get/all`                                                                           | Get all dividends                                             |               |
+| `GET`  | `/dividend/get/total/amount`                                                                  | Get total amount of dividends                                 |               |
+| `POST` | `/api/transaction/in`                                                                         | Insert a transaction                                          |               |
 
 </details> 
 

@@ -1,6 +1,7 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.controller.response.CashTransactionResponse;
+import com.investments.tracker.enums.FeeType;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.enums.CashTransactionType;
@@ -27,13 +28,14 @@ public class CashTransactionService {
                 .build();
     }
 
-    public CashTransaction createCashTransactionForFee(LocalDate date, CashTransactionType cashTransactionType, BigDecimal feeValue, long transactionId) {
+    public CashTransaction createCashTransactionForFee(LocalDate date, CashTransactionType cashTransactionType, FeeType feeType, BigDecimal feeValue, long transactionId) {
+        String feeDescription = String.format("Fee of type %s; Reference id to 'transaction' table", feeType.name());
         return CashTransaction.builder()
                 .date(date)
                 .cashTransactionType(cashTransactionType)
                 .amount(feeValue)
                 .currency(EUR)
-                .description("Reference to 'transaction' table")
+                .description(feeDescription)
                 .referenceId(transactionId)
                 .build();
     }

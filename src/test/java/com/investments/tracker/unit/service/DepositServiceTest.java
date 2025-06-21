@@ -67,7 +67,12 @@ public class DepositServiceTest {
                 .description("TEST DESCRIPTION")
                 .build();
 
-        cashTransactionResponse = new CashTransactionResponse(DATE, BigDecimal.valueOf(1000), EUR, "TEST DESCRIPTION");
+        cashTransactionResponse = new CashTransactionResponse(
+                DATE,
+                DEPOSIT,
+                BigDecimal.valueOf(1000),
+                EUR,
+                "TEST DESCRIPTION");
 
         cashTransaction = CashTransaction.builder()
                 .date(DATE)

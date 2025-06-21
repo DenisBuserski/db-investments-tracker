@@ -84,6 +84,7 @@ public class WithdrawalService {
             withdrawalResult.stream().forEach(withdrawal -> {
                 CashTransactionResponse cashTransactionResponse = new CashTransactionResponse(
                         withdrawal.getDate(),
+                        WITHDRAWAL,
                         withdrawal.getAmount(),
                         withdrawal.getCurrency(),
                         withdrawal.getDescription()

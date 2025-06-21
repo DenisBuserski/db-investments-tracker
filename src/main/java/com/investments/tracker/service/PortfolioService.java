@@ -1,7 +1,7 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.model.Portfolio;
-import com.investments.tracker.dto.transaction.TransactionRequestDTO;
+import com.investments.tracker.controller.request.TransactionRequest;
 import com.investments.tracker.repository.PortfolioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +23,13 @@ public class PortfolioService{
         this.portfolioRepository = portfolioRepository;
     }
 
-    public void updatePortfolioWithBuyTransaction(TransactionRequestDTO transactionRequestDTO, BigDecimal totalTransactionValue) {
-        LocalDate transactionDate = transactionRequestDTO.getDate();
-        String productName = transactionRequestDTO.getProductName();
+    public void updatePortfolioForBuyTransaction(TransactionRequest transactionRequest, BigDecimal totalTransactionValue) {
+        LocalDate transactionDate = transactionRequest.getDate();
+        String productName = transactionRequest.getProductName();
 
         Optional<Portfolio> portfolioForProduct = this.portfolioRepository.findByProductName(productName);
         if (!portfolioForProduct.isEmpty()) {
-            int newQuantity = portfolioForProduct.get().getQuantity() + transactionRequestDTO.getQuantity();
+            int newQuantity = portfolioForProduct.get().getQuantity() + transactionRequest.getQuantity();
             BigDecimal newInvestedMoney = portfolioForProduct.get().getInvestedMoney().add(totalTransactionValue);
             int updatedResult = this.portfolioRepository.updatePortfolioWithBuyTransaction(transactionDate, productName, newQuantity, newInvestedMoney);
             if (updatedResult == 1) {
@@ -41,7 +41,7 @@ public class PortfolioService{
             Portfolio portfolio = Portfolio.builder()
                     .lastUpdated(transactionDate)
                     .productName(productName)
-                    .quantity(transactionRequestDTO.getQuantity())
+                    .quantity(transactionRequest.getQuantity())
                     .investedMoney(totalTransactionValue)
                     .dividendsAmount(BigDecimal.ZERO)
                     .status(ACTIVE)
@@ -51,7 +51,7 @@ public class PortfolioService{
         }
     }
 
-    public void updatePortfolioWithSellTransaction(TransactionRequestDTO transactionRequestDTO, BigDecimal transactionValue) {
+    public void updatePortfolioWithSellTransaction(TransactionRequest transactionRequestDTO, BigDecimal transactionValue) {
 
 
 

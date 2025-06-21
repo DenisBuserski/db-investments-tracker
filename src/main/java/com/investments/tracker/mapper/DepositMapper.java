@@ -28,6 +28,7 @@ public class DepositMapper implements Function<DepositRequest, CashTransaction> 
     public CashTransactionResponse mapToResponseDTO(CashTransaction deposit) {
         return new CashTransactionResponse(
                 deposit.getDate(),
+                DEPOSIT,
                 deposit.getAmount(),
                 deposit.getCurrency(),
                 deposit.getDescription()

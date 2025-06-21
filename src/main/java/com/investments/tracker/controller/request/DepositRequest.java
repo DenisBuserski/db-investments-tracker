@@ -19,7 +19,7 @@ import static com.investments.tracker.utils.ValidationMessages.*;
 @Builder
 public class DepositRequest {
     @NotNull(message = DEPOSIT_DATE_NOT_NULL)
-    @PastOrPresent(message = DEPOSIT_DATE__NOT_IN_FUTURE)
+    @PastOrPresent(message = DEPOSIT_DATE_NOT_IN_FUTURE)
     private LocalDate date;
 
     @NotNull(message = DEPOSIT_AMOUNT_NOT_NULL)

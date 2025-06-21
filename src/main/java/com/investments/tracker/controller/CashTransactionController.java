@@ -26,7 +26,7 @@ import static com.investments.tracker.utils.Constants.START_DATE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/api/v1/cashtransaction")
+@RequestMapping("/api/v1/cashtransactions")
 @CrossOrigin(
         origins = "http://localhost:3000",
         methods = RequestMethod.GET
@@ -81,7 +81,7 @@ public class CashTransactionController {
             case FEE -> this.feeService.getAllFeesFromTo(from, to);
         };
 
-        return returnCashTransactionsResponseList(result, type);
+        return returnCashTransactionsResponseList(result);
     }
 
 
@@ -97,7 +97,7 @@ public class CashTransactionController {
                     description = "Got total cash transactions amount",
                     content = {
                             @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = BigDecimal.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = BigDecimal.class)))
                     }),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
@@ -114,13 +114,12 @@ public class CashTransactionController {
         return new ResponseEntity<>(totalAmount, HttpStatus.OK);
     }
 
-    // TODO: Add the type of cash transaction returned
-    private static ResponseEntity<List<CashTransactionResponse>> returnCashTransactionsResponseList(List<CashTransactionResponse> cashTransactionResponses, CashTransactionType type) {
+    private static ResponseEntity<List<CashTransactionResponse>> returnCashTransactionsResponseList(List<CashTransactionResponse> cashTransactionResponses) {
         if (cashTransactionResponses.isEmpty()) {
             log.info("No cash transactions found");
             return new ResponseEntity<>(Collections.EMPTY_LIST, HttpStatus.OK);
         } else {
-            log.info("Found [{}] cash transactions of type: {}", cashTransactionResponses.size(), type.name().toUpperCase());
+            log.info("Found [{}] cash transactions of type: {}", cashTransactionResponses.size(), cashTransactionResponses.get(0).type());
             return new ResponseEntity<>(cashTransactionResponses, HttpStatus.OK);
         }
     }
