@@ -1,6 +1,6 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.dto.response.BalanceResponse;
+import com.investments.tracker.controller.response.BalanceResponse;
 import com.investments.tracker.dto.dividend.DividendRequestDTO;
 import com.investments.tracker.service.DividendService;
 import jakarta.validation.Valid;

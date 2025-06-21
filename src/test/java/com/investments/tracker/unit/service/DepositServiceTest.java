@@ -1,12 +1,12 @@
 package com.investments.tracker.unit.service;
 
-import com.investments.tracker.dto.response.CashTransactionResponse;
+import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.response.BalanceResponse;
-import com.investments.tracker.dto.request.DepositRequest;
+import com.investments.tracker.controller.response.BalanceResponse;
+import com.investments.tracker.controller.request.DepositRequest;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.service.BalanceService;
@@ -68,7 +68,6 @@ public class DepositServiceTest {
                 .build();
 
         cashTransactionResponse = new CashTransactionResponse(DATE, BigDecimal.valueOf(1000), EUR, "TEST DESCRIPTION");
-
 
         cashTransaction = CashTransaction.builder()
                 .date(DATE)

@@ -1,6 +1,6 @@
 package com.investments.tracker.service;
 
-import com.investments.tracker.dto.response.CashTransactionResponse;
+import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.dto.transaction.TransactionRequestDTO;
 import com.investments.tracker.enums.CashTransactionType;

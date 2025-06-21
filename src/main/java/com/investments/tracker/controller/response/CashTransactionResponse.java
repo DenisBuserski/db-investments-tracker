@@ -1,4 +1,4 @@
-package com.investments.tracker.dto.response;
+package com.investments.tracker.controller.response;
 
 import com.investments.tracker.enums.Currency;
 

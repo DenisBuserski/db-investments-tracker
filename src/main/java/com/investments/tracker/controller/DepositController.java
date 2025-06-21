@@ -1,7 +1,7 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.dto.response.BalanceResponse;
-import com.investments.tracker.dto.request.DepositRequest;
+import com.investments.tracker.controller.response.BalanceResponse;
+import com.investments.tracker.controller.request.DepositRequest;
 import com.investments.tracker.service.DepositService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,10 +22,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/api/v1/deposits")
 @CrossOrigin(
         origins = "http://localhost:3000",
-        methods = { RequestMethod.POST, RequestMethod.GET }
+        methods = { RequestMethod.POST }
 )
 @Slf4j
-@Tag(name = "Deposit Controller", description = "Contains REST POST method for inserting a deposit in DB")
+@Tag(name = "Deposit Controller", description = "Contains REST POST method for inserting a deposit in database")
 public class DepositController {
     private final DepositService depositService;
 

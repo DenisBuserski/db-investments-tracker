@@ -1,6 +1,6 @@
 package com.investments.tracker.controller;
 
-import com.investments.tracker.dto.response.CashTransactionResponse;
+import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.enums.CashTransactionType;
 import com.investments.tracker.service.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +32,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
         methods = RequestMethod.GET
 )
 @Slf4j
-@Tag(name = "Cash transaction Controller", description = "REST methods for retrieving cash transaction data")
+@Tag(name = "Cash Transaction Controller", description = "REST methods for retrieving cash transaction data")
 public class CashTransactionController {
     private final DepositService depositService;
     private final WithdrawalService withdrawalService;

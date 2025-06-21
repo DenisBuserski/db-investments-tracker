@@ -1,6 +1,7 @@
-package com.investments.tracker.dto.response;
+package com.investments.tracker.controller.response;
 
 import com.investments.tracker.model.Balance;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -10,14 +11,30 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Builder
+@Schema(description = "The response object for the Balance entity")
 public class BalanceResponse {
+    @Schema(description = "Date of the balance")
     private LocalDate date;
+
+    @Schema(description = "Total balance on the particular date")
     private BigDecimal balance;
+
+    @Schema(description = "Total investments till the particular date")
     private BigDecimal totalInvestments;
+
+    @Schema(description = "Total deposits till the particular date")
     private BigDecimal totalDeposits;
+
+    @Schema(description = "Total withdrawals till the particular date")
     private BigDecimal totalWithdrawals;
+
+    @Schema(description = "Total dividends received till the particular date")
     private BigDecimal totalDividends;
+
+    @Schema(description = "Total fees paid till the particular date")
     private BigDecimal totalFees;
+
+    @Schema(description = "The last portfolio value on the particular date")
     private BigDecimal lastPortfolioValue;
 
     public static BalanceResponse createBalanceResponseDTO(Balance newBalance) {
