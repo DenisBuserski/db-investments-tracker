@@ -3,7 +3,6 @@ package com.investments.tracker.service;
 import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.controller.request.TransactionRequest;
-import com.investments.tracker.enums.CashTransactionType;
 import com.investments.tracker.enums.FeeType;
 import com.investments.tracker.repository.CashTransactionRepository;
 import lombok.extern.slf4j.Slf4j;

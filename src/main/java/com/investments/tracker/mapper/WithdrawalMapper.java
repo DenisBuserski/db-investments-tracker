@@ -1,7 +1,7 @@
 package com.investments.tracker.mapper;
 
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.withdraw.WithdrawalRequestDTO;
+import com.investments.tracker.controller.request.WithdrawalRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
@@ -9,15 +9,15 @@ import java.util.function.Function;
 import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 
 @Component
-public class WithdrawalMapper implements Function<WithdrawalRequestDTO, CashTransaction> {
+public class WithdrawalMapper implements Function<WithdrawalRequest, CashTransaction> {
     @Override
-    public CashTransaction apply(WithdrawalRequestDTO withdrawalRequestDTO) {
+    public CashTransaction apply(WithdrawalRequest withdrawalRequest) {
         return CashTransaction.builder()
-                .date(withdrawalRequestDTO.getDate())
+                .date(withdrawalRequest.getDate())
                 .cashTransactionType(WITHDRAWAL)
-                .amount(withdrawalRequestDTO.getAmount())
-                .currency(withdrawalRequestDTO.getCurrency())
-                .description(withdrawalRequestDTO.getDescription())
+                .amount(withdrawalRequest.getAmount())
+                .currency(withdrawalRequest.getCurrency())
+                .description(withdrawalRequest.getDescription())
                 .referenceId(null)
                 .build();
     }

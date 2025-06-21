@@ -8,5 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/weekly")
 @Slf4j
 public class WeeklyViewController {
+    // Trigger calculation via API
+    // List of WeeklyPositions
+    // Calculate Total invested money
+    // Calculate Total current value
+    // Total Unrealized P/L
+    // Total Unrealized P/L %
 
 }

@@ -57,9 +57,4 @@ public class TransactionController {
 
     // TODO:
     // getTransactionsFromTo
-    // getAllTransactions
-
-
-
-
 }

@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponseDTO;
+import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
 import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
 
 @Service
@@ -58,7 +58,7 @@ public class DepositService {
         }
         this.balanceRepository.save(newBalance);
         log.info("Deposit for [{} {}] successful", String.format("%.2f", deposit.getAmount()), deposit.getCurrency());
-        return createBalanceResponseDTO(newBalance);
+        return createBalanceResponse(newBalance);
     }
 
     // TODO: What if we have deposits in 2 currencies

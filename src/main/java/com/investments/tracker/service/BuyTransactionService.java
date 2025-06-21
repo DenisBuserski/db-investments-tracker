@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponseDTO;
+import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
 import static com.investments.tracker.service.TransactionService.createTransaction;
 
 @Service
@@ -38,23 +38,27 @@ public class BuyTransactionService {
         this.balanceService = balanceService;
     }
 
-    public BalanceResponse insertBuyTransaction(Balance currentBalance, BigDecimal balanceValue, BigDecimal transactionValue, TransactionRequest transactionRequest) {
-        if (balanceValue.compareTo(transactionValue) >= 0) {
+    public BalanceResponse insertBuyTransaction(Balance currentBalance, BigDecimal transactionValue, TransactionRequest transactionRequest) {
+        if (currentBalance.getBalance().compareTo(transactionValue) >= 0) {
+            log.info("Preparing [BUY] transaction with the following params: [CurrentBalance:{} | TransactionValue:{}]",
+                    currentBalance.getBalance(), transactionValue);
             Transaction transaction = createTransaction(transactionRequest, transactionValue);
             this.transactionRepository.save(transaction);
 
+            log.info("Start calculating fees");
             BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequest, transaction.getId());
 
+            log.info("Start updating portfolio");
             this.portfolioService.updatePortfolioForBuyTransaction(transactionRequest, transactionValue);
 
             Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance, transaction, totalAmountOfInsertedFees);
             this.balanceRepository.save(newBalance);
-            log.info("Successful [{}] transaction for product [{}] on [{}]", transaction.getTransactionType(), transactionRequest.getProductName(), transactionRequest.getDate());
+            log.info("Successful [BUY] transaction for product [{}] on [{}]", transactionRequest.getProductName(), transactionRequest.getDate());
 
-            return createBalanceResponseDTO(newBalance);
+            return createBalanceResponse(newBalance);
         } else {
-            log.info("Transaction cannot be created because there is not enough balance.");
-            return createBalanceResponseDTO(null);
+            log.info("Transaction of type [BUY] cannot be created because there is not enough balance.");
+            return createBalanceResponse(null);
         }
     }
 }

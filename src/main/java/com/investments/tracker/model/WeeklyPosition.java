@@ -42,7 +42,7 @@ public class WeeklyPosition {
     private BigDecimal quantity;
 
     @Column(name = "total_invested_cash", nullable = false)
-    private BigDecimal totalInvestmentCash;
+    private BigDecimal totalInvestedCash;
 
     @Column(name = "open_price", nullable = false)
     private long openPrice;
@@ -53,6 +53,10 @@ public class WeeklyPosition {
 
     @Column(name = "exchange_rate")
     private BigDecimal exchangeRate;
+
+    @Column(name = "currency", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
     @Column(name = "investment_value", nullable = false)
     private BigDecimal investmentValue;

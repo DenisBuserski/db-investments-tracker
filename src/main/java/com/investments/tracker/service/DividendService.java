@@ -5,7 +5,7 @@ import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Dividend;
 import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.dto.dividend.DividendRequestDTO;
+import com.investments.tracker.controller.request.DividendRequest;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.repository.DividendRepository;
@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponseDTO;
+import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
 import static java.math.RoundingMode.CEILING;
 
 @Service
@@ -45,15 +45,15 @@ public class DividendService {
     }
 
     // TODO: Check the scaling with the exchange rate
-    public BalanceResponse insertDividend(DividendRequestDTO dividendRequestDTO) {
-        BigDecimal exchangeRate = dividendRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequestDTO.getExchangeRate();
-        BigDecimal dividendAmountBeforeConversion = calculateDividendAmount(dividendRequestDTO);
+    public BalanceResponse insertDividend(DividendRequest dividendRequest) {
+        BigDecimal exchangeRate = dividendRequest.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequest.getExchangeRate();
+        BigDecimal dividendAmountBeforeConversion = calculateDividendAmount(dividendRequest);
         BigDecimal dividendAmountAfterConversion = dividendConversion(exchangeRate, dividendAmountBeforeConversion);
 
-        CashTransaction dividend = this.cashtransactionService.createCashTransactionForDividend(dividendRequestDTO, dividendAmountAfterConversion);
+        CashTransaction dividend = this.cashtransactionService.createCashTransactionForDividend(dividendRequest, dividendAmountAfterConversion);
         this.cashTransactionRepository.save(dividend);
 
-        Dividend dividendEntity = creteDividend(dividendRequestDTO);
+        Dividend dividendEntity = creteDividend(dividendRequest);
         this.dividendRepository.save(dividendEntity);
 
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
@@ -65,13 +65,13 @@ public class DividendService {
         }
 
         this.balanceRepository.save(newBalance);
-        log.info("Dividend for product [{}] created successfully", dividendRequestDTO.getProductName());
-        return createBalanceResponseDTO(newBalance);
+        log.info("Dividend for product [{}] created successfully", dividendRequest.getProductName());
+        return createBalanceResponse(newBalance);
     }
 
-    private static BigDecimal calculateDividendAmount(DividendRequestDTO dividendRequestDTO) {
-        BigDecimal dividendAmountBeforeConversion = dividendRequestDTO.getDividendAmount();
-        BigDecimal dividendTaxBeforeConversion = dividendRequestDTO.getDividendTax();
+    private static BigDecimal calculateDividendAmount(DividendRequest dividendRequest) {
+        BigDecimal dividendAmountBeforeConversion = dividendRequest.getDividendAmount();
+        BigDecimal dividendTaxBeforeConversion = dividendRequest.getDividendTax();
         return dividendAmountBeforeConversion.subtract(dividendTaxBeforeConversion);
     }
 
@@ -83,23 +83,23 @@ public class DividendService {
         }
     }
 
-    private static Dividend creteDividend(DividendRequestDTO dividendRequestDTO) {
-        int quantity = dividendRequestDTO.getQuantity();
-        BigDecimal dividendAmount = dividendRequestDTO.getDividendAmount();
-        BigDecimal dividendTaxAmount = dividendRequestDTO.getDividendTax();
+    private static Dividend creteDividend(DividendRequest dividendRequest) {
+        int quantity = dividendRequest.getQuantity();
+        BigDecimal dividendAmount = dividendRequest.getDividendAmount();
+        BigDecimal dividendTaxAmount = dividendRequest.getDividendTax();
         BigDecimal dividendAmountPerShare = dividendAmount.divide(BigDecimal.valueOf(quantity), 10, CEILING);
         BigDecimal dividendTaxAmountPerShare = dividendTaxAmount.divide(BigDecimal.valueOf(quantity), 10, CEILING);
 
         return Dividend.builder()
-                .date(dividendRequestDTO.getDate())
-                .productName(dividendRequestDTO.getProductName())
+                .date(dividendRequest.getDate())
+                .productName(dividendRequest.getProductName())
                 .quantity(quantity)
                 .dividendAmount(dividendAmount)
                 .dividendTaxAmount(dividendTaxAmount)
                 .dividendAmountPerShare(dividendAmountPerShare)
                 .dividendTaxAmountPerShare(dividendTaxAmountPerShare)
-                .exchangeRate(dividendRequestDTO.getExchangeRate())
-                .currency(dividendRequestDTO.getCurrency())
+                .exchangeRate(dividendRequest.getExchangeRate())
+                .currency(dividendRequest.getCurrency())
                 .build();
 
     }

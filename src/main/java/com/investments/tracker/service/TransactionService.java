@@ -1,14 +1,11 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.model.Balance;
-import com.investments.tracker.model.Portfolio;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.controller.response.BalanceResponse;
 import com.investments.tracker.controller.request.TransactionRequest;
 import com.investments.tracker.enums.TransactionType;
 import com.investments.tracker.repository.BalanceRepository;
-import com.investments.tracker.repository.PortfolioRepository;
-import com.investments.tracker.repository.TransactionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponseDTO;
+import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
 import static com.investments.tracker.enums.Currency.EUR;
 import static com.investments.tracker.enums.TransactionType.BUY;
 import static com.investments.tracker.enums.TransactionType.SELL;
@@ -40,15 +37,14 @@ public class TransactionService{
         Optional<Balance> currentBalance = this.balanceRepository.getLatestBalance();
         if (!currentBalance.isPresent()) {
             log.error("Transaction cannot be created because there is no current balance!");
-            return createBalanceResponseDTO(null);
+            return createBalanceResponse(null);
         } else {
             TransactionType transactionType = transactionRequest.getTransactionType();
-            BigDecimal balanceValue = currentBalance.get().getBalance();
             BigDecimal transactionValue = calculateTransactionValue(transactionRequest);
 
             BalanceResponse balanceResponse = null;
             if (transactionType == BUY) {
-                balanceResponse = this.buyTransactionService.insertBuyTransaction(currentBalance.get(), balanceValue, transactionValue, transactionRequest);
+                balanceResponse = this.buyTransactionService.insertBuyTransaction(currentBalance.get(), transactionValue, transactionRequest);
             } else if (transactionType == SELL) {
                 // balanceResponse = sellTransaction(currentBalance.get(), transactionValue, transactionRequest);
             }
@@ -56,10 +52,11 @@ public class TransactionService{
         }
     }
 
-    private static BigDecimal calculateTransactionValue(TransactionRequest transactionRequestDTO) {
-        BigDecimal exchangeRate = transactionRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : transactionRequestDTO.getExchangeRate();
-        BigDecimal singlePrice = transactionRequestDTO.getSinglePrice();
-        int quantity = transactionRequestDTO.getQuantity();
+    private static BigDecimal calculateTransactionValue(TransactionRequest transactionRequest) {
+        BigDecimal exchangeRate = transactionRequest.getExchangeRate() == null ? BigDecimal.ZERO : transactionRequest.getExchangeRate();
+        BigDecimal singlePrice = transactionRequest.getSinglePrice();
+        int quantity = transactionRequest.getQuantity();
+        log.info("Start calculating transaction value with the following params: [SinglePrice:{} | Quantity:{} | ExchangeRate:{}]", singlePrice, quantity, exchangeRate);
         BigDecimal calculationWithoutExchangeRate = singlePrice.multiply(BigDecimal.valueOf(quantity));
 
         if (exchangeRate.equals(BigDecimal.ZERO)) {
@@ -69,20 +66,20 @@ public class TransactionService{
         }
     }
 
-    public static Transaction createTransaction(TransactionRequest transactionRequestDTO, BigDecimal transactionValue) {
-        BigDecimal exchangeRate = transactionRequestDTO.getExchangeRate() == null ? BigDecimal.ZERO : transactionRequestDTO.getExchangeRate();
-        String description = transactionRequestDTO.getFees().isEmpty() ? "No fees related to this transaction" : "Check 'cashtransaction' table for related fees";
+    public static Transaction createTransaction(TransactionRequest transactionRequest, BigDecimal transactionValue) {
+        BigDecimal exchangeRate = transactionRequest.getExchangeRate() == null ? BigDecimal.ZERO : transactionRequest.getExchangeRate();
+        String description = transactionRequest.getFees().isEmpty() ? "No fees related to this transaction" : "Check 'cashtransaction' table for related fees";
         return Transaction.builder()
-                .date(transactionRequestDTO.getDate())
-                .transactionType(transactionRequestDTO.getTransactionType())
-                .productType(transactionRequestDTO.getProductType())
-                .productName(transactionRequestDTO.getProductName())
-                .singlePrice(transactionRequestDTO.getSinglePrice())
-                .quantity(transactionRequestDTO.getQuantity())
+                .date(transactionRequest.getDate())
+                .transactionType(transactionRequest.getTransactionType())
+                .productType(transactionRequest.getProductType())
+                .productName(transactionRequest.getProductName())
+                .singlePrice(transactionRequest.getSinglePrice())
+                .quantity(transactionRequest.getQuantity())
                 .exchangeRate(exchangeRate)
                 .totalAmount(transactionValue)
                 .currency(EUR)
-                .baseCurrency(transactionRequestDTO.getCurrency())
+                .baseCurrency(transactionRequest.getCurrency()) // TODO: Rename to base_product_currency
                 .description(description)
                 .build();
     }

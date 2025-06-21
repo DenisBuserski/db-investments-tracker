@@ -1,9 +1,8 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.controller.response.CashTransactionResponse;
-import com.investments.tracker.enums.FeeType;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.dividend.DividendRequestDTO;
+import com.investments.tracker.controller.request.DividendRequest;
 import com.investments.tracker.enums.CashTransactionType;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +15,10 @@ import static com.investments.tracker.enums.Currency.EUR;
 
 @Service
 public class CashTransactionService {
-    public CashTransaction createCashTransactionForDividend(DividendRequestDTO dividendRequestDTO, BigDecimal dividendAmount) {
-        String dividendDescription = String.format("Dividend for product [%s]", dividendRequestDTO.getProductName());
+    public CashTransaction createCashTransactionForDividend(DividendRequest dividendRequest, BigDecimal dividendAmount) {
+        String dividendDescription = String.format("Dividend for product [%s]", dividendRequest.getProductName());
         return CashTransaction.builder()
-                .date(dividendRequestDTO.getDate())
+                .date(dividendRequest.getDate())
                 .cashTransactionType(DIVIDEND)
                 .amount(dividendAmount)
                 .currency(EUR)

@@ -51,7 +51,7 @@ public class PortfolioService{
         }
     }
 
-    public void updatePortfolioWithSellTransaction(TransactionRequest transactionRequestDTO, BigDecimal transactionValue) {
+    public void updatePortfolioForSellTransaction() {
 
 
 

@@ -4,7 +4,7 @@ import com.investments.tracker.controller.response.BalanceResponse;
 import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.dto.withdraw.WithdrawalRequestDTO;
+import com.investments.tracker.controller.request.WithdrawalRequest;
 import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.WithdrawalMapper;
 import com.investments.tracker.repository.BalanceRepository;
@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponseDTO;
+import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
 import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 
 
@@ -47,31 +47,31 @@ public class WithdrawalService {
         this.balanceService = balanceService;
     }
     
-    public BalanceResponse withdrawCash(WithdrawalRequestDTO withdrawalRequestDTO) {
+    public BalanceResponse withdrawCash(WithdrawalRequest withdrawalRequest) {
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             Balance balance = latestBalance.get();
             // FIX THIS IS VERY WRONG
-            if (balance.getDate().isBefore(withdrawalRequestDTO.getDate())) {
+            if (balance.getDate().isBefore(withdrawalRequest.getDate())) {
                 log.error("Withdrawal date cannot be before the latest balance date");
-                return createBalanceResponseDTO(balance);
+                return createBalanceResponse(balance);
             } else {
-                if (balance.getBalance().compareTo(withdrawalRequestDTO.getAmount()) >= 0) {
-                    CashTransaction withdrawal = this.cashTransactionMapper.createCashtransaction(withdrawalRequestDTO, withdrawalMapper);
+                if (balance.getBalance().compareTo(withdrawalRequest.getAmount()) >= 0) {
+                    CashTransaction withdrawal = this.cashTransactionMapper.createCashtransaction(withdrawalRequest, withdrawalMapper);
                     this.cashTransactionRepository.save(withdrawal);
 
                     Balance newBalance = this.balanceService.createNewBalanceFromWithdrawal(balance, withdrawal);
                     this.balanceRepository.save(newBalance);
                     log.info("Withdrawal for [{} {}] successful", String.format("%.2f", withdrawal.getAmount()), withdrawal.getCurrency());
-                    return createBalanceResponseDTO(newBalance);
+                    return createBalanceResponse(newBalance);
                 } else {
                     log.info("You don't have enough money to withdraw. Current balance is [{}]", balance.getBalance());
-                    return createBalanceResponseDTO(balance);
+                    return createBalanceResponse(balance);
                 }
             }
         } else {
             log.info("Withdrawal cannot be made, because no balance exists");
-            return createBalanceResponseDTO(null);
+            return createBalanceResponse(null);
         }
     }
 

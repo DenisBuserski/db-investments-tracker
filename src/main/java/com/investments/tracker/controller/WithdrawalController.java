@@ -1,7 +1,7 @@
 package com.investments.tracker.controller;
 
 import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.dto.withdraw.WithdrawalRequestDTO;
+import com.investments.tracker.controller.request.WithdrawalRequest;
 import com.investments.tracker.service.WithdrawalService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/withdrawals")
 @CrossOrigin(
         origins = "http://localhost:3000",
-        methods = { RequestMethod.POST, RequestMethod.GET }
+        methods = { RequestMethod.POST }
 )
 @Slf4j
 public class WithdrawalController {
@@ -27,9 +27,9 @@ public class WithdrawalController {
 
     @PostMapping("/out")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<BalanceResponse> makeWithdraw(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO) {
-        log.info("Making withdrawal for [{} {}]", String.format("%.2f", withdrawalRequestDTO.getAmount()), withdrawalRequestDTO.getCurrency());
-        BalanceResponse balanceResponse = this.withdrawalService.withdrawCash(withdrawalRequestDTO);
+    public ResponseEntity<BalanceResponse> makeWithdraw(@RequestBody @Valid WithdrawalRequest withdrawalRequest) {
+        log.info("Making withdrawal for [{} {}]", String.format("%.2f", withdrawalRequest.getAmount()), withdrawalRequest.getCurrency());
+        BalanceResponse balanceResponse = this.withdrawalService.withdrawCash(withdrawalRequest);
         return new ResponseEntity<>(balanceResponse, HttpStatus.OK);
     }
 

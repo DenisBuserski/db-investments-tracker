@@ -37,7 +37,7 @@ public class BalanceResponse {
     @Schema(description = "The last portfolio value on the particular date")
     private BigDecimal lastPortfolioValue;
 
-    public static BalanceResponse createBalanceResponseDTO(Balance newBalance) {
+    public static BalanceResponse createBalanceResponse(Balance newBalance) {
         LocalDate newBalanceDate = newBalance == null ? LocalDate.now() : newBalance.getDate();
         BigDecimal newBalanceAmount = newBalance == null ? BigDecimal.ZERO : newBalance.getBalance();
         BigDecimal newTotalInvestments = newBalance == null ? BigDecimal.ZERO : newBalance.getTotalInvestments();
