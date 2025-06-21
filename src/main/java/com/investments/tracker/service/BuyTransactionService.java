@@ -38,7 +38,6 @@ public class BuyTransactionService {
         this.balanceService = balanceService;
     }
 
-
     public BalanceResponse insertBuyTransaction(Balance currentBalance, BigDecimal balanceValue, BigDecimal transactionValue, TransactionRequest transactionRequest) {
         if (balanceValue.compareTo(transactionValue) >= 0) {
             Transaction transaction = createTransaction(transactionRequest, transactionValue);

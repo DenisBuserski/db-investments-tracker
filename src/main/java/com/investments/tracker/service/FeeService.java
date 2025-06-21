@@ -49,12 +49,22 @@ public class FeeService {
         List<CashTransaction> fees = feesMap.entrySet()
                 .stream()
                 .map(entry -> {
-                    FeeType feeType = entry.getKey(); // Check if fee tpe is real
+                    String feeType = checkFeeType(entry.getKey());
                     BigDecimal feeValue = entry.getValue();
                     return this.cashTransactionService.createCashTransactionForFee(transactionRequest.getDate(), FEE, feeType, feeValue, transactionId);
                 })
                 .collect(Collectors.toList());
         return this.cashTransactionRepository.saveAll(fees);
+    }
+
+    private String checkFeeType(FeeType feeType) {
+        String name = feeType.name();
+        for (FeeType type : FeeType.values()) {
+            if (type.name().equals(name)) {
+                return type.getName();
+            }
+        }
+        throw new IllegalArgumentException("Unknown fee type name: " + name);
     }
 
     private BigDecimal calculateTotalFees(List<CashTransaction> fees) {

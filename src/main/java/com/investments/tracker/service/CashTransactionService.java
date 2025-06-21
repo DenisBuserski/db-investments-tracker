@@ -28,8 +28,8 @@ public class CashTransactionService {
                 .build();
     }
 
-    public CashTransaction createCashTransactionForFee(LocalDate date, CashTransactionType cashTransactionType, FeeType feeType, BigDecimal feeValue, long transactionId) {
-        String feeDescription = String.format("Fee of type %s; Reference id to 'transaction' table", feeType.name());
+    public CashTransaction createCashTransactionForFee(LocalDate date, CashTransactionType cashTransactionType, String feeType, BigDecimal feeValue, long transactionId) {
+        String feeDescription = String.format("Fee of type %s; Reference id to 'transaction' table", feeType);
         return CashTransaction.builder()
                 .date(date)
                 .cashTransactionType(cashTransactionType)
