@@ -1,7 +1,7 @@
 package com.investments.tracker.controller.request;
 
 import com.investments.tracker.enums.Currency;
-import com.investments.tracker.validation.ValidCurrency;
+import com.investments.tracker.common.validation.ValidCurrency;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -11,7 +11,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.investments.tracker.utils.ValidationMessages.*;
+import static com.investments.tracker.common.util.ValidationMessages.*;
 
 @AllArgsConstructor
 @NoArgsConstructor

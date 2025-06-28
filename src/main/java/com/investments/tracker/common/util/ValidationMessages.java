@@ -1,4 +1,4 @@
-package com.investments.tracker.utils;
+package com.investments.tracker.common.util;
 
 public class ValidationMessages {
     public static final String DEPOSIT_DATE_NOT_NULL = "Deposit date cannot be NULL!";

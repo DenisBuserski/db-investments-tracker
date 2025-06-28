@@ -22,7 +22,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import static com.investments.tracker.utils.Constants.START_DATE;
+import static com.investments.tracker.common.util.Constants.START_DATE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController

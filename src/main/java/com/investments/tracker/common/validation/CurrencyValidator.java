@@ -1,4 +1,4 @@
-package com.investments.tracker.validation;
+package com.investments.tracker.common.validation;
 
 import com.investments.tracker.enums.Currency;
 import jakarta.validation.ConstraintValidator;

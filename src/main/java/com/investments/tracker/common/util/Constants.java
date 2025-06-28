@@ -1,4 +1,4 @@
-package com.investments.tracker.utils;
+package com.investments.tracker.common.util;
 
 import java.time.LocalDate;
 
