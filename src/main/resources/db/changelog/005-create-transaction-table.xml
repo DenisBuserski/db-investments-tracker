@@ -44,7 +44,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="base_currency" type="VARCHAR(3)">
+            <column name="base_product_currency" type="VARCHAR(3)">
                 <constraints nullable="false"/>
             </column>
 

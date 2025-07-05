@@ -72,10 +72,12 @@ public class FeeService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    // TODO: Implement
     public BigDecimal getTotalFeesAmount() {
         return null;
     }
 
+    // TODO: Implement
     public List<CashTransactionResponse> getAllFeesFromTo(LocalDate startDate, LocalDate now) {
         return null;
     }

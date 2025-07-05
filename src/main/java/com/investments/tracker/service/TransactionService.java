@@ -6,6 +6,7 @@ import com.investments.tracker.controller.response.BalanceResponse;
 import com.investments.tracker.controller.request.TransactionRequest;
 import com.investments.tracker.enums.TransactionType;
 import com.investments.tracker.repository.BalanceRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class TransactionService{
         this.buyTransactionService = buyTransactionService;
     }
 
+    @Transactional
     public BalanceResponse insertTransaction(TransactionRequest transactionRequest) {
         Optional<Balance> currentBalance = this.balanceRepository.getLatestBalance();
         if (!currentBalance.isPresent()) {
@@ -56,7 +58,7 @@ public class TransactionService{
         BigDecimal exchangeRate = transactionRequest.getExchangeRate() == null ? BigDecimal.ZERO : transactionRequest.getExchangeRate();
         BigDecimal singlePrice = transactionRequest.getSinglePrice();
         int quantity = transactionRequest.getQuantity();
-        log.info("Start calculating transaction value with the following params: [SinglePrice:{} | Quantity:{} | ExchangeRate:{}]", singlePrice, quantity, exchangeRate);
+        log.info("Start calculating transaction value with the following params: [SinglePrice:{} | Quantity:{} | ExchangeRate:{}]", singlePrice, quantity, exchangeRate); // TODO: Specify currencies
         BigDecimal calculationWithoutExchangeRate = singlePrice.multiply(BigDecimal.valueOf(quantity));
 
         if (exchangeRate.equals(BigDecimal.ZERO)) {
@@ -79,7 +81,7 @@ public class TransactionService{
                 .exchangeRate(exchangeRate)
                 .totalAmount(transactionValue)
                 .currency(EUR)
-                .baseCurrency(transactionRequest.getCurrency()) // TODO: Rename to base_product_currency
+                .baseProductCurrency(transactionRequest.getCurrency())
                 .description(description)
                 .build();
     }

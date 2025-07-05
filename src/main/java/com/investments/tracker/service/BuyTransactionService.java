@@ -6,6 +6,7 @@ import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.TransactionRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class BuyTransactionService {
         this.balanceService = balanceService;
     }
 
+    @Transactional
     public BalanceResponse insertBuyTransaction(Balance currentBalance, BigDecimal transactionValue, TransactionRequest transactionRequest) {
         if (currentBalance.getBalance().compareTo(transactionValue) >= 0) {
             log.info("Preparing [BUY] transaction with the following params: [CurrentBalance:{} | TransactionValue:{}]",

@@ -50,9 +50,9 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    @Column(name = "base_currency", nullable = false)
+    @Column(name = "base_product_currency", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Currency baseCurrency;
+    private Currency baseProductCurrency;
 
     @Column(name = "description")
     private String description;

@@ -1,1 +1,0 @@
-#logback.classic pattern: %d{HH:mm:ss.SSS} [%t] %level %logger{0} DENIS - %msg%n
