@@ -38,7 +38,23 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="last_portfolio_value" type="DECIMAL(10,3)">
+            <column name="last_portfolio_value" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_unrealized_pl" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_unrealized_pl_percentage" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="total_sold" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="realized_pl" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
         </createTable>

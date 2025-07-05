@@ -2,7 +2,7 @@ package com.investments.tracker;
 
 import com.investments.tracker.controller.DepositController;
 import com.investments.tracker.controller.WithdrawalController;
-import com.investments.tracker.service.DepositService;
+import com.investments.tracker.service.deposit.DepositService;
 import com.investments.tracker.service.WithdrawalService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

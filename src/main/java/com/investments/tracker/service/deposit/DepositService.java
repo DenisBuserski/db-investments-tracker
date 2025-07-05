@@ -1,4 +1,4 @@
-package com.investments.tracker.service;
+package com.investments.tracker.service.deposit;
 
 import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.model.Balance;
@@ -10,7 +10,6 @@ import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,19 +30,20 @@ public class DepositService {
     private final BalanceRepository balanceRepository;
     private final CashTransactionMapper cashTransactionMapper;
     private final DepositMapper depositMapper;
-    private final BalanceService balanceService;
+    private final DepositBalanceBuilderService depositBalanceBuilderService;
 
     @Autowired
     public DepositService(
             CashTransactionRepository cashTransactionRepository,
             BalanceRepository balanceRepository,
             CashTransactionMapper cashTransactionMapper,
-            DepositMapper depositMapper, BalanceService balanceService) {
+            DepositMapper depositMapper,
+            DepositBalanceBuilderService depositBalanceBuilderService) {
         this.cashTransactionRepository = cashTransactionRepository;
         this.balanceRepository = balanceRepository;
         this.cashTransactionMapper = cashTransactionMapper;
         this.depositMapper = depositMapper;
-        this.balanceService = balanceService;
+        this.depositBalanceBuilderService = depositBalanceBuilderService;
     }
 
     // TODO: Check what is the currency of the Deposit, based on that decide how to save in the balance
@@ -55,9 +55,9 @@ public class DepositService {
 
         Optional<Balance> latestBalance = this.balanceRepository.findTopByOrderByIdDesc();
         if (latestBalance.isPresent()) {
-            newBalance = this.balanceService.createNewBalanceFromDeposit(latestBalance.get(), deposit);
+            newBalance = this.depositBalanceBuilderService.createNewBalanceFromCashTransaction(latestBalance.get(), deposit);
         } else {
-            newBalance = this.balanceService.createNewBalanceFromDeposit(null, deposit);
+            newBalance = this.depositBalanceBuilderService.createNewBalanceFromCashTransaction(null, deposit);
         }
         this.balanceRepository.save(newBalance);
         log.info("Deposit for [{} {}] successful", String.format("%.2f", deposit.getAmount()), deposit.getCurrency());

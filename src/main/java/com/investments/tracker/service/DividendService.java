@@ -28,7 +28,7 @@ public class DividendService {
     private final BalanceRepository balanceRepository;
     private final DividendRepository dividendRepository;
     private final CashTransactionService cashtransactionService;
-    private final BalanceService balanceService;
+    private final DividendBalanceBuilderService dividendBalanceBuilderService;
 
     @Autowired
     public DividendService(
@@ -36,12 +36,12 @@ public class DividendService {
             BalanceRepository balanceRepository,
             DividendRepository dividendRepository,
             CashTransactionService cashtransactionService,
-            BalanceService balanceService) {
+            DividendBalanceBuilderService dividendBalanceBuilderService) {
         this.cashTransactionRepository = cashTransactionRepository;
         this.balanceRepository = balanceRepository;
         this.dividendRepository = dividendRepository;
         this.cashtransactionService = cashtransactionService;
-        this.balanceService = balanceService;
+        this.dividendBalanceBuilderService = dividendBalanceBuilderService;
     }
 
     // TODO: Check the scaling with the exchange rate
@@ -59,9 +59,9 @@ public class DividendService {
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         Balance newBalance;
         if (latestBalance.isPresent()) {
-            newBalance = this.balanceService.createNewBalanceFromDividend(latestBalance.get(), dividend);
+            newBalance = this.dividendBalanceBuilderService.createNewBalanceFromCashTransaction(latestBalance.get(), dividend);
         } else {
-            newBalance = this.balanceService.createNewBalanceFromDividend(null, dividend);
+            newBalance = this.dividendBalanceBuilderService.createNewBalanceFromCashTransaction(null, dividend);
         }
 
         this.balanceRepository.save(newBalance);

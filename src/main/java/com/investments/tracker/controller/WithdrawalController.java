@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -49,7 +51,7 @@ public class WithdrawalController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     public ResponseEntity<BalanceResponse> insertWithdraw(@RequestBody @Valid WithdrawalRequest withdrawalRequest) {
-        log.info("Making withdrawal for [{} {}]", String.format("%.2f", withdrawalRequest.getAmount()), withdrawalRequest.getCurrency());
+        log.info("Inserting withdrawal for [{} {}]", String.format("%.2f", withdrawalRequest.getAmount()), withdrawalRequest.getCurrency());
         BalanceResponse balanceResponse = this.withdrawalService.insertWithdraw(withdrawalRequest);
         return new ResponseEntity<>(balanceResponse, HttpStatus.CREATED);
     }

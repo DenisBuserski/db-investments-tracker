@@ -39,6 +39,18 @@ public class Balance {
     @Column(name = "total_fees", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalFees;
 
-    @Column(name = "last_portfolio_value", nullable = false, precision = 10, scale = 3)
+    @Column(name = "last_portfolio_value", nullable = false, precision = 10, scale = 2)
     private BigDecimal lastPortfolioValue;
+
+    @Column(name = "last_unrealized_pl", nullable = false, precision = 10, scale = 2)
+    private BigDecimal lastUnrealizedPl;
+
+    @Column(name = "last_unrealized_pl_percentage", nullable = false, precision = 10, scale = 2)
+    private BigDecimal lastUnrealizedPlPercentage;
+
+    @Column(name = "total_sold", nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalSold;
+
+    @Column(name = "realized_pl", nullable = false, precision = 10, scale = 2)
+    private BigDecimal realizedPl;
 }

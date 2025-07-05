@@ -1,6 +1,7 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.controller.response.BalanceResponse;
+import com.investments.tracker.enums.CashTransactionType;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Transaction;
@@ -15,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
+import static com.investments.tracker.enums.CashTransactionType.*;
 
 @Service
 @Slf4j
@@ -25,44 +27,11 @@ public class BalanceService {
         this.balanceRepository = balanceRepository;
     }
 
-    public Balance createNewBalanceFromDeposit(Balance balance, CashTransaction deposit) {
-        LocalDate newBalanceDate = deposit.getDate();
-        BigDecimal newBalanceAmount = balance == null ? deposit.getAmount() : balance.getBalance().add(deposit.getAmount());
-        BigDecimal newTotalInvestments = balance == null ? BigDecimal.ZERO : balance.getTotalInvestments();
-        BigDecimal newTotalDeposits = balance == null ? deposit.getAmount() : balance.getTotalDeposits().add(deposit.getAmount());
-        BigDecimal newTotalWithdrawals = balance == null ? BigDecimal.ZERO : balance.getTotalWithdrawals();
-        BigDecimal newTotalDividends = balance == null ? BigDecimal.ZERO : balance.getTotalDividends();
-        BigDecimal newTotalFees = balance == null ? BigDecimal.ZERO : balance.getTotalFees();
-        BigDecimal newLastPortfolioValue = balance == null ? BigDecimal.ZERO : balance.getLastPortfolioValue();
 
-        return balanceBuilder(newBalanceDate, newBalanceAmount, newTotalInvestments, newTotalDeposits, newTotalWithdrawals, newTotalDividends, newTotalFees, newLastPortfolioValue);
-    }
 
-    public Balance createNewBalanceFromWithdrawal(Balance balance, CashTransaction withdrawal) {
-        LocalDate newBalanceDate = withdrawal.getDate();
-        BigDecimal newBalanceAmount = balance.getBalance().subtract(withdrawal.getAmount());
-        BigDecimal newTotalInvestments = balance.getTotalInvestments();
-        BigDecimal newTotalDeposits = balance.getTotalDeposits();
-        BigDecimal newTotalWithdrawals = balance.getTotalWithdrawals().add(withdrawal.getAmount());
-        BigDecimal newTotalDividends = balance.getTotalDividends();
-        BigDecimal newTotalFees = balance.getTotalFees();
-        BigDecimal newLastPortfolioValue = balance.getLastPortfolioValue();
 
-        return balanceBuilder(newBalanceDate, newBalanceAmount, newTotalInvestments, newTotalDeposits, newTotalWithdrawals, newTotalDividends, newTotalFees, newLastPortfolioValue);
-    }
 
-    public Balance createNewBalanceFromDividend(Balance balance, CashTransaction dividend) {
-        LocalDate newBalanceDate = dividend.getDate();
-        BigDecimal newBalanceAmount = balance == null ? dividend.getAmount() : balance.getBalance().add(dividend.getAmount());
-        BigDecimal newTotalInvestments = balance == null ? BigDecimal.ZERO : balance.getTotalInvestments();
-        BigDecimal newTotalDeposits = balance == null ? BigDecimal.ZERO : balance.getTotalDeposits();
-        BigDecimal newTotalWithdrawals = balance == null ? BigDecimal.ZERO : balance.getTotalWithdrawals();
-        BigDecimal newTotalDividends = balance == null ? dividend.getAmount() : balance.getTotalDividends().add(dividend.getAmount());
-        BigDecimal newTotalFees = balance == null ? BigDecimal.ZERO : balance.getTotalFees();
-        BigDecimal newLastPortfolioValue = balance == null ? BigDecimal.ZERO : balance.getLastPortfolioValue();
 
-        return balanceBuilder(newBalanceDate, newBalanceAmount, newTotalInvestments, newTotalDeposits, newTotalWithdrawals, newTotalDividends, newTotalFees, newLastPortfolioValue);
-    }
 
     public Balance createNewBalanceFromTransaction(Balance balance, Transaction transaction, BigDecimal totalAmountOfInsertedFees) {
         LocalDate newBalanceDate = transaction.getDate();
@@ -73,18 +42,26 @@ public class BalanceService {
         BigDecimal newTotalDividends = balance.getTotalDividends();
         BigDecimal newTotalFees = balance.getTotalFees().add(totalAmountOfInsertedFees);
         BigDecimal newLastPortfolioValue = balance.getLastPortfolioValue();
+        BigDecimal lastUnrealizedPl = balance == null ? BigDecimal.ZERO : balance.getLastUnrealizedPl();
+        BigDecimal lastUnrealizedPlPercentage = balance == null ? BigDecimal.ZERO : balance.getLastUnrealizedPlPercentage();
+        BigDecimal totalSold = balance == null ? BigDecimal.ZERO : balance.getTotalSold();
+        BigDecimal realizedPl = balance == null ? BigDecimal.ZERO : balance.getRealizedPl();
 
-        return balanceBuilder(newBalanceDate, newBalanceAmount, newTotalInvestments, newTotalDeposits, newTotalWithdrawals, newTotalDividends, newTotalFees, newLastPortfolioValue);
+        return balanceBuilder(newBalanceDate, newBalanceAmount, newTotalInvestments, newTotalDeposits, newTotalWithdrawals, newTotalDividends, newTotalFees, newLastPortfolioValue, lastUnrealizedPl, lastUnrealizedPlPercentage, totalSold, realizedPl);
     }
 
-    private static Balance balanceBuilder(LocalDate newBalanceDate,
+    public static Balance balanceBuilder(LocalDate newBalanceDate,
                                           BigDecimal newBalanceAmount,
                                           BigDecimal newTotalInvestments,
                                           BigDecimal newTotalDeposits,
                                           BigDecimal newTotalWithdrawals,
                                           BigDecimal newTotalDividends,
                                           BigDecimal newTotalFees,
-                                          BigDecimal newLastPortfolioValue) {
+                                          BigDecimal newLastPortfolioValue,
+                                          BigDecimal lastUnrealizedPl,
+                                          BigDecimal lastUnrealizedPlPercentage,
+                                          BigDecimal totalSold,
+                                          BigDecimal realizedPl) {
         return Balance.builder()
                 .date(newBalanceDate)
                 .balance(newBalanceAmount)
@@ -94,6 +71,10 @@ public class BalanceService {
                 .totalDividends(newTotalDividends)
                 .totalFees(newTotalFees)
                 .lastPortfolioValue(newLastPortfolioValue)
+                .lastUnrealizedPl(lastUnrealizedPl)
+                .lastUnrealizedPlPercentage(lastUnrealizedPlPercentage)
+                .totalSold(totalSold)
+                .realizedPl(realizedPl)
                 .build();
     }
 
