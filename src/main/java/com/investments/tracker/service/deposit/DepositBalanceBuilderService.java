@@ -9,13 +9,12 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.investments.tracker.service.BalanceService.balanceBuilder;
 
 @Service
 @Slf4j
-public class DepositBalanceBuilderService implements BalanceBuilder {
+public class DepositBalanceBuilderService extends BalanceBuilder {
     @Override
-    public Balance createNewBalanceFromCashTransaction(Balance balance, CashTransaction deposit) {
+    public Balance createBalanceFromCashTransaction(Balance balance, CashTransaction deposit) {
         LocalDate newBalanceDate = deposit.getDate();
         BigDecimal newBalanceAmount = balance == null ? deposit.getAmount() : balance.getBalance().add(deposit.getAmount());
         BigDecimal newTotalInvestments = balance == null ? BigDecimal.ZERO : balance.getTotalInvestments();

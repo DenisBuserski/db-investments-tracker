@@ -4,6 +4,8 @@ import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.enums.CashTransactionType;
 import com.investments.tracker.service.*;
 import com.investments.tracker.service.deposit.DepositService;
+import com.investments.tracker.service.dividend.DividendService;
+import com.investments.tracker.service.withdrawal.WithdrawalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

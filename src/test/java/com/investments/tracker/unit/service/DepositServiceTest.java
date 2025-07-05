@@ -113,7 +113,7 @@ public class DepositServiceTest {
         when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(cashTransaction);
         when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(cashTransaction);
         when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.empty());
-        when(depositBalanceBuilderService.createNewBalanceFromCashTransaction(isNull(), eq(cashTransaction))).thenReturn(balance);
+        when(depositBalanceBuilderService.createBalanceFromCashTransaction(isNull(), eq(cashTransaction))).thenReturn(balance);
 
         BalanceResponse balanceResponse = depositService.insertDeposit(depositRequest);
         assertEquals(balanceResponse.getBalance(), BigDecimal.valueOf(1000));
@@ -122,7 +122,7 @@ public class DepositServiceTest {
         verify(cashTransactionMapper).createCashtransaction(eq(depositRequest), eq(depositMapper));
         verify(cashTransactionRepository).save(any(CashTransaction.class));
         verify(balanceRepository).findTopByOrderByIdDesc();
-        verify(depositBalanceBuilderService).createNewBalanceFromCashTransaction(isNull(), eq(cashTransaction));
+        verify(depositBalanceBuilderService).createBalanceFromCashTransaction(isNull(), eq(cashTransaction));
         verify(balanceRepository).save(any(Balance.class));
     }
 
@@ -132,7 +132,7 @@ public class DepositServiceTest {
         when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(cashTransaction);
         when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(cashTransaction);
         when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(balance));
-        when(depositBalanceBuilderService.createNewBalanceFromCashTransaction(eq(balance), eq(cashTransaction))).thenReturn(balance2);
+        when(depositBalanceBuilderService.createBalanceFromCashTransaction(eq(balance), eq(cashTransaction))).thenReturn(balance2);
 
         BalanceResponse balanceResponse = depositService.insertDeposit(depositRequest);
         assertEquals(0, balanceResponse.getBalance().compareTo(BigDecimal.valueOf(2000)));
@@ -141,7 +141,7 @@ public class DepositServiceTest {
         verify(cashTransactionMapper).createCashtransaction(eq(depositRequest), eq(depositMapper));
         verify(cashTransactionRepository).save(any(CashTransaction.class));
         verify(balanceRepository).findTopByOrderByIdDesc();
-        verify(depositBalanceBuilderService).createNewBalanceFromCashTransaction(eq(balance), eq(cashTransaction));
+        verify(depositBalanceBuilderService).createBalanceFromCashTransaction(eq(balance), eq(cashTransaction));
         verify(balanceRepository).save(any(Balance.class));
     }
 

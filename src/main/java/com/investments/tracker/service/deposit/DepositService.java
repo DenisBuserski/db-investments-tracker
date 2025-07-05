@@ -55,9 +55,9 @@ public class DepositService {
 
         Optional<Balance> latestBalance = this.balanceRepository.findTopByOrderByIdDesc();
         if (latestBalance.isPresent()) {
-            newBalance = this.depositBalanceBuilderService.createNewBalanceFromCashTransaction(latestBalance.get(), deposit);
+            newBalance = this.depositBalanceBuilderService.createBalanceFromCashTransaction(latestBalance.get(), deposit);
         } else {
-            newBalance = this.depositBalanceBuilderService.createNewBalanceFromCashTransaction(null, deposit);
+            newBalance = this.depositBalanceBuilderService.createBalanceFromCashTransaction(null, deposit);
         }
         this.balanceRepository.save(newBalance);
         log.info("Deposit for [{} {}] successful", String.format("%.2f", deposit.getAmount()), deposit.getCurrency());

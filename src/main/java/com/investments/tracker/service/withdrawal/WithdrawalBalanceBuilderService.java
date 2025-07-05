@@ -1,20 +1,20 @@
-package com.investments.tracker.service;
+package com.investments.tracker.service.withdrawal;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
+import com.investments.tracker.service.BalanceBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.investments.tracker.service.BalanceService.balanceBuilder;
 
 @Service
 @Slf4j
-public class WithdrawalBalanceBuilderService implements BalanceBuilder {
+public class WithdrawalBalanceBuilderService extends BalanceBuilder {
     @Override
-    public Balance createNewBalanceFromCashTransaction(Balance balance, CashTransaction withdrawal) {
+    public Balance createBalanceFromCashTransaction(Balance balance, CashTransaction withdrawal) {
         LocalDate newBalanceDate = withdrawal.getDate();
         BigDecimal newBalanceAmount = balance.getBalance().subtract(withdrawal.getAmount());
         BigDecimal newTotalInvestments = balance.getTotalInvestments();

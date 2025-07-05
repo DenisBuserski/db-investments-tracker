@@ -1,4 +1,4 @@
-package com.investments.tracker.service;
+package com.investments.tracker.service.transaction;
 
 import com.investments.tracker.controller.request.TransactionRequest;
 import com.investments.tracker.controller.response.BalanceResponse;
@@ -6,6 +6,8 @@ import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.TransactionRepository;
+import com.investments.tracker.service.FeeService;
+import com.investments.tracker.service.PortfolioService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
-import static com.investments.tracker.service.TransactionService.createTransaction;
+import static com.investments.tracker.service.transaction.TransactionService.createTransaction;
 
 @Service
 @Slf4j
@@ -23,7 +25,7 @@ public class BuyTransactionService {
     private final TransactionRepository transactionRepository;
     private final FeeService feeService;
     private final PortfolioService portfolioService;
-    private final BalanceService balanceService;
+    private final TransactionBalanceBuilderService balanceService;
 
     @Autowired
     public BuyTransactionService(
@@ -31,7 +33,7 @@ public class BuyTransactionService {
             TransactionRepository transactionRepository,
             FeeService feeService,
             PortfolioService portfolioService,
-            BalanceService balanceService) {
+            TransactionBalanceBuilderService balanceService) {
         this.balanceRepository = balanceRepository;
         this.transactionRepository = transactionRepository;
         this.feeService = feeService;

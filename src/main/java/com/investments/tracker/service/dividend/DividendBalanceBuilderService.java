@@ -1,20 +1,20 @@
-package com.investments.tracker.service;
+package com.investments.tracker.service.dividend;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
+import com.investments.tracker.service.BalanceBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.investments.tracker.service.BalanceService.balanceBuilder;
 
 @Service
 @Slf4j
-public class DividendBalanceBuilderService implements BalanceBuilder {
+public class DividendBalanceBuilderService extends BalanceBuilder {
     @Override
-    public Balance createNewBalanceFromCashTransaction(Balance balance, CashTransaction dividend) {
+    public Balance createBalanceFromCashTransaction(Balance balance, CashTransaction dividend) {
         LocalDate newBalanceDate = dividend.getDate();
         BigDecimal newBalanceAmount = balance == null ? dividend.getAmount() : balance.getBalance().add(dividend.getAmount());
         BigDecimal newTotalInvestments = balance == null ? BigDecimal.ZERO : balance.getTotalInvestments();

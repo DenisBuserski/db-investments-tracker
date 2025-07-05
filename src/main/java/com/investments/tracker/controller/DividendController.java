@@ -2,7 +2,7 @@ package com.investments.tracker.controller;
 
 import com.investments.tracker.controller.response.BalanceResponse;
 import com.investments.tracker.controller.request.DividendRequest;
-import com.investments.tracker.service.DividendService;
+import com.investments.tracker.service.dividend.DividendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

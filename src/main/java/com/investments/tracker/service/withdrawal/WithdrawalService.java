@@ -1,4 +1,4 @@
-package com.investments.tracker.service;
+package com.investments.tracker.service.withdrawal;
 
 import com.investments.tracker.controller.response.BalanceResponse;
 import com.investments.tracker.controller.response.CashTransactionResponse;
@@ -18,13 +18,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
-import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
 import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 
 
@@ -65,7 +63,7 @@ public class WithdrawalService {
                     CashTransaction withdrawal = this.cashTransactionMapper.createCashtransaction(withdrawalRequest, withdrawalMapper);
                     this.cashTransactionRepository.save(withdrawal);
 
-                    Balance newBalance = this.withdrawalBalanceBuilderService.createNewBalanceFromCashTransaction(balance, withdrawal);
+                    Balance newBalance = this.withdrawalBalanceBuilderService.createBalanceFromCashTransaction(balance, withdrawal);
                     this.balanceRepository.save(newBalance);
                     log.info("Withdrawal for [{} {}] successful", String.format("%.2f", withdrawal.getAmount()), withdrawal.getCurrency());
                     return createBalanceResponse(newBalance);

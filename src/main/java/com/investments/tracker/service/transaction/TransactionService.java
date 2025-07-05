@@ -1,4 +1,4 @@
-package com.investments.tracker.service;
+package com.investments.tracker.service.transaction;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Transaction;

@@ -1,4 +1,4 @@
-package com.investments.tracker.service;
+package com.investments.tracker.service.dividend;
 
 import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.model.Balance;
@@ -9,6 +9,7 @@ import com.investments.tracker.controller.request.DividendRequest;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.repository.DividendRepository;
+import com.investments.tracker.service.CashTransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,9 +60,9 @@ public class DividendService {
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         Balance newBalance;
         if (latestBalance.isPresent()) {
-            newBalance = this.dividendBalanceBuilderService.createNewBalanceFromCashTransaction(latestBalance.get(), dividend);
+            newBalance = this.dividendBalanceBuilderService.createBalanceFromCashTransaction(latestBalance.get(), dividend);
         } else {
-            newBalance = this.dividendBalanceBuilderService.createNewBalanceFromCashTransaction(null, dividend);
+            newBalance = this.dividendBalanceBuilderService.createBalanceFromCashTransaction(null, dividend);
         }
 
         this.balanceRepository.save(newBalance);

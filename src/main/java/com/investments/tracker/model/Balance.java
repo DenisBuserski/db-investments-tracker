@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Builder
-@ToString
 public class Balance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
