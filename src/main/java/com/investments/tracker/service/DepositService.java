@@ -9,6 +9,8 @@ import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,7 @@ public class DepositService {
     }
 
     // TODO: Check what is the currency of the Deposit, based on that decide how to save in the balance
+    @Transactional
     public BalanceResponse insertDeposit(DepositRequest depositRequest) {
         CashTransaction deposit = this.cashTransactionMapper.createCashtransaction(depositRequest, depositMapper);
         this.cashTransactionRepository.save(deposit);

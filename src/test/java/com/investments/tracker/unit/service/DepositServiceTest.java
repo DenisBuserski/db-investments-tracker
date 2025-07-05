@@ -16,6 +16,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@Tag("unit")
 public class DepositServiceTest {
 
     @InjectMocks
@@ -57,6 +59,7 @@ public class DepositServiceTest {
     private Balance balance;
     private Balance balance2;
     private final LocalDate DATE = LocalDate.of(2025, 1, 1);
+    private final String TEST_DESCRIPTION = "TEST DESCRIPTION";
 
     @BeforeEach
     public void setUp() {
@@ -64,7 +67,7 @@ public class DepositServiceTest {
                 .date(DATE)
                 .amount(BigDecimal.valueOf(1000))
                 .currency(EUR)
-                .description("TEST DESCRIPTION")
+                .description(TEST_DESCRIPTION)
                 .build();
 
         cashTransactionResponse = new CashTransactionResponse(
@@ -72,14 +75,14 @@ public class DepositServiceTest {
                 DEPOSIT,
                 BigDecimal.valueOf(1000),
                 EUR,
-                "TEST DESCRIPTION");
+                TEST_DESCRIPTION);
 
         cashTransaction = CashTransaction.builder()
                 .date(DATE)
                 .cashTransactionType(DEPOSIT)
                 .amount(BigDecimal.valueOf(1000))
                 .currency(EUR)
-                .description("TEST DESCRIPTION")
+                .description(TEST_DESCRIPTION)
                 .build();
 
         balance = Balance.builder()

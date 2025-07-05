@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,14 +26,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
         methods = { RequestMethod.POST }
 )
 @Slf4j
-@Tag(name = "Deposit Controller", description = "Contains REST POST method for inserting a deposit in database")
+@Tag(name = "Deposit Controller", description = "Contains REST POST method for inserting a deposit in the database")
+@RequiredArgsConstructor
 public class DepositController {
     private final DepositService depositService;
-
-    @Autowired
-    public DepositController(DepositService depositService) {
-        this.depositService = depositService;
-    }
 
     @PostMapping(value = "/in", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)

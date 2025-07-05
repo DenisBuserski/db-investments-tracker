@@ -9,6 +9,7 @@ import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.WithdrawalMapper;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
+import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
 import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 
 
@@ -46,13 +48,14 @@ public class WithdrawalService {
         this.withdrawalMapper = withdrawalMapper;
         this.balanceService = balanceService;
     }
-    
-    public BalanceResponse withdrawCash(WithdrawalRequest withdrawalRequest) {
+
+    @Transactional
+    public BalanceResponse insertWithdraw(WithdrawalRequest withdrawalRequest) {
         Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             Balance balance = latestBalance.get();
-            // FIX THIS IS VERY WRONG
-            if (balance.getDate().isBefore(withdrawalRequest.getDate())) {
+
+            if (withdrawalRequest.getDate().isAfter(balance.getDate())) {
                 log.error("Withdrawal date cannot be before the latest balance date");
                 return createBalanceResponse(balance);
             } else {
@@ -75,30 +78,16 @@ public class WithdrawalService {
         }
     }
 
-    // TODO: Refactor
     public List<CashTransactionResponse> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
-        log.info("Getting all withdrawals from [{}] to [{}]", from, to);
-        List<CashTransaction> withdrawalResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(WITHDRAWAL, from, to);
-        if (!withdrawalResult.isEmpty()) {
-            List<CashTransactionResponse> withdrawals = new ArrayList<>();
-            withdrawalResult.stream().forEach(withdrawal -> {
-                CashTransactionResponse cashTransactionResponse = new CashTransactionResponse(
-                        withdrawal.getDate(),
-                        WITHDRAWAL,
-                        withdrawal.getAmount(),
-                        withdrawal.getCurrency(),
-                        withdrawal.getDescription()
-                );
-                withdrawals.add(cashTransactionResponse);
-            });
-            return withdrawals;
+        List<CashTransaction> withdrawalsResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(WITHDRAWAL, from, to);
+        if (!withdrawalsResult.isEmpty()) {
+            return withdrawalMapper.mapToResponseDTOList(withdrawalsResult);
         }
         return Collections.emptyList();
     }
 
-    // TODO: Refactor
     public BigDecimal getTotalWithdrawalsAmount() {
-        return null;
+        return this.cashTransactionRepository.getTotalAmountOf(WITHDRAWAL).orElse(BigDecimal.ZERO);
     }
 
 }
