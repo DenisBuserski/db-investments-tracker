@@ -1,9 +1,9 @@
 package com.investments.tracker.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.investments.tracker.controller.DepositController;
+import com.investments.tracker.controller.deposit.DepositController;
 import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.controller.request.DepositRequest;
+import com.investments.tracker.controller.deposit.DepositRequest;
 import com.investments.tracker.service.deposit.DepositService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

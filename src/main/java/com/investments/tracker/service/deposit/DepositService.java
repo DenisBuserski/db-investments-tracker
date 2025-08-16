@@ -4,7 +4,7 @@ import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.controller.request.DepositRequest;
+import com.investments.tracker.controller.deposit.DepositRequest;
 import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.repository.BalanceRepository;
@@ -12,7 +12,6 @@ import com.investments.tracker.repository.CashTransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -52,7 +51,7 @@ public class DepositService {
     }
 
     public List<CashTransactionResponse> getAllDepositsFromTo(LocalDate from, LocalDate to) {
-        List<CashTransaction> depositsResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, from, to);
+        List<CashTransaction> depositsResult = cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, from, to);
         if (!depositsResult.isEmpty()) {
             return depositMapper.mapToResponseDTOList(depositsResult);
         }
@@ -60,6 +59,6 @@ public class DepositService {
     }
 
     public BigDecimal getTotalDepositsAmount() {
-        return this.cashTransactionRepository.getTotalAmountOf(DEPOSIT).orElse(BigDecimal.ZERO);
+        return cashTransactionRepository.getTotalAmountOf(DEPOSIT).orElse(BigDecimal.ZERO);
     }
 }

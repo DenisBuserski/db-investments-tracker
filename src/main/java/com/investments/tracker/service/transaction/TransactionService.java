@@ -9,7 +9,9 @@ import com.investments.tracker.repository.BalanceRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -36,17 +38,20 @@ public class TransactionService{
 
     @Transactional
     public BalanceResponse insertTransaction(TransactionRequest transactionRequest) {
-        Optional<Balance> currentBalance = this.balanceRepository.getLatestBalance();
+        Optional<Balance> currentBalance = balanceRepository.getLatestBalance();
         if (!currentBalance.isPresent()) {
-            log.error("Transaction cannot be created because there is no current balance!");
-            return createBalanceResponse(null);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction cannot be created, because no balance exists");
         } else {
             TransactionType transactionType = transactionRequest.getTransactionType();
             BigDecimal transactionValue = calculateTransactionValue(transactionRequest);
 
             BalanceResponse balanceResponse = null;
             if (transactionType == BUY) {
-                balanceResponse = this.buyTransactionService.insertBuyTransaction(currentBalance.get(), transactionValue, transactionRequest);
+                if (currentBalance.get().getBalance().compareTo(transactionValue) >= 0) {
+                    balanceResponse = buyTransactionService.insertBuyTransaction(currentBalance.get(), transactionValue, transactionRequest);
+                } else {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction of type [BUY] cannot be created because there is not enough money");
+                }
             } else if (transactionType == SELL) {
                 // balanceResponse = sellTransaction(currentBalance.get(), transactionValue, transactionRequest);
             }

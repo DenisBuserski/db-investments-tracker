@@ -50,10 +50,10 @@ public class FeeService {
                 .map(entry -> {
                     String feeType = checkFeeType(entry.getKey());
                     BigDecimal feeValue = entry.getValue();
-                    return this.cashTransactionService.createCashTransactionForFee(transactionRequest.getDate(), FEE, feeType, feeValue, transactionId);
+                    return cashTransactionService.createCashTransactionForFee(transactionRequest.getDate(), FEE, feeType, feeValue, transactionId);
                 })
                 .collect(Collectors.toList());
-        return this.cashTransactionRepository.saveAll(fees);
+        return cashTransactionRepository.saveAll(fees);
     }
 
     private String checkFeeType(FeeType feeType) {

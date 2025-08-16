@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -36,21 +37,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 )
 @Slf4j
 @Tag(name = "Cash Transaction Controller", description = "REST methods for retrieving cash transaction data")
+@RequiredArgsConstructor
 public class CashTransactionController {
     private final DepositService depositService;
     private final WithdrawalService withdrawalService;
     private final DividendService dividendService;
     private final FeeService feeService;
-
-    public CashTransactionController(DepositService depositService,
-                                     WithdrawalService withdrawalService,
-                                     DividendService dividendService,
-                                     FeeService feeService) {
-        this.depositService = depositService;
-        this.withdrawalService = withdrawalService;
-        this.dividendService = dividendService;
-        this.feeService = feeService;
-    }
 
     // TODO: Add Pagination
     @GetMapping(value = "/get", produces = APPLICATION_JSON_VALUE)
@@ -78,7 +70,7 @@ public class CashTransactionController {
         to = to == null ? LocalDate.now() : to;
         log.info("Getting cash transactions type: {} from [{}] to [{}]", type.name().toUpperCase(), from, to);
         List<CashTransactionResponse> result = switch (type) {
-            case DEPOSIT -> this.depositService.getAllDepositsFromTo(from, to);
+            case DEPOSIT -> depositService.getAllDepositsFromTo(from, to);
             case WITHDRAWAL -> this.withdrawalService.getAllWithdrawalsFromTo(from, to);
             case DIVIDEND -> this.dividendService.getAllDividendsFromTo(from, to);
             case FEE -> this.feeService.getAllFeesFromTo(from, to);
@@ -109,7 +101,7 @@ public class CashTransactionController {
             @Parameter(description = "The type of cash transaction", required = true) @RequestParam("CashTransactionType") CashTransactionType type) {
         log.info("Getting total amount of cash transactions with type: {}", type.name().toUpperCase());
         BigDecimal totalAmount = switch (type) {
-            case DEPOSIT -> this.depositService.getTotalDepositsAmount();
+            case DEPOSIT -> depositService.getTotalDepositsAmount();
             case WITHDRAWAL -> this.withdrawalService.getTotalWithdrawalsAmount();
             case DIVIDEND -> this.dividendService.getTotalDividendsAmount();
             case FEE -> this.feeService.getTotalFeesAmount();

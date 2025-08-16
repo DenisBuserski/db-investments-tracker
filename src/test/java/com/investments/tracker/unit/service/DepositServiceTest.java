@@ -6,7 +6,7 @@ import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.controller.request.DepositRequest;
+import com.investments.tracker.controller.deposit.DepositRequest;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.service.deposit.DepositBalanceBuilderService;

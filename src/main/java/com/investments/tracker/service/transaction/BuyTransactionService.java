@@ -11,7 +11,9 @@ import com.investments.tracker.service.PortfolioService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 
@@ -43,26 +45,22 @@ public class BuyTransactionService {
 
     @Transactional
     public BalanceResponse insertBuyTransaction(Balance currentBalance, BigDecimal transactionValue, TransactionRequest transactionRequest) {
-        if (currentBalance.getBalance().compareTo(transactionValue) >= 0) {
-            log.info("Preparing [BUY] transaction with the following params: [CurrentBalance:{} | TransactionValue:{}]",
+        log.info("Preparing [BUY] transaction with the following params: [CurrentBalance:{} | TransactionValue:{}]",
                     currentBalance.getBalance(), transactionValue);
-            Transaction transaction = createTransaction(transactionRequest, transactionValue);
-            this.transactionRepository.save(transaction);
+        Transaction transaction = createTransaction(transactionRequest, transactionValue);
+        transactionRepository.save(transaction);
 
-            log.info("Start calculating fees");
-            BigDecimal totalAmountOfInsertedFees = this.feeService.getTotalAmountOfInsertedFees(transactionRequest, transaction.getId());
+        log.info("Start calculating fees");
+        BigDecimal totalAmountOfInsertedFees = feeService.getTotalAmountOfInsertedFees(transactionRequest, transaction.getId());
 
-            log.info("Start updating portfolio");
-            this.portfolioService.updatePortfolioForBuyTransaction(transactionRequest, transactionValue);
+        log.info("Start updating portfolio");
+        portfolioService.updatePortfolioForBuyTransaction(transactionRequest, transactionValue);
 
             Balance newBalance = this.balanceService.createNewBalanceFromTransaction(currentBalance, transaction, totalAmountOfInsertedFees);
             this.balanceRepository.save(newBalance);
             log.info("Successful [BUY] transaction for product [{}] on [{}]", transactionRequest.getProductName(), transactionRequest.getDate());
 
             return createBalanceResponse(newBalance);
-        } else {
-            log.info("Transaction of type [BUY] cannot be created because there is not enough balance.");
-            return createBalanceResponse(null);
-        }
+
     }
 }
