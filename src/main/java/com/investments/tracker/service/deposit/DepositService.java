@@ -37,7 +37,7 @@ public class DepositService {
     @Transactional
     public BalanceResponse insertDeposit(DepositRequest depositRequest) {
         CashTransaction deposit = cashTransactionMapper.createCashtransaction(depositRequest, depositMapper);
-        this.cashTransactionRepository.save(deposit);
+        cashTransactionRepository.save(deposit);
         Balance newBalance;
 
         Optional<Balance> latestBalance = balanceRepository.findTopByOrderByIdDesc();
@@ -46,7 +46,7 @@ public class DepositService {
         } else {
             newBalance = depositBalanceBuilderService.createBalanceFromCashTransaction(null, deposit);
         }
-        this.balanceRepository.save(newBalance);
+        balanceRepository.save(newBalance);
         log.info("Deposit for [{} {}] successful", String.format("%.2f", deposit.getAmount()), deposit.getCurrency());
         return createBalanceResponse(newBalance);
     }

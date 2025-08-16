@@ -47,11 +47,11 @@ public class WithdrawalService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Withdrawal date cannot be before the latest balance date");
             } else {
                 if (balance.getBalance().compareTo(withdrawalRequest.getAmount()) >= 0) {
-                    CashTransaction withdrawal = this.cashTransactionMapper.createCashtransaction(withdrawalRequest, withdrawalMapper);
-                    this.cashTransactionRepository.save(withdrawal);
+                    CashTransaction withdrawal = cashTransactionMapper.createCashtransaction(withdrawalRequest, withdrawalMapper);
+                    cashTransactionRepository.save(withdrawal);
 
-                    Balance newBalance = this.withdrawalBalanceBuilderService.createBalanceFromCashTransaction(balance, withdrawal);
-                    this.balanceRepository.save(newBalance);
+                    Balance newBalance = withdrawalBalanceBuilderService.createBalanceFromCashTransaction(balance, withdrawal);
+                    balanceRepository.save(newBalance);
                     log.info("Withdrawal for [{} {}] successful", String.format("%.2f", withdrawal.getAmount()), withdrawal.getCurrency());
                     return createBalanceResponse(newBalance);
                 } else {
