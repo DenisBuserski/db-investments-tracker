@@ -25,12 +25,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
         methods = { RequestMethod.POST }
 )
 @Slf4j
-@Tag(name = "Withdrawal Controller", description = "Contains REST POST method for inserting a withdrawal in the database")
+@Tag(name = "Withdrawal Controller", description = "Contains REST POST method for creating a withdrawal in the database")
 @RequiredArgsConstructor
 public class WithdrawalController {
     private final WithdrawalService withdrawalService;
 
-    @PostMapping(value = "/in", produces = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/out", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             operationId = "insertWithdraw",
@@ -48,8 +48,8 @@ public class WithdrawalController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     public ResponseEntity<BalanceResponse> insertWithdraw(@RequestBody @Valid WithdrawalRequest withdrawalRequest) {
-        log.info("Inserting withdrawal for [{} {}]", String.format("%.2f", withdrawalRequest.getAmount()), withdrawalRequest.getCurrency());
-        BalanceResponse balanceResponse = this.withdrawalService.insertWithdraw(withdrawalRequest);
+        log.info("Creating withdrawal for [{} {}]", String.format("%.2f", withdrawalRequest.getAmount()), withdrawalRequest.getCurrency());
+        BalanceResponse balanceResponse = withdrawalService.insertWithdraw(withdrawalRequest);
         return new ResponseEntity<>(balanceResponse, HttpStatus.CREATED);
     }
 

@@ -10,6 +10,7 @@ import com.investments.tracker.mapper.WithdrawalMapper;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class WithdrawalService {
     private final CashTransactionRepository cashTransactionRepository;
     private final BalanceRepository balanceRepository;
@@ -35,24 +37,9 @@ public class WithdrawalService {
     private final WithdrawalMapper withdrawalMapper;
     private final WithdrawalBalanceBuilderService withdrawalBalanceBuilderService;
 
-    @Autowired
-    public WithdrawalService(
-            CashTransactionRepository cashTransactionRepository,
-            BalanceRepository balanceRepository,
-            CashTransactionMapper cashTransactionMapper,
-            WithdrawalMapper withdrawalMapper,
-            WithdrawalBalanceBuilderService withdrawalBalanceBuilderService) {
-        this.cashTransactionRepository = cashTransactionRepository;
-        this.balanceRepository = balanceRepository;
-        this.cashTransactionMapper = cashTransactionMapper;
-        this.withdrawalMapper = withdrawalMapper;
-        this.withdrawalBalanceBuilderService = withdrawalBalanceBuilderService;
-    }
-
-    // TODO: Check what is the currency of the Withdrawal, based on that decide how to save in the balance
     @Transactional
     public BalanceResponse insertWithdraw(WithdrawalRequest withdrawalRequest) {
-        Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
+        Optional<Balance> latestBalance = balanceRepository.getLatestBalance();
         if (latestBalance.isPresent()) {
             Balance balance = latestBalance.get();
 
@@ -76,7 +63,6 @@ public class WithdrawalService {
         }
     }
 
-    // TODO: What if we have withdrawals in 2 currencies
     public List<CashTransactionResponse> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
         List<CashTransaction> withdrawalsResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(WITHDRAWAL, from, to);
         if (!withdrawalsResult.isEmpty()) {
@@ -85,7 +71,6 @@ public class WithdrawalService {
         return Collections.emptyList();
     }
 
-    // TODO: What if we have withdrawals in 2 currencies
     public BigDecimal getTotalWithdrawalsAmount() {
         return this.cashTransactionRepository.getTotalAmountOf(WITHDRAWAL).orElse(BigDecimal.ZERO);
     }

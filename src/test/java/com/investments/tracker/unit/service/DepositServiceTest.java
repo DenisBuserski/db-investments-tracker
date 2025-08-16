@@ -31,7 +31,6 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@Tag("unit")
 public class DepositServiceTest {
 
     @InjectMocks
@@ -66,7 +65,6 @@ public class DepositServiceTest {
                 .date(DATE)
                 .amount(BigDecimal.valueOf(1000))
                 .currency(EUR)
-                .description(TEST_DESCRIPTION)
                 .build();
 
         cashTransactionResponse = new CashTransactionResponse(
@@ -145,6 +143,8 @@ public class DepositServiceTest {
         verify(balanceRepository).save(any(Balance.class));
     }
 
+
+    //
     @Test
     @DisplayName("Test should return all deposits from [date] to [date] when we have deposits")
     public void testGetAllDepositsFromToNotEmpty() {

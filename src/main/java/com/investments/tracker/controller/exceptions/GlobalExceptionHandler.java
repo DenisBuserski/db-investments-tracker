@@ -4,13 +4,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.List;
 
 @RestControllerAdvice
 @Slf4j
@@ -27,6 +30,9 @@ public class GlobalExceptionHandler {
 
     @Value("${application.error.internal.server.error.url}")
     private String internalServerErrorUrl;
+
+    @Value("${application.error.validation.url}")
+    private String validationUrl;
 
 
     @ExceptionHandler(ResponseStatusException.class)
@@ -77,6 +83,26 @@ public class GlobalExceptionHandler {
         problemDetail.setDetail("An unexpected error occurred. Please contact support.");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setType(URI.create(internalServerErrorUrl));
+        return problemDetail;
+    }
+
+    // Handle validation errors
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidationErrors(MethodArgumentNotValidException exception, HttpServletRequest request) {
+        log.warn("Validation failed: {}", exception.getMessage());
+
+        List<String> errors = exception.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .toList();
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Validation failed");
+        problemDetail.setDetail(String.join(", ", errors)); // Join all messages into one
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        problemDetail.setType(URI.create(validationUrl));
+        problemDetail.setProperty("errors", errors);
         return problemDetail;
     }
 

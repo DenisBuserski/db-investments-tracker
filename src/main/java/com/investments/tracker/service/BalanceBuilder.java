@@ -8,18 +8,19 @@ import java.time.LocalDate;
 public abstract class BalanceBuilder {
     public abstract Balance createBalanceFromCashTransaction(Balance balance, CashTransaction cashTransaction);
 
-    public Balance balanceBuilder(LocalDate newBalanceDate,
-                                         BigDecimal newBalanceAmount,
-                                         BigDecimal newTotalInvestments,
-                                         BigDecimal newTotalDeposits,
-                                         BigDecimal newTotalWithdrawals,
-                                         BigDecimal newTotalDividends,
-                                         BigDecimal newTotalFees,
-                                         BigDecimal newLastPortfolioValue,
-                                         BigDecimal lastUnrealizedPl,
-                                         BigDecimal lastUnrealizedPlPercentage,
-                                         BigDecimal totalSold,
-                                         BigDecimal realizedPl) {
+    public Balance balanceBuilder(
+            LocalDate newBalanceDate,
+            BigDecimal newBalanceAmount,
+            BigDecimal newTotalInvestments,
+            BigDecimal newTotalDeposits,
+            BigDecimal newTotalWithdrawals,
+            BigDecimal newTotalDividends,
+            BigDecimal newTotalFees,
+            BigDecimal newLastPortfolioValue,
+            BigDecimal lastUnrealizedPl,
+            BigDecimal lastUnrealizedPlPercentage,
+            BigDecimal totalSold,
+            BigDecimal realizedPl) {
         return Balance.builder()
                 .date(newBalanceDate)
                 .balance(newBalanceAmount)

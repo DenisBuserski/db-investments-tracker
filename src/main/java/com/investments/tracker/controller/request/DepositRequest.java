@@ -2,7 +2,6 @@ package com.investments.tracker.controller.request;
 
 import com.investments.tracker.enums.Currency;
 import com.investments.tracker.common.validation.ValidCurrency;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
@@ -30,6 +29,5 @@ public class DepositRequest {
     @ValidCurrency
     private Currency currency;
 
-    @NotBlank(message = DEPOSIT_DESCRIPTION_NOT_BLANK_OR_NULL)
     private String description;
 }
