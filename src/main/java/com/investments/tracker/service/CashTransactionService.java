@@ -1,8 +1,8 @@
 package com.investments.tracker.service;
 
-import com.investments.tracker.controller.response.CashTransactionResponse;
+import com.investments.tracker.controller.cashtransaction.CashTransactionResponse;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.controller.request.DividendRequest;
+import com.investments.tracker.controller.dividend.DividendRequest;
 import com.investments.tracker.enums.CashTransactionType;
 import org.springframework.stereotype.Service;
 

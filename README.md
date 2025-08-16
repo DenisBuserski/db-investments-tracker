@@ -72,24 +72,8 @@ Frontend installation
 <details>
 <summary><h3>API Endpoints</h3></summary>
 
+All API endpoints can be found here - 
 http://localhost:8080/swagger-ui/index.html
-
-Create an openapi.json file and automatically generate API docs using Swagger.
-
-| Method | Endpoint                                                                                      | Description                                                   | Auth required |
-|--------|-----------------------------------------------------------------------------------------------|---------------------------------------------------------------|---------------|
-| `POST` | `api/v1/deposits/in`                                                                          | Insert a deposit                                              | N/A           |
-| `GET`  | `/api/v1/cashtransactions/get?CashTransactionType={Type}&fromDate={fromDate}&toDate={toDate}` | Get deposits / withdrawals / dividends / fees in range        | N/A           |
-| `GET`  | `/api/v1/cashtransactions/get/total/amount?CashTransactionType={type}`                        | Get total amount of deposits / withdrawals / dividends / fees | N/A           |
-| `POST` | `/withdrawal/out`                                                                             | Make a withdrawal                                             |               |
-| `GET`  | `/withdrawal/get/from/{fromDate}/to/{toDate}`                                                 | Get withdrawals in range                                      |               |
-| `GET`  | `/withdrawal/get/all`                                                                         | Get all withdrawals                                           |               |
-| `GET`  | `/withdrawal/get/total/amount`                                                                | Get total amount of withdrawals                               |               |
-| `POST` | `/dividend/in`                                                                                | Insert a dividend                                             |               |
-| `GET`  | `/dividend/get/from/{fromDate}/to/{toDate}`                                                   | Get dividends in range                                        |               |
-| `GET`  | `/dividend/get/all`                                                                           | Get all dividends                                             |               |
-| `GET`  | `/dividend/get/total/amount`                                                                  | Get total amount of dividends                                 |               |
-| `POST` | `/api/transaction/in`                                                                         | Insert a transaction                                          |               |
 
 </details> 
 
@@ -99,13 +83,33 @@ Create an openapi.json file and automatically generate API docs using Swagger.
 
 DB schema
 
+Table - `balance`
+- `date`
+- `balance`
+- `total_investments` - Total invested money till the given date
+- `total_deposits` - Total deposits till the given date
+- `total_withdrawals` - Total withdrawals till the given date
+- `total_dividends` - Total dividends till the given date
+- `total_fees` - Total fees till the given date
+- `last_portfolio_value` 
+- `last_unrealized_pl`
+- `last_unrealized_pl_percentage`
+- `total_sold` - Total money of sold products
+- `realized_pl`
+
+Table - `cash_transactions`
+Table - `dividends`
+Table - `transactions`
+Table - `portfolio`
+Table - `weekly_positions`
+Table - `portfolio_value_history`
+Table - `yearly_statements`
+
 </details>
 
 
 <details>
 <summary><h3>Folder Structure</h3></summary>
-
-Screenshot from IntelliJ
 
 </details>
 
@@ -115,16 +119,6 @@ Screenshot from IntelliJ
 
 Home Page
 Login Page
-
-</details>
-
-
-<details>
-<summary><h3>Future Improvements</h3></summary>
-
-- Add Swagger-ui
-- Add email notification for weekly portfolio view
-- Docker
 
 </details>
 

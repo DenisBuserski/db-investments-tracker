@@ -1,9 +1,9 @@
 package com.investments.tracker.service.deposit;
 
-import com.investments.tracker.controller.response.CashTransactionResponse;
+import com.investments.tracker.controller.cashtransaction.CashTransactionResponse;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.controller.response.BalanceResponse;
+import com.investments.tracker.controller.balance.BalanceResponse;
 import com.investments.tracker.controller.deposit.DepositRequest;
 import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.DepositMapper;
@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
+import static com.investments.tracker.controller.balance.BalanceResponse.createBalanceResponse;
 import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
 
 @Service
@@ -53,7 +53,7 @@ public class DepositService {
     public List<CashTransactionResponse> getAllDepositsFromTo(LocalDate from, LocalDate to) {
         List<CashTransaction> depositsResult = cashTransactionRepository.findByCashTransactionTypeAndDateBetween(DEPOSIT, from, to);
         if (!depositsResult.isEmpty()) {
-            return depositMapper.mapToResponseDTOList(depositsResult);
+            return cashTransactionMapper.mapToResponseDTOList(depositsResult, DEPOSIT);
         }
         return Collections.emptyList();
     }

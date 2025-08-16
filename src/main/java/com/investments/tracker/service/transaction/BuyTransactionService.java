@@ -1,7 +1,7 @@
 package com.investments.tracker.service.transaction;
 
-import com.investments.tracker.controller.request.TransactionRequest;
-import com.investments.tracker.controller.response.BalanceResponse;
+import com.investments.tracker.controller.transaction.TransactionRequest;
+import com.investments.tracker.controller.balance.BalanceResponse;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.repository.BalanceRepository;
@@ -11,13 +11,11 @@ import com.investments.tracker.service.PortfolioService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
+import static com.investments.tracker.controller.balance.BalanceResponse.createBalanceResponse;
 import static com.investments.tracker.service.transaction.TransactionService.createTransaction;
 
 @Service

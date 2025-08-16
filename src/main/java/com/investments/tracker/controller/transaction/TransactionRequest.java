@@ -1,4 +1,4 @@
-package com.investments.tracker.controller.request;
+package com.investments.tracker.controller.transaction;
 
 import com.investments.tracker.enums.Currency;
 import com.investments.tracker.enums.FeeType;

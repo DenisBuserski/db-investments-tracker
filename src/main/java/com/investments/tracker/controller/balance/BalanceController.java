@@ -1,6 +1,5 @@
-package com.investments.tracker.controller;
+package com.investments.tracker.controller.balance;
 
-import com.investments.tracker.controller.response.BalanceResponse;
 import com.investments.tracker.service.BalanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -9,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +27,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 )
 @Slf4j
 @Tag(name = "Balance Controller", description = "REST endpoint for retrieving the latest balance data")
+@RequiredArgsConstructor
 public class BalanceController {
     private final BalanceService balanceService;
-
-    public BalanceController(BalanceService balanceService) {
-        this.balanceService = balanceService;
-    }
 
     // TODO: Redis might be needed here
     @GetMapping(value = "/get", produces = APPLICATION_JSON_VALUE)

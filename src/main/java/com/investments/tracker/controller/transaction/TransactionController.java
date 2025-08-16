@@ -1,7 +1,6 @@
-package com.investments.tracker.controller;
+package com.investments.tracker.controller.transaction;
 
-import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.controller.request.TransactionRequest;
+import com.investments.tracker.controller.balance.BalanceResponse;
 import com.investments.tracker.service.transaction.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

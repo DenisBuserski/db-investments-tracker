@@ -1,12 +1,12 @@
 package com.investments.tracker.service;
 
-import com.investments.tracker.controller.response.CashTransactionResponse;
+import com.investments.tracker.controller.cashtransaction.CashTransactionResponse;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.controller.request.TransactionRequest;
+import com.investments.tracker.controller.transaction.TransactionRequest;
 import com.investments.tracker.enums.FeeType;
 import com.investments.tracker.repository.CashTransactionRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,16 +20,10 @@ import static com.investments.tracker.enums.CashTransactionType.FEE;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FeeService {
     private final CashTransactionRepository cashTransactionRepository;
     private final CashTransactionService cashTransactionService;
-
-    @Autowired
-    public FeeService(CashTransactionRepository cashTransactionRepository,
-                          CashTransactionService cashTransactionService) {
-        this.cashTransactionRepository = cashTransactionRepository;
-        this.cashTransactionService = cashTransactionService;
-    }
 
     public BigDecimal getTotalAmountOfInsertedFees(TransactionRequest transactionRequest, long transactionId) {
         if (!transactionRequest.getFees().isEmpty()) {

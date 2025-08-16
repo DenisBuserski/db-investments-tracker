@@ -2,8 +2,8 @@ package com.investments.tracker.service.transaction;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Transaction;
-import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.controller.request.TransactionRequest;
+import com.investments.tracker.controller.balance.BalanceResponse;
+import com.investments.tracker.controller.transaction.TransactionRequest;
 import com.investments.tracker.enums.TransactionType;
 import com.investments.tracker.repository.BalanceRepository;
 import jakarta.transaction.Transactional;
@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
 import static com.investments.tracker.enums.Currency.EUR;
 import static com.investments.tracker.enums.TransactionType.BUY;
 import static com.investments.tracker.enums.TransactionType.SELL;

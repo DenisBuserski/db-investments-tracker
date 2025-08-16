@@ -1,7 +1,8 @@
 package com.investments.tracker.unit.mapper;
 
 import com.investments.tracker.controller.deposit.DepositRequest;
-import com.investments.tracker.controller.response.CashTransactionResponse;
+import com.investments.tracker.controller.cashtransaction.CashTransactionResponse;
+import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.model.CashTransaction;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import static com.investments.tracker.enums.Currency.EUR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DepositMapperTest {
+    private CashTransactionMapper cashTransactionMapper;
     private DepositMapper depositMapper;
     private final LocalDate DATE = LocalDate.of(2025, 1, 1);
     private final LocalDate DATE_2 = LocalDate.of(2025, 1, 2);
@@ -24,6 +26,7 @@ public class DepositMapperTest {
 
     @BeforeEach
     public void setUp() {
+        cashTransactionMapper = new CashTransactionMapper();
         depositMapper = new DepositMapper();
     }
 
@@ -58,7 +61,7 @@ public class DepositMapperTest {
                 .referenceId(null)
                 .build();
 
-        CashTransactionResponse response = depositMapper.mapToResponseDTO(deposit);
+        CashTransactionResponse response = cashTransactionMapper.mapToResponseDTO(deposit, DEPOSIT);
 
         assertThat(response.date()).isEqualTo(deposit.getDate());
         assertThat(response.type()).isEqualTo(DEPOSIT);
@@ -89,7 +92,7 @@ public class DepositMapperTest {
                         .build()
         );
 
-        List<CashTransactionResponse> responses = depositMapper.mapToResponseDTOList(transactions);
+        List<CashTransactionResponse> responses = cashTransactionMapper.mapToResponseDTOList(transactions, DEPOSIT);
 
         assertThat(responses).hasSize(2);
 

@@ -1,6 +1,5 @@
-package com.investments.tracker.controller;
+package com.investments.tracker.controller.cashtransaction;
 
-import com.investments.tracker.controller.response.CashTransactionResponse;
 import com.investments.tracker.enums.CashTransactionType;
 import com.investments.tracker.service.*;
 import com.investments.tracker.service.deposit.DepositService;

@@ -1,10 +1,10 @@
 package com.investments.tracker.service.withdrawal;
 
-import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.controller.response.CashTransactionResponse;
+import com.investments.tracker.controller.balance.BalanceResponse;
+import com.investments.tracker.controller.cashtransaction.CashTransactionResponse;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.controller.request.WithdrawalRequest;
+import com.investments.tracker.controller.withdrawal.WithdrawalRequest;
 import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.WithdrawalMapper;
 import com.investments.tracker.repository.BalanceRepository;
@@ -12,7 +12,6 @@ import com.investments.tracker.repository.CashTransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
+import static com.investments.tracker.controller.balance.BalanceResponse.createBalanceResponse;
 import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 
 
@@ -64,9 +63,9 @@ public class WithdrawalService {
     }
 
     public List<CashTransactionResponse> getAllWithdrawalsFromTo(LocalDate from, LocalDate to) {
-        List<CashTransaction> withdrawalsResult = this.cashTransactionRepository.findByCashTransactionTypeAndDateBetween(WITHDRAWAL, from, to);
+        List<CashTransaction> withdrawalsResult = cashTransactionRepository.findByCashTransactionTypeAndDateBetween(WITHDRAWAL, from, to);
         if (!withdrawalsResult.isEmpty()) {
-            return withdrawalMapper.mapToResponseDTOList(withdrawalsResult);
+            return cashTransactionMapper.mapToResponseDTOList(withdrawalsResult, WITHDRAWAL);
         }
         return Collections.emptyList();
     }

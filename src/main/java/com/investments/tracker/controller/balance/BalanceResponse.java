@@ -1,4 +1,4 @@
-package com.investments.tracker.controller.response;
+package com.investments.tracker.controller.balance;
 
 import com.investments.tracker.model.Balance;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,10 +1,10 @@
 package com.investments.tracker.service;
 
 import com.investments.tracker.model.Portfolio;
-import com.investments.tracker.controller.request.TransactionRequest;
+import com.investments.tracker.controller.transaction.TransactionRequest;
 import com.investments.tracker.repository.PortfolioRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,14 +15,11 @@ import static com.investments.tracker.enums.Status.ACTIVE;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PortfolioService{
     private final PortfolioRepository portfolioRepository;
 
-    @Autowired
-    public PortfolioService(PortfolioRepository portfolioRepository) {
-        this.portfolioRepository = portfolioRepository;
-    }
-
+    // Add average price
     public void updatePortfolioForBuyTransaction(TransactionRequest transactionRequest, BigDecimal totalTransactionValue) {
         LocalDate transactionDate = transactionRequest.getDate();
         String productName = transactionRequest.getProductName();
@@ -31,13 +28,14 @@ public class PortfolioService{
         if (!portfolioForProduct.isEmpty()) {
             int newQuantity = portfolioForProduct.get().getQuantity() + transactionRequest.getQuantity();
             BigDecimal newInvestedMoney = portfolioForProduct.get().getInvestedMoney().add(totalTransactionValue);
-            int updatedResult = this.portfolioRepository.updatePortfolioWithBuyTransaction(transactionDate, productName, newQuantity, newInvestedMoney);
+            int updatedResult = portfolioRepository.updatePortfolioWithBuyTransaction(transactionDate, productName, newQuantity, newInvestedMoney);
             if (updatedResult == 1) {
                 log.info("Portfolio updated successfully for product [{}]", productName);
             } else {
                 log.warn("Portfolio for product [{}] was not updated", productName);
             }
         } else {
+
             Portfolio portfolio = Portfolio.builder()
                     .lastUpdated(transactionDate)
                     .productName(productName)
@@ -47,7 +45,7 @@ public class PortfolioService{
                     .status(ACTIVE)
                     .build();
             log.info("Inserted product [{}] in portfolio for the first time", productName);
-            this.portfolioRepository.save(portfolio);
+            portfolioRepository.save(portfolio);
         }
     }
 

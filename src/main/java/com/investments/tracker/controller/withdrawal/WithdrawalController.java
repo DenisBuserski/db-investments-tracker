@@ -1,7 +1,6 @@
-package com.investments.tracker.controller;
+package com.investments.tracker.controller.withdrawal;
 
-import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.controller.request.WithdrawalRequest;
+import com.investments.tracker.controller.balance.BalanceResponse;
 import com.investments.tracker.service.withdrawal.WithdrawalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

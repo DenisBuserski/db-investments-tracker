@@ -1,11 +1,11 @@
 package com.investments.tracker.unit.service;
 
-import com.investments.tracker.controller.response.CashTransactionResponse;
+import com.investments.tracker.controller.cashtransaction.CashTransactionResponse;
 import com.investments.tracker.mapper.CashTransactionMapper;
 import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
-import com.investments.tracker.controller.response.BalanceResponse;
+import com.investments.tracker.controller.balance.BalanceResponse;
 import com.investments.tracker.controller.deposit.DepositRequest;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
@@ -57,7 +57,6 @@ public class DepositServiceTest {
     private Balance balance;
     private Balance balance2;
     private final LocalDate DATE = LocalDate.of(2025, 1, 1);
-    private final String TEST_DESCRIPTION = "TEST DESCRIPTION";
 
     @BeforeEach
     public void setUp() {
@@ -72,14 +71,14 @@ public class DepositServiceTest {
                 DEPOSIT,
                 BigDecimal.valueOf(1000),
                 EUR,
-                TEST_DESCRIPTION);
+                "");
 
         cashTransaction = CashTransaction.builder()
                 .date(DATE)
                 .cashTransactionType(DEPOSIT)
                 .amount(BigDecimal.valueOf(1000))
                 .currency(EUR)
-                .description(TEST_DESCRIPTION)
+                .description("")
                 .build();
 
         balance = Balance.builder()
@@ -149,14 +148,14 @@ public class DepositServiceTest {
     @DisplayName("Test should return all deposits from [date] to [date] when we have deposits")
     public void testGetAllDepositsFromToNotEmpty() {
         when(cashTransactionRepository.findByCashTransactionTypeAndDateBetween(eq(DEPOSIT), eq(DATE), eq(DATE))).thenReturn(List.of(cashTransaction));
-        when(depositMapper.mapToResponseDTOList(eq(List.of(cashTransaction)))).thenReturn(List.of(cashTransactionResponse));
+        when(cashTransactionMapper.mapToResponseDTOList(eq(List.of(cashTransaction)), eq(DEPOSIT))).thenReturn(List.of(cashTransactionResponse));
 
         List<CashTransactionResponse> result = depositService.getAllDepositsFromTo(DATE, DATE);
         assertEquals(1, result.size());
         assertEquals(result.get(0).amount(), BigDecimal.valueOf(1000));
 
         verify(cashTransactionRepository).findByCashTransactionTypeAndDateBetween(DEPOSIT, DATE, DATE);
-        verify(depositMapper).mapToResponseDTOList(List.of(cashTransaction));
+        verify(cashTransactionMapper).mapToResponseDTOList(List.of(cashTransaction), DEPOSIT);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.investments.tracker.controller.response;
+package com.investments.tracker.controller.cashtransaction;
 
 import com.investments.tracker.enums.CashTransactionType;
 import com.investments.tracker.enums.Currency;

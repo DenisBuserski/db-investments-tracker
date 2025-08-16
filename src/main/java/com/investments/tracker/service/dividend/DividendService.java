@@ -1,11 +1,11 @@
 package com.investments.tracker.service.dividend;
 
-import com.investments.tracker.controller.response.CashTransactionResponse;
+import com.investments.tracker.controller.cashtransaction.CashTransactionResponse;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Dividend;
-import com.investments.tracker.controller.response.BalanceResponse;
-import com.investments.tracker.controller.request.DividendRequest;
+import com.investments.tracker.controller.balance.BalanceResponse;
+import com.investments.tracker.controller.dividend.DividendRequest;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.repository.DividendRepository;
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.controller.response.BalanceResponse.createBalanceResponse;
+import static com.investments.tracker.controller.balance.BalanceResponse.createBalanceResponse;
 import static java.math.RoundingMode.CEILING;
 
 @Service
