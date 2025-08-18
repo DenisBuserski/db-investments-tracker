@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @Component
@@ -29,6 +28,6 @@ public class CashTransactionMapper {
     public List<CashTransactionResponse> mapToResponseDTOList(List<CashTransaction> cashTransactions, CashTransactionType cashTransactionType) {
         return cashTransactions.stream()
                 .map(cashTransaction -> mapToResponseDTO(cashTransaction, cashTransactionType))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

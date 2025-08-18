@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class DepositServiceTest {
+class DepositServiceTest {
 
     @InjectMocks
     private DepositService depositService;
@@ -59,7 +59,7 @@ public class DepositServiceTest {
     private final LocalDate DATE = LocalDate.of(2025, 1, 1);
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         depositRequest = DepositRequest.builder()
                 .date(DATE)
                 .amount(BigDecimal.valueOf(1000))
@@ -106,7 +106,7 @@ public class DepositServiceTest {
 
     @Test
     @DisplayName("Test should insert a successful deposit for the first time")
-    public void testInsertSuccessfulDepositForTheFirstTime() {
+    void testInsertSuccessfulDepositForTheFirstTime() {
         when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(cashTransaction);
         when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(cashTransaction);
         when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.empty());
@@ -142,11 +142,9 @@ public class DepositServiceTest {
         verify(balanceRepository).save(any(Balance.class));
     }
 
-
-    //
     @Test
     @DisplayName("Test should return all deposits from [date] to [date] when we have deposits")
-    public void testGetAllDepositsFromToNotEmpty() {
+    void testGetAllDepositsFromToNotEmpty() {
         when(cashTransactionRepository.findByCashTransactionTypeAndDateBetween(eq(DEPOSIT), eq(DATE), eq(DATE))).thenReturn(List.of(cashTransaction));
         when(cashTransactionMapper.mapToResponseDTOList(eq(List.of(cashTransaction)), eq(DEPOSIT))).thenReturn(List.of(cashTransactionResponse));
 
@@ -160,7 +158,7 @@ public class DepositServiceTest {
 
     @Test
     @DisplayName("Test should return all deposits from [date] to [date] when we don't have deposits")
-    public void testGetAllDepositsFromToEmpty() {
+    void testGetAllDepositsFromToEmpty() {
         when(cashTransactionRepository.findByCashTransactionTypeAndDateBetween(eq(DEPOSIT), eq(DATE), eq(DATE))).thenReturn(Collections.emptyList());
 
         List<CashTransactionResponse> result = depositService.getAllDepositsFromTo(DATE, DATE);

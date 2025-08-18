@@ -14,47 +14,47 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="balance" type="DECIMAL(10,2)">
+            <column name="balance" type="DECIMAL(18,2)"> <!-- 18 total digits, 2 after the decimal -->
                 <constraints nullable="false"/>
             </column>
 
-            <column name="total_investments" type="DECIMAL(10,2)">
+            <column name="total_investments" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="total_deposits" type="DECIMAL(10,2)">
+            <column name="total_deposits" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="total_withdrawals" type="DECIMAL(10,2)">
+            <column name="total_withdrawals" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="total_dividends" type="DECIMAL(10,2)">
+            <column name="total_dividends" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="total_fees" type="DECIMAL(10,2)">
+            <column name="total_fees" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="last_portfolio_value" type="DECIMAL(10,2)">
+            <column name="last_portfolio_value" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="last_unrealized_pl" type="DECIMAL(10,2)">
+            <column name="last_unrealized_pl" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="last_unrealized_pl_percentage" type="DECIMAL(10,2)">
+            <column name="last_unrealized_pl_percentage" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="total_sold" type="DECIMAL(10,2)">
+            <column name="total_sold" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="realized_pl" type="DECIMAL(10,2)">
+            <column name="realized_pl" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
         </createTable>

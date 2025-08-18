@@ -30,6 +30,9 @@ public class Portfolio {
     @Column(name = "invested_money", nullable = false)
     private BigDecimal investedMoney;
 
+    @Column(name = "average_price", nullable = false)
+    private BigDecimal averagePrice;
+
     @Column(name = "dividends_amount", nullable = false)
     private BigDecimal dividendsAmount;
 

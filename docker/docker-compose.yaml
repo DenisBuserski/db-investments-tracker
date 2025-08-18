@@ -1,5 +1,6 @@
-services:
+version: '3.9'
 
+services:
   mariadb:
     image: mysql:9.2.0
     container_name: mysql-container

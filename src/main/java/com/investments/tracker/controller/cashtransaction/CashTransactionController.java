@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.investments.tracker.common.util.Constants.START_DATE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -62,17 +63,17 @@ public class CashTransactionController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     public ResponseEntity<List<CashTransactionResponse>> getCashTransactionsFromTo(
-            @Parameter(description = "The type of cash transaction", required = true) @RequestParam("CashTransactionType") CashTransactionType type, // TODO: Fix only 1 type of fee,
-            @Parameter(description = "The start date of the range. Format YYYY-MM-DD") @RequestParam(name = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @Parameter(description = "The end date of the range Format YYYY-MM-DD") @RequestParam(name = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        from = from == null ? START_DATE : from;
-        to = to == null ? LocalDate.now() : to;
-        log.info("Getting cash transactions type: {} from [{}] to [{}]", type.name().toUpperCase(), from, to);
+            @Parameter(description = "The type of cash transaction", required = true) @RequestParam("cashTransactionType") CashTransactionType type,
+            @Parameter(description = "The start date of the range. Format YYYY-MM-DD") @RequestParam(name = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> from,
+            @Parameter(description = "The end date of the range Format YYYY-MM-DD") @RequestParam(name = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> to) {
+        LocalDate fromDate = from.orElse(START_DATE);
+        LocalDate toDate = to.orElse(LocalDate.now());
+        log.info("Getting cash transactions type: {} from [{}] to [{}]", type.name().toUpperCase(), fromDate, toDate);
         List<CashTransactionResponse> result = switch (type) {
-            case DEPOSIT -> depositService.getAllDepositsFromTo(from, to);
-            case WITHDRAWAL -> this.withdrawalService.getAllWithdrawalsFromTo(from, to);
-            case DIVIDEND -> this.dividendService.getAllDividendsFromTo(from, to);
-            case FEE -> this.feeService.getAllFeesFromTo(from, to);
+            case DEPOSIT -> depositService.getAllDepositsFromTo(fromDate, toDate);
+            case WITHDRAWAL -> this.withdrawalService.getAllWithdrawalsFromTo(fromDate, toDate);
+            case DIVIDEND -> this.dividendService.getAllDividendsFromTo(fromDate, toDate);
+            case FEE -> this.feeService.getAllFeesFromTo(fromDate, toDate);
         };
 
         return returnCashTransactionsResponseList(result);
@@ -97,7 +98,7 @@ public class CashTransactionController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     public ResponseEntity<BigDecimal> getTotalCashTransactionsAmount(
-            @Parameter(description = "The type of cash transaction", required = true) @RequestParam("CashTransactionType") CashTransactionType type) {
+            @Parameter(description = "The type of cash transaction", required = true) @RequestParam("cashTransactionType") CashTransactionType type) {
         log.info("Getting total amount of cash transactions with type: {}", type.name().toUpperCase());
         BigDecimal totalAmount = switch (type) {
             case DEPOSIT -> depositService.getTotalDepositsAmount();
