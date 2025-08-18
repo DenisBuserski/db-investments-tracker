@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Transactional
-public class WithdrawalControllerIT {
+class WithdrawalControllerIT {
     @Value("${withdrawal.out.url}")
     private String withdrawalOutUrl;
 
@@ -32,7 +32,7 @@ public class WithdrawalControllerIT {
 
     @Test
     @DisplayName("Test the insertion from the WithdrawalController")
-    public void testCallingInsertWithdrawalMethod() throws Exception {
+    void testCallingInsertWithdrawalMethod() throws Exception {
         String requestBody = Files.readString(Paths.get(WITHDRAWAL_REQUEST_JSON));
 
         mockMvc.perform(post(withdrawalOutUrl)

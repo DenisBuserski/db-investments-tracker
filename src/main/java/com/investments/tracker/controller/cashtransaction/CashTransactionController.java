@@ -71,7 +71,7 @@ public class CashTransactionController {
         log.info("Getting cash transactions type: {} from [{}] to [{}]", type.name().toUpperCase(), fromDate, toDate);
         List<CashTransactionResponse> result = switch (type) {
             case DEPOSIT -> depositService.getAllDepositsFromTo(fromDate, toDate);
-            case WITHDRAWAL -> this.withdrawalService.getAllWithdrawalsFromTo(fromDate, toDate);
+            case WITHDRAWAL -> withdrawalService.getAllWithdrawalsFromTo(fromDate, toDate);
             case DIVIDEND -> this.dividendService.getAllDividendsFromTo(fromDate, toDate);
             case FEE -> this.feeService.getAllFeesFromTo(fromDate, toDate);
         };
@@ -102,7 +102,7 @@ public class CashTransactionController {
         log.info("Getting total amount of cash transactions with type: {}", type.name().toUpperCase());
         BigDecimal totalAmount = switch (type) {
             case DEPOSIT -> depositService.getTotalDepositsAmount();
-            case WITHDRAWAL -> this.withdrawalService.getTotalWithdrawalsAmount();
+            case WITHDRAWAL -> withdrawalService.getTotalWithdrawalsAmount();
             case DIVIDEND -> this.dividendService.getTotalDividendsAmount();
             case FEE -> this.feeService.getTotalFeesAmount();
         };

@@ -47,7 +47,7 @@ public class WithdrawalController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     public ResponseEntity<BalanceResponse> insertWithdraw(@RequestBody @Valid WithdrawalRequest withdrawalRequest) {
-        log.info("Creating withdrawal for [{} {}]", String.format("%.2f", withdrawalRequest.getAmount()), withdrawalRequest.getCurrency());
+        log.info("Inserting withdrawal for [{} {}]", String.format("%.2f", withdrawalRequest.getAmount()), withdrawalRequest.getCurrency());
         BalanceResponse balanceResponse = withdrawalService.insertWithdraw(withdrawalRequest);
         return new ResponseEntity<>(balanceResponse, HttpStatus.CREATED);
     }
