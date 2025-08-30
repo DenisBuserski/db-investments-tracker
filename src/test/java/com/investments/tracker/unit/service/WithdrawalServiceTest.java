@@ -3,16 +3,12 @@ package com.investments.tracker.unit.service;
 import com.investments.tracker.controller.cashtransaction.CashTransactionResponse;
 import com.investments.tracker.controller.withdrawal.WithdrawalRequest;
 import com.investments.tracker.mapper.CashTransactionMapper;
-import com.investments.tracker.mapper.DepositMapper;
 import com.investments.tracker.mapper.WithdrawalMapper;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.controller.balance.BalanceResponse;
-import com.investments.tracker.controller.deposit.DepositRequest;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
-import com.investments.tracker.service.deposit.DepositBalanceBuilderService;
-import com.investments.tracker.service.deposit.DepositService;
 import com.investments.tracker.service.withdrawal.WithdrawalBalanceBuilderService;
 import com.investments.tracker.service.withdrawal.WithdrawalService;
 import org.junit.jupiter.api.*;
@@ -29,13 +25,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.enums.CashTransactionType.DEPOSIT;
+import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 import static com.investments.tracker.enums.Currency.EUR;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
 
 @ExtendWith(MockitoExtension.class)
 class WithdrawalServiceTest {
@@ -59,10 +53,9 @@ class WithdrawalServiceTest {
 
     private WithdrawalRequest withdrawalRequest;
     private CashTransactionResponse cashTransactionResponse;
-    private CashTransaction cashTransaction;
-    private Balance balance;
-    private Balance balance2;
-    private Balance balance3;
+    private CashTransaction withdrawal;
+    private Balance MOCK_BALANCE_WITH_ENOUGH_MONEY;
+    private Balance MOCK_BALANCE_WITH_ENOUGH_MONEY_AFTER_WITHDRAWAL;
     private final LocalDate DATE = LocalDate.of(2025, 1, 1);
     private final LocalDate DATE_1 = LocalDate.of(2026, 1, 1);
     private final LocalDate DATE_2 = LocalDate.of(2024, 1, 1);
@@ -75,29 +68,22 @@ class WithdrawalServiceTest {
                 .currency(EUR)
                 .build();
 
-        balance = Balance.builder()
-                .date(DATE_1)
-                .balance(BigDecimal.valueOf(1000))
-                .totalInvestments(BigDecimal.ZERO)
-                .totalDeposits(BigDecimal.ZERO)
-                .totalWithdrawals(BigDecimal.ZERO)
-                .totalDividends(BigDecimal.ZERO)
-                .totalFees(BigDecimal.ZERO)
-                .lastPortfolioValue(BigDecimal.ZERO)
+        withdrawal = CashTransaction.builder()
+                .date(DATE)
+                .cashTransactionType(WITHDRAWAL)
+                .amount(BigDecimal.valueOf(1000))
+                .currency(EUR)
+                .description("")
                 .build();
 
-        balance2 = Balance.builder()
-                .date(DATE_2)
-                .balance(BigDecimal.valueOf(100))
-                .totalInvestments(BigDecimal.ZERO)
-                .totalDeposits(BigDecimal.ZERO)
-                .totalWithdrawals(BigDecimal.ZERO)
-                .totalDividends(BigDecimal.ZERO)
-                .totalFees(BigDecimal.ZERO)
-                .lastPortfolioValue(BigDecimal.ZERO)
-                .build();
+        cashTransactionResponse = new CashTransactionResponse(
+                DATE,
+                WITHDRAWAL,
+                BigDecimal.valueOf(1000),
+                EUR,
+                "");
 
-        balance3 = Balance.builder()
+        MOCK_BALANCE_WITH_ENOUGH_MONEY = Balance.builder()
                 .date(DATE_2)
                 .balance(BigDecimal.valueOf(5000))
                 .totalInvestments(BigDecimal.ZERO)
@@ -107,53 +93,134 @@ class WithdrawalServiceTest {
                 .totalFees(BigDecimal.ZERO)
                 .lastPortfolioValue(BigDecimal.ZERO)
                 .build();
+
+        MOCK_BALANCE_WITH_ENOUGH_MONEY_AFTER_WITHDRAWAL = Balance.builder()
+                .date(DATE_2)
+                .balance(BigDecimal.valueOf(4000))
+                .totalInvestments(BigDecimal.ZERO)
+                .totalDeposits(BigDecimal.ZERO)
+                .totalWithdrawals(BigDecimal.valueOf(1000))
+                .totalDividends(BigDecimal.ZERO)
+                .totalFees(BigDecimal.ZERO)
+                .lastPortfolioValue(BigDecimal.ZERO)
+                .build();
     }
 
     @Test
     @DisplayName("Test should return error when no balance exists")
     void testShouldReturnErrorWhenNoBalanceExists() {
-        when(balanceRepository.getLatestBalance()).thenReturn(Optional.empty());
+        when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.empty());
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                 () -> withdrawalService.insertWithdraw(withdrawalRequest));
         assertEquals("Withdrawal cannot be made, because no balance exists", exception.getReason());
     }
 
-    // Test Withdrawal date cannot be before the latest balance date"
     @Test
     @DisplayName("Test should return error when withdrawal date is before latest balance date")
     void testShouldReturnErrorWhenWithdrawalDateIsBeforeLatestBalanceDate() {
-        when(balanceRepository.getLatestBalance()).thenReturn(Optional.of(balance));
+        Balance MOCK_BALANCE_WITH_DATE_AFTER_WITHDRAWAL = Balance.builder()
+                .date(DATE_1)
+                .balance(BigDecimal.valueOf(1000))
+                .totalInvestments(BigDecimal.ZERO)
+                .totalDeposits(BigDecimal.ZERO)
+                .totalWithdrawals(BigDecimal.ZERO)
+                .totalDividends(BigDecimal.ZERO)
+                .totalFees(BigDecimal.ZERO)
+                .lastPortfolioValue(BigDecimal.ZERO)
+                .build();
+        when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(MOCK_BALANCE_WITH_DATE_AFTER_WITHDRAWAL));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                 () -> withdrawalService.insertWithdraw(withdrawalRequest));
         assertEquals("Withdrawal date cannot be before the latest balance date", exception.getReason());
     }
 
-    // Test You don't have enough money to withdraw. Current balance is [%s %s]
+
     @Test
     @DisplayName("Test should return error when there is not enough money")
     void testShouldReturnErrorWhenThereIsNoEnoughMoney() {
-        when(balanceRepository.getLatestBalance()).thenReturn(Optional.of(balance2));
+        Balance MOCK_BALANCE_WITH_NOT_ENOUGH_MONEY = Balance.builder()
+                .date(DATE_2)
+                .balance(BigDecimal.valueOf(100))
+                .totalInvestments(BigDecimal.ZERO)
+                .totalDeposits(BigDecimal.ZERO)
+                .totalWithdrawals(BigDecimal.ZERO)
+                .totalDividends(BigDecimal.ZERO)
+                .totalFees(BigDecimal.ZERO)
+                .lastPortfolioValue(BigDecimal.ZERO)
+                .build();
+        when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(MOCK_BALANCE_WITH_NOT_ENOUGH_MONEY));
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
                 () -> withdrawalService.insertWithdraw(withdrawalRequest));
         assertTrue(ex.getReason().contains("You don't have enough money to withdraw. Current balance is "));
     }
 
-    // Test Withdrawal for [{} {}] successful
     @Test
-    void insertWithdraw_successfulWithdrawal_returnsBalanceResponse() {
-        when(balanceRepository.getLatestBalance()).thenReturn(Optional.of(balance3));
-        when(cashTransactionMapper.createCashtransaction(request, withdrawalMapper)).thenReturn(withdrawal);
-        when(withdrawalBalanceBuilderService.createBalanceFromCashTransaction(latestBalance, withdrawal)).thenReturn(newBalance);
+    @DisplayName("Test should create successful withdrawal")
+    void testShouldCreateSuccessfulWithdrawal() {
+        when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(MOCK_BALANCE_WITH_ENOUGH_MONEY));
+        when(cashTransactionMapper.createCashtransaction(withdrawalRequest, withdrawalMapper)).thenReturn(withdrawal);
+        when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(withdrawal);
+        when(withdrawalBalanceBuilderService.createBalanceFromCashTransaction(eq(MOCK_BALANCE_WITH_ENOUGH_MONEY), eq(withdrawal))).thenReturn(MOCK_BALANCE_WITH_ENOUGH_MONEY_AFTER_WITHDRAWAL);
 
-        BalanceResponse response = withdrawalService.insertWithdraw(request);
+        BalanceResponse balanceResponse = withdrawalService.insertWithdraw(withdrawalRequest);
+        assertEquals(0, balanceResponse.getBalance().compareTo(BigDecimal.valueOf(4000)));
+        assertEquals(0, balanceResponse.getTotalWithdrawals().compareTo(BigDecimal.valueOf(1000)));
 
-        // verify that the transaction and new balance are saved
-        verify(cashTransactionRepository).save(withdrawal);
-        verify(balanceRepository).save(newBalance);
+        verify(cashTransactionMapper).createCashtransaction(eq(withdrawalRequest), eq(withdrawalMapper));
+        verify(cashTransactionRepository).save(any(CashTransaction.class));
+        verify(balanceRepository).findTopByOrderByIdDesc();
+        verify(withdrawalBalanceBuilderService).createBalanceFromCashTransaction(eq(MOCK_BALANCE_WITH_ENOUGH_MONEY), eq(withdrawal));
+        verify(balanceRepository).save(any(Balance.class));
+    }
 
-        assertNotNull(response);
+    @Test
+    @DisplayName("Test should return all withdrawals from [date] to [date] when we have withdrawals")
+    void testGetAllWithdrawalsFromToNotEmpty() {
+        when(cashTransactionRepository.findByCashTransactionTypeAndDateBetween(eq(WITHDRAWAL), eq(DATE), eq(DATE))).thenReturn(List.of(withdrawal));
+        when(cashTransactionMapper.mapToResponseDTOList(eq(List.of(withdrawal)), eq(WITHDRAWAL))).thenReturn(List.of(cashTransactionResponse));
+
+        List<CashTransactionResponse> result = withdrawalService.getAllWithdrawalsFromTo(DATE, DATE);
+        assertEquals(1, result.size());
+        assertEquals(result.get(0).amount(), BigDecimal.valueOf(1000));
+
+        verify(cashTransactionRepository).findByCashTransactionTypeAndDateBetween(WITHDRAWAL, DATE, DATE);
+        verify(cashTransactionMapper).mapToResponseDTOList(List.of(withdrawal), WITHDRAWAL);
+    }
+
+    @Test
+    @DisplayName("Test should return all withdrawals from [date] to [date] when we don't have withdrawals")
+    void testGetAllWithdrawalsFromToEmpty() {
+        when(cashTransactionRepository.findByCashTransactionTypeAndDateBetween(eq(WITHDRAWAL), eq(DATE), eq(DATE))).thenReturn(Collections.emptyList());
+
+        List<CashTransactionResponse> result = withdrawalService.getAllWithdrawalsFromTo(DATE, DATE);
+        assertEquals(0, result.size());
+
+        verify(cashTransactionRepository).findByCashTransactionTypeAndDateBetween(WITHDRAWAL, DATE, DATE);
+        verifyNoInteractions(withdrawalMapper);
+    }
+
+    @Test
+    @DisplayName("Test should return total amount of all deposits when we have deposits")
+    public void testGetTotalWithdrawalsAmountNotEmpty() {
+        when(cashTransactionRepository.getTotalAmountOf(WITHDRAWAL)).thenReturn(Optional.of(MOCK_BALANCE_WITH_ENOUGH_MONEY_AFTER_WITHDRAWAL.getTotalWithdrawals()));
+
+        BigDecimal result = withdrawalService.getTotalWithdrawalsAmount();
+        assertEquals(0, result.compareTo(BigDecimal.valueOf(1000)));
+
+        verify(cashTransactionRepository).getTotalAmountOf(WITHDRAWAL);
+    }
+
+    @Test
+    @DisplayName("Test should return total amount of all deposits when we don't have deposits")
+    public void testGetTotalWithdrawalsAmountEmpty() {
+        when(cashTransactionRepository.getTotalAmountOf(WITHDRAWAL)).thenReturn(Optional.empty());
+
+        BigDecimal result = withdrawalService.getTotalWithdrawalsAmount();
+        assertEquals(0, result.compareTo(BigDecimal.ZERO));
+
+        verify(cashTransactionRepository).getTotalAmountOf(WITHDRAWAL);
     }
 }

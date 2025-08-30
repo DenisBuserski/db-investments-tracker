@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,6 +26,7 @@ class DepositControllerIT {
     private String depositInsertUrl;
 
     private static final String DEPOSIT_REQUEST_JSON = "src/test/resources/json/deposit-request.json";
+    private static final String BALANCE_RESPONSE_JSON = "src/test/resources/json/balance-response.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,10 +35,18 @@ class DepositControllerIT {
     @DisplayName("Test the insertion from the DepositController")
     void testCallingInsertDepositMethod() throws Exception {
         String requestBody = Files.readString(Paths.get(DEPOSIT_REQUEST_JSON));
+        String expectedResponse = Files.readString(Paths.get(BALANCE_RESPONSE_JSON));
 
-        mockMvc.perform(post(depositInsertUrl)
+        String actualResponse = mockMvc
+                .perform(post(depositInsertUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        JSONAssert.assertEquals(expectedResponse, actualResponse, false);
     }
 }

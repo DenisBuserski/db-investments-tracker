@@ -38,7 +38,7 @@ public class WithdrawalService {
 
     @Transactional
     public BalanceResponse insertWithdraw(WithdrawalRequest withdrawalRequest) {
-        Optional<Balance> latestBalance = balanceRepository.getLatestBalance();
+        Optional<Balance> latestBalance = balanceRepository.findTopByOrderByIdDesc();
         if (latestBalance.isPresent()) {
             Balance balance = latestBalance.get();
 

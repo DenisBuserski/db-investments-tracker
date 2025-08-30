@@ -53,7 +53,7 @@ class DepositServiceTest {
 
     private DepositRequest depositRequest;
     private CashTransactionResponse cashTransactionResponse;
-    private CashTransaction cashTransaction;
+    private CashTransaction deposit;
     private Balance balance;
     private Balance balance2;
     private final LocalDate DATE = LocalDate.of(2025, 1, 1);
@@ -73,7 +73,7 @@ class DepositServiceTest {
                 EUR,
                 "");
 
-        cashTransaction = CashTransaction.builder()
+        deposit = CashTransaction.builder()
                 .date(DATE)
                 .cashTransactionType(DEPOSIT)
                 .amount(BigDecimal.valueOf(1000))
@@ -107,10 +107,10 @@ class DepositServiceTest {
     @Test
     @DisplayName("Test should insert a successful deposit for the first time")
     void testInsertSuccessfulDepositForTheFirstTime() {
-        when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(cashTransaction);
-        when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(cashTransaction);
+        when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(deposit);
+        when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(deposit);
         when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.empty());
-        when(depositBalanceBuilderService.createBalanceFromCashTransaction(isNull(), eq(cashTransaction))).thenReturn(balance);
+        when(depositBalanceBuilderService.createBalanceFromCashTransaction(isNull(), eq(deposit))).thenReturn(balance);
 
         BalanceResponse balanceResponse = depositService.insertDeposit(depositRequest);
         assertEquals(balanceResponse.getBalance(), BigDecimal.valueOf(1000));
@@ -119,17 +119,17 @@ class DepositServiceTest {
         verify(cashTransactionMapper).createCashtransaction(eq(depositRequest), eq(depositMapper));
         verify(cashTransactionRepository).save(any(CashTransaction.class));
         verify(balanceRepository).findTopByOrderByIdDesc();
-        verify(depositBalanceBuilderService).createBalanceFromCashTransaction(isNull(), eq(cashTransaction));
+        verify(depositBalanceBuilderService).createBalanceFromCashTransaction(isNull(), eq(deposit));
         verify(balanceRepository).save(any(Balance.class));
     }
 
     @Test
     @DisplayName("Test should create a successful deposit")
     public void testInsertSuccessfulDeposit() {
-        when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(cashTransaction);
-        when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(cashTransaction);
+        when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(deposit);
+        when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(deposit);
         when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(balance));
-        when(depositBalanceBuilderService.createBalanceFromCashTransaction(eq(balance), eq(cashTransaction))).thenReturn(balance2);
+        when(depositBalanceBuilderService.createBalanceFromCashTransaction(eq(balance), eq(deposit))).thenReturn(balance2);
 
         BalanceResponse balanceResponse = depositService.insertDeposit(depositRequest);
         assertEquals(0, balanceResponse.getBalance().compareTo(BigDecimal.valueOf(2000)));
@@ -138,22 +138,22 @@ class DepositServiceTest {
         verify(cashTransactionMapper).createCashtransaction(eq(depositRequest), eq(depositMapper));
         verify(cashTransactionRepository).save(any(CashTransaction.class));
         verify(balanceRepository).findTopByOrderByIdDesc();
-        verify(depositBalanceBuilderService).createBalanceFromCashTransaction(eq(balance), eq(cashTransaction));
+        verify(depositBalanceBuilderService).createBalanceFromCashTransaction(eq(balance), eq(deposit));
         verify(balanceRepository).save(any(Balance.class));
     }
 
     @Test
     @DisplayName("Test should return all deposits from [date] to [date] when we have deposits")
     void testGetAllDepositsFromToNotEmpty() {
-        when(cashTransactionRepository.findByCashTransactionTypeAndDateBetween(eq(DEPOSIT), eq(DATE), eq(DATE))).thenReturn(List.of(cashTransaction));
-        when(cashTransactionMapper.mapToResponseDTOList(eq(List.of(cashTransaction)), eq(DEPOSIT))).thenReturn(List.of(cashTransactionResponse));
+        when(cashTransactionRepository.findByCashTransactionTypeAndDateBetween(eq(DEPOSIT), eq(DATE), eq(DATE))).thenReturn(List.of(deposit));
+        when(cashTransactionMapper.mapToResponseDTOList(eq(List.of(deposit)), eq(DEPOSIT))).thenReturn(List.of(cashTransactionResponse));
 
         List<CashTransactionResponse> result = depositService.getAllDepositsFromTo(DATE, DATE);
         assertEquals(1, result.size());
         assertEquals(result.get(0).amount(), BigDecimal.valueOf(1000));
 
         verify(cashTransactionRepository).findByCashTransactionTypeAndDateBetween(DEPOSIT, DATE, DATE);
-        verify(cashTransactionMapper).mapToResponseDTOList(List.of(cashTransaction), DEPOSIT);
+        verify(cashTransactionMapper).mapToResponseDTOList(List.of(deposit), DEPOSIT);
     }
 
     @Test
