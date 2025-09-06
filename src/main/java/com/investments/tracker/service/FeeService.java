@@ -25,11 +25,14 @@ public class FeeService {
     private final CashTransactionRepository cashTransactionRepository;
     private final CashTransactionService cashTransactionService;
 
-    public BigDecimal getTotalAmountOfInsertedFees(TransactionRequest transactionRequest, long transactionId) {
+    public BigDecimal calculateTotalAmountOfInsertedFees(TransactionRequest transactionRequest, long transactionId) {
         if (!transactionRequest.getFees().isEmpty()) {
             List<CashTransaction> fees = createFees(transactionRequest, transactionId);
             log.info("Total number of applied fees for transaction_id={} -> [{}]", transactionId, fees.size());
-            return calculateTotalFees(fees);
+            return fees
+                    .stream()
+                    .map(CashTransaction::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             log.info("No related fees for transaction_id={}", transactionId);
             return BigDecimal.ZERO;
@@ -56,13 +59,6 @@ public class FeeService {
             throw new IllegalArgumentException("Unknown fee type");
         }
         return feeType.getName();
-    }
-
-    private BigDecimal calculateTotalFees(List<CashTransaction> fees) {
-        return fees
-                .stream()
-                .map(CashTransaction::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     // TODO: Implement

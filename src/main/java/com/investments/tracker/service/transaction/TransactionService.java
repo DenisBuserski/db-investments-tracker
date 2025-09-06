@@ -59,6 +59,7 @@ public class TransactionService{
         BigDecimal singlePrice = transactionRequest.getSinglePrice();
         int quantity = transactionRequest.getQuantity();
         Currency currency = transactionRequest.getCurrency();
+
         log.info("Start calculating transaction value with the following params: [SinglePrice:{} | Quantity:{} | ExchangeRate:{} | Currency:{}]", singlePrice, quantity, exchangeRate, currency.name());
         BigDecimal calculationWithoutExchangeRate = singlePrice.multiply(BigDecimal.valueOf(quantity));
 

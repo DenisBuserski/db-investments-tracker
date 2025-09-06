@@ -2,14 +2,11 @@ package com.investments.tracker.service.transaction;
 
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Transaction;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
-@Slf4j
 public class TransactionBalanceBuilderService {
 
     public Balance createNewBalanceFromTransaction(Balance balance, Transaction transaction, BigDecimal totalAmountOfInsertedFees) {
