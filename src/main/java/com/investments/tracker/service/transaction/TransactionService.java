@@ -1,5 +1,6 @@
 package com.investments.tracker.service.transaction;
 
+import com.investments.tracker.enums.Currency;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.Transaction;
 import com.investments.tracker.controller.balance.BalanceResponse;
@@ -7,6 +8,7 @@ import com.investments.tracker.controller.transaction.TransactionRequest;
 import com.investments.tracker.enums.TransactionType;
 import com.investments.tracker.repository.BalanceRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,17 +25,11 @@ import static com.investments.tracker.enums.TransactionType.SELL;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class TransactionService{
     private final BalanceRepository balanceRepository;
     private final BuyTransactionService buyTransactionService;
-
-    @Autowired
-    public TransactionService(
-            BalanceRepository balanceRepository,
-            BuyTransactionService buyTransactionService) {
-        this.balanceRepository = balanceRepository;
-        this.buyTransactionService = buyTransactionService;
-    }
+    private final SellTransactionService sellTransactionService;
 
     @Transactional
     public BalanceResponse insertTransaction(TransactionRequest transactionRequest) {
@@ -52,7 +48,7 @@ public class TransactionService{
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction of type [BUY] cannot be created because there is not enough money");
                 }
             } else if (transactionType == SELL) {
-                // balanceResponse = sellTransaction(currentBalance.get(), transactionValue, transactionRequest);
+
             }
             return balanceResponse;
         }
@@ -62,7 +58,8 @@ public class TransactionService{
         BigDecimal exchangeRate = transactionRequest.getExchangeRate() == null ? BigDecimal.ZERO : transactionRequest.getExchangeRate();
         BigDecimal singlePrice = transactionRequest.getSinglePrice();
         int quantity = transactionRequest.getQuantity();
-        log.info("Start calculating transaction value with the following params: [SinglePrice:{} | Quantity:{} | ExchangeRate:{}]", singlePrice, quantity, exchangeRate); // TODO: Specify currencies
+        Currency currency = transactionRequest.getCurrency();
+        log.info("Start calculating transaction value with the following params: [SinglePrice:{} | Quantity:{} | ExchangeRate:{} | Currency:{}]", singlePrice, quantity, exchangeRate, currency.name());
         BigDecimal calculationWithoutExchangeRate = singlePrice.multiply(BigDecimal.valueOf(quantity));
 
         if (exchangeRate.equals(BigDecimal.ZERO)) {
@@ -70,24 +67,6 @@ public class TransactionService{
         } else {
             return calculationWithoutExchangeRate.divide(exchangeRate, 2, BigDecimal.ROUND_HALF_UP);
         }
-    }
-
-    public static Transaction createTransaction(TransactionRequest transactionRequest, BigDecimal transactionValue) {
-        BigDecimal exchangeRate = transactionRequest.getExchangeRate() == null ? BigDecimal.ZERO : transactionRequest.getExchangeRate();
-        String description = transactionRequest.getFees().isEmpty() ? "No fees related to this transaction" : "Check 'cashtransaction' table for related fees";
-        return Transaction.builder()
-                .date(transactionRequest.getDate())
-                .transactionType(transactionRequest.getTransactionType())
-                .productType(transactionRequest.getProductType())
-                .productName(transactionRequest.getProductName())
-                .singlePrice(transactionRequest.getSinglePrice())
-                .quantity(transactionRequest.getQuantity())
-                .exchangeRate(exchangeRate)
-                .totalAmount(transactionValue)
-                .currency(EUR)
-                .baseProductCurrency(transactionRequest.getCurrency())
-                .description(description)
-                .build();
     }
 
 }

@@ -29,6 +29,7 @@ public class CashTransactionService {
 
     public CashTransaction createCashTransactionForFee(LocalDate date, CashTransactionType cashTransactionType, String feeType, BigDecimal feeValue, long transactionId) {
         String feeDescription = String.format("Fee of type %s; Reference id to 'transaction' table", feeType);
+
         return CashTransaction.builder()
                 .date(date)
                 .cashTransactionType(cashTransactionType)
@@ -37,13 +38,5 @@ public class CashTransactionService {
                 .description(feeDescription)
                 .referenceId(transactionId)
                 .build();
-    }
-
-    public List<CashTransactionResponse> getAllCashTransactionsFromTo(LocalDate from, LocalDate to) {
-        return null;
-    }
-
-    public BigDecimal getAllCashTransactionsAmount() {
-        return null;
     }
 }

@@ -39,7 +39,8 @@ public class FeeService {
     private List<CashTransaction> createFees(TransactionRequest transactionRequest, long transactionId) {
         Map<FeeType, BigDecimal> feesMap = transactionRequest.getFees();
 
-        List<CashTransaction> fees = feesMap.entrySet()
+        List<CashTransaction> fees = feesMap
+                .entrySet()
                 .stream()
                 .map(entry -> {
                     String feeType = checkFeeType(entry.getKey());
@@ -51,17 +52,15 @@ public class FeeService {
     }
 
     private String checkFeeType(FeeType feeType) {
-        String name = feeType.name();
-        for (FeeType type : FeeType.values()) {
-            if (type.name().equals(name)) {
-                return type.getName();
-            }
+        if (feeType == null) {
+            throw new IllegalArgumentException("Unknown fee type");
         }
-        throw new IllegalArgumentException("Unknown fee type name: " + name);
+        return feeType.getName();
     }
 
     private BigDecimal calculateTotalFees(List<CashTransaction> fees) {
-        return fees.stream()
+        return fees
+                .stream()
                 .map(CashTransaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }

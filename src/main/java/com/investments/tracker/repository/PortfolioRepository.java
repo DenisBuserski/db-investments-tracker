@@ -23,12 +23,14 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
             SET
             p.lastUpdated = :transactionDate,  
             p.quantity = :newQuantity, 
-            p.investedMoney = :newInvestedMoney 
+            p.investedMoney = :newInvestedMoney,
+            p.averagePrice = :newAveragePrice 
             WHERE p.productName = :productName
             """)
     int updatePortfolioWithBuyTransaction(
             @Param("transactionDate") LocalDate transactionDate,
             @Param("productName") String productName,
             @Param("newQuantity") int newQuantity,
-            @Param("newInvestedMoney") BigDecimal newInvestedMoney);
+            @Param("newInvestedMoney") BigDecimal newInvestedMoney,
+            @Param("newAveragePrice") BigDecimal newAveragePrice);
 }

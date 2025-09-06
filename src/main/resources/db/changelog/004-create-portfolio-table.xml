@@ -24,7 +24,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="average_price" type="DECIMAL(18, 6)">
+            <column name="average_price" type="DECIMAL(19, 6)">
                 <constraints nullable="false"/>
             </column>
 

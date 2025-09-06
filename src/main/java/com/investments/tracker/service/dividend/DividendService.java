@@ -10,6 +10,7 @@ import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.repository.DividendRepository;
 import com.investments.tracker.service.CashTransactionService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import static java.math.RoundingMode.CEILING;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DividendService {
     private final CashTransactionRepository cashTransactionRepository;
     private final BalanceRepository balanceRepository;
@@ -31,42 +33,28 @@ public class DividendService {
     private final CashTransactionService cashtransactionService;
     private final DividendBalanceBuilderService dividendBalanceBuilderService;
 
-    @Autowired
-    public DividendService(
-            CashTransactionRepository cashTransactionRepository,
-            BalanceRepository balanceRepository,
-            DividendRepository dividendRepository,
-            CashTransactionService cashtransactionService,
-            DividendBalanceBuilderService dividendBalanceBuilderService) {
-        this.cashTransactionRepository = cashTransactionRepository;
-        this.balanceRepository = balanceRepository;
-        this.dividendRepository = dividendRepository;
-        this.cashtransactionService = cashtransactionService;
-        this.dividendBalanceBuilderService = dividendBalanceBuilderService;
-    }
-
     // TODO: Check the scaling with the exchange rate
     public BalanceResponse insertDividend(DividendRequest dividendRequest) {
         BigDecimal exchangeRate = dividendRequest.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequest.getExchangeRate();
         BigDecimal dividendAmountBeforeConversion = calculateDividendAmount(dividendRequest);
         BigDecimal dividendAmountAfterConversion = dividendConversion(exchangeRate, dividendAmountBeforeConversion);
 
-        CashTransaction dividend = this.cashtransactionService.createCashTransactionForDividend(dividendRequest, dividendAmountAfterConversion);
-        this.cashTransactionRepository.save(dividend);
+        CashTransaction dividend = cashtransactionService.createCashTransactionForDividend(dividendRequest, dividendAmountAfterConversion);
+        cashTransactionRepository.save(dividend);
 
-        Dividend dividendEntity = creteDividend(dividendRequest);
-        this.dividendRepository.save(dividendEntity);
+        Dividend dividendEntity = creteDividendEntity(dividendRequest);
+        dividendRepository.save(dividendEntity);
 
-        Optional<Balance> latestBalance = this.balanceRepository.getLatestBalance();
+        Optional<Balance> latestBalance = balanceRepository.getLatestBalance();
         Balance newBalance;
         if (latestBalance.isPresent()) {
-            newBalance = this.dividendBalanceBuilderService.createBalanceFromCashTransaction(latestBalance.get(), dividend);
+            newBalance = dividendBalanceBuilderService.createBalanceFromCashTransaction(latestBalance.get(), dividend);
         } else {
-            newBalance = this.dividendBalanceBuilderService.createBalanceFromCashTransaction(null, dividend);
+            newBalance = dividendBalanceBuilderService.createBalanceFromCashTransaction(null, dividend);
         }
 
-        this.balanceRepository.save(newBalance);
-        log.info("Dividend for product [{}] created successfully", dividendRequest.getProductName());
+        balanceRepository.save(newBalance);
+        log.info("Dividend for product: {} created successfully", dividendRequest.getProductName());
         return createBalanceResponse(newBalance);
     }
 
@@ -84,7 +72,7 @@ public class DividendService {
         }
     }
 
-    private static Dividend creteDividend(DividendRequest dividendRequest) {
+    private static Dividend creteDividendEntity(DividendRequest dividendRequest) {
         int quantity = dividendRequest.getQuantity();
         BigDecimal dividendAmount = dividendRequest.getDividendAmount();
         BigDecimal dividendTaxAmount = dividendRequest.getDividendTax();

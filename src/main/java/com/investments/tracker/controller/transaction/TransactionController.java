@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,13 +24,9 @@ import org.springframework.web.bind.annotation.*;
 )
 @Slf4j
 @Tag(name = "Transaction Controller", description = "Contains REST methods for inserting and retrieving transactions from the database")
+@RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
-
-    @Autowired
-    public TransactionController(TransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
 
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
@@ -49,8 +46,8 @@ public class TransactionController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     public ResponseEntity<BalanceResponse> insertTransaction(@RequestBody @Valid TransactionRequest transactionRequest) {
-        log.info("Creating [{}] transaction for product [{}] on [{}]", transactionRequest.getTransactionType(), transactionRequest.getProductName(), transactionRequest.getDate());
-        BalanceResponse balanceResponse = this.transactionService.insertTransaction(transactionRequest);
+        log.info("Creating [{}] transaction for product: {} on date: {}", transactionRequest.getTransactionType(), transactionRequest.getProductName(), transactionRequest.getDate());
+        BalanceResponse balanceResponse = transactionService.insertTransaction(transactionRequest);
         return new ResponseEntity<>(balanceResponse, HttpStatus.CREATED);
     }
 
