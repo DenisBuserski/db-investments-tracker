@@ -20,37 +20,37 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date")
     private LocalDate date;
 
-    @Column(name = "transaction_type", nullable = false)
+    @Column(name = "transaction_type")
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
-    @Column(name = "product_type", nullable = false)
+    @Column(name = "product_type")
     @Enumerated(EnumType.STRING)
     private ProductType productType;
 
-    @Column(name = "product_name", nullable = false)
+    @Column(name = "product_name")
     private String productName;
 
-    @Column(name = "single_price", nullable = false, precision = 10, scale = 3)
+    @Column(name = "single_price")
     private BigDecimal singlePrice;
 
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "exchange_rate", nullable = false, precision = 10, scale = 4)
+    @Column(name = "exchange_rate")
     private BigDecimal exchangeRate;
 
-    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
+    @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
-    @Column(name = "currency", nullable = false)
+    @Column(name = "currency")
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    @Column(name = "base_product_currency", nullable = false)
+    @Column(name = "base_product_currency")
     @Enumerated(EnumType.STRING)
     private Currency baseProductCurrency;
 

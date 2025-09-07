@@ -6,13 +6,18 @@ import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Dividend;
 import com.investments.tracker.controller.balance.BalanceResponse;
 import com.investments.tracker.controller.dividend.DividendRequest;
+import com.investments.tracker.model.Portfolio;
 import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.CashTransactionRepository;
 import com.investments.tracker.repository.DividendRepository;
 import com.investments.tracker.service.CashTransactionService;
+import com.investments.tracker.service.PortfolioService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,30 +37,42 @@ public class DividendService {
     private final DividendRepository dividendRepository;
     private final CashTransactionService cashtransactionService;
     private final DividendBalanceBuilderService dividendBalanceBuilderService;
+    private final PortfolioService portfolioService;
 
-    // TODO: Check the scaling with the exchange rate
+    @Transactional
     public BalanceResponse insertDividend(DividendRequest dividendRequest) {
-        BigDecimal exchangeRate = dividendRequest.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequest.getExchangeRate();
-        BigDecimal dividendAmountBeforeConversion = calculateDividendAmountReceived(dividendRequest);
-        BigDecimal dividendAmountAfterConversion = dividendConversion(exchangeRate, dividendAmountBeforeConversion);
+        Optional<Portfolio> portfolioForProduct = portfolioService.findByProductName(dividendRequest.getProductName());
 
-        CashTransaction dividend = cashtransactionService.createCashTransactionForDividend(dividendRequest, dividendAmountAfterConversion);
-        cashTransactionRepository.save(dividend);
+        if (!portfolioForProduct.isEmpty()) {
+            BigDecimal exchangeRate = dividendRequest.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequest.getExchangeRate();
+            BigDecimal dividendAmountReceivedBeforeConversion = calculateDividendAmountReceived(dividendRequest);
+            BigDecimal dividendAmountReceivedAfterConversion = dividendConversion(exchangeRate, dividendAmountReceivedBeforeConversion);
 
-        Dividend dividendEntity = creteDividendEntity(dividendRequest);
-        dividendRepository.save(dividendEntity);
+            CashTransaction dividend = cashtransactionService.createCashTransactionForDividend(dividendRequest, dividendAmountReceivedAfterConversion);
+            cashTransactionRepository.save(dividend);
 
-        Optional<Balance> latestBalance = balanceRepository.getLatestBalance();
-        Balance newBalance;
-        if (latestBalance.isPresent()) {
-            newBalance = dividendBalanceBuilderService.createBalanceFromCashTransaction(latestBalance.get(), dividend);
+            Dividend dividendEntity = creteDividendEntity(dividendRequest, dividendAmountReceivedBeforeConversion, dividendAmountReceivedAfterConversion);
+            dividendRepository.save(dividendEntity);
+
+            portfolioService.updatePortfolioForDividend(dividend.getDate(), dividendRequest.getProductName(), dividend.getAmount());
+
+            Optional<Balance> latestBalance = balanceRepository.getLatestBalance();
+            Balance newBalance;
+            if (latestBalance.isPresent()) {
+                newBalance = dividendBalanceBuilderService.createBalanceFromCashTransaction(latestBalance.get(), dividend);
+            } else {
+                newBalance = dividendBalanceBuilderService.createBalanceFromCashTransaction(null, dividend);
+            }
+
+            balanceRepository.save(newBalance);
+            log.info("Dividend for product: {} created successfully", dividendRequest.getProductName());
+            return createBalanceResponse(newBalance);
         } else {
-            newBalance = dividendBalanceBuilderService.createBalanceFromCashTransaction(null, dividend);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Product with name %s not found", dividendRequest.getProductName()));
         }
 
-        balanceRepository.save(newBalance);
-        log.info("Dividend for product: {} created successfully", dividendRequest.getProductName());
-        return createBalanceResponse(newBalance);
+
+
     }
 
     private static BigDecimal calculateDividendAmountReceived(DividendRequest dividendRequest) {
@@ -72,7 +89,10 @@ public class DividendService {
         }
     }
 
-    private static Dividend creteDividendEntity(DividendRequest dividendRequest) {
+    private static Dividend creteDividendEntity(
+            DividendRequest dividendRequest,
+            BigDecimal dividendAmountReceivedBeforeConversion,
+            BigDecimal dividendAmountReceivedAfterConversion) {
         int quantity = dividendRequest.getQuantity();
         BigDecimal dividendAmount = dividendRequest.getTotalDividendReceived();
         BigDecimal dividendTaxAmount = dividendRequest.getTotalDividendTaxCharged();
@@ -83,10 +103,12 @@ public class DividendService {
                 .date(dividendRequest.getDate())
                 .productName(dividendRequest.getProductName())
                 .quantity(quantity)
-                .dividendAmount(dividendAmount)
-                .dividendTaxAmount(dividendTaxAmount)
-                .dividendAmountPerShare(dividendAmountPerShare)
-                .dividendTaxAmountPerShare(dividendTaxAmountPerShare)
+                .totalAmountAfterTaxAndConversion(dividendAmountReceivedAfterConversion)
+                .totalAmountAfterTaxBeforeConversion(dividendAmountReceivedBeforeConversion)
+                .baseAmount(dividendAmount)
+                .totalTaxAmount(dividendTaxAmount)
+                .amountPerShare(dividendAmountPerShare)
+                .taxAmountPerShare(dividendTaxAmountPerShare)
                 .exchangeRate(dividendRequest.getExchangeRate())
                 .dividendCurrency(dividendRequest.getCurrency())
                 .build();

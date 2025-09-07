@@ -19,51 +19,51 @@ public class WeeklyPosition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "year", nullable = false)
+    @Column(name = "year")
     private int year;
 
-    @Column(name = "week_number", nullable = false)
+    @Column(name = "week_number")
     private int weekNumber;
 
-    @Column(name = "from_date", nullable = false)
+    @Column(name = "from_date")
     private LocalDate fromDate;
 
-    @Column(name = "to_date", nullable = false)
+    @Column(name = "to_date")
     private LocalDate toDate;
 
-    @Column(name = "product_name", nullable = false)
+    @Column(name = "product_name")
     private String productName;
 
-    @Column(name = "product_type", nullable = false)
+    @Column(name = "product_type")
     @Enumerated(EnumType.STRING)
     private ProductType productType;
 
     @Column(nullable = false)
     private BigDecimal quantity;
 
-    @Column(name = "total_invested_cash", nullable = false)
+    @Column(name = "total_invested_cash")
     private BigDecimal totalInvestedCash;
 
-    @Column(name = "open_price", nullable = false)
+    @Column(name = "open_price")
     private long openPrice;
 
-    @Column(name = "product_base_currency", nullable = false)
+    @Column(name = "product_base_currency")
     @Enumerated(EnumType.STRING)
     private Currency productBaseCurrency;
 
     @Column(name = "exchange_rate")
     private BigDecimal exchangeRate;
 
-    @Column(name = "currency", nullable = false)
+    @Column(name = "currency")
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    @Column(name = "investment_value", nullable = false)
+    @Column(name = "investment_value")
     private BigDecimal investmentValue;
 
-    @Column(name = "unrealized_PL", nullable = false)
+    @Column(name = "unrealized_PL")
     private BigDecimal unrealizedProfitLoss;
 
-    @Column(name = "unrealized_PL_percentage", nullable = false)
+    @Column(name = "unrealized_PL_percentage")
     private BigDecimal unrealizedProfitLossPercentage;
 }

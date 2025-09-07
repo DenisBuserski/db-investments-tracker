@@ -19,17 +19,17 @@ public class CashTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date")
     private LocalDate date;
 
-    @Column(name = "cash_transaction_type", nullable = false)
+    @Column(name = "cash_transaction_type")
     @Enumerated(EnumType.STRING)
     private CashTransactionType cashTransactionType;
 
-    @Column(name = "amount", nullable = false, precision = 10, scale = 2)
+    @Column(name = "amount")
     private BigDecimal amount;
 
-    @Column(name = "currency", nullable = false)
+    @Column(name = "currency")
     @Enumerated(EnumType.STRING)
     private Currency currency;
 

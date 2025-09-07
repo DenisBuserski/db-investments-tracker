@@ -3,6 +3,8 @@ package com.investments.tracker.service;
 import com.investments.tracker.model.Portfolio;
 import com.investments.tracker.controller.transaction.TransactionRequest;
 import com.investments.tracker.repository.PortfolioRepository;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import static com.investments.tracker.enums.Status.ACTIVE;
 public class PortfolioService{
     private final PortfolioRepository portfolioRepository;
 
+    @Transactional
     public void updatePortfolioForBuyTransaction(TransactionRequest transactionRequest, BigDecimal totalTransactionValue) {
         LocalDate transactionDate = transactionRequest.getDate();
         String productName = transactionRequest.getProductName();
@@ -51,10 +54,25 @@ public class PortfolioService{
         }
     }
 
-
-
+    @Transactional
     public void updatePortfolioForSellTransaction() {
 
+    }
+
+    @Transactional
+    public void updatePortfolioForDividend(LocalDate date, String productName, BigDecimal amount) {
+        int updatedResult = portfolioRepository.updatePortfolioForDividend(date, productName, amount);
+
+        if (updatedResult == 1) {
+            log.info("Portfolio updated successfully for product [{}]", productName);
+        } else {
+            log.warn("Portfolio for product [{}] was not updated", productName);
+        }
+
+    }
+
+    public Optional<Portfolio> findByProductName(String productName) {
+        return portfolioRepository.findByProductName(productName);
     }
 }
 

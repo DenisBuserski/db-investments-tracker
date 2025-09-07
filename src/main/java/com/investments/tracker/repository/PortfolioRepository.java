@@ -33,4 +33,18 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
             @Param("newQuantity") int newQuantity,
             @Param("newInvestedMoney") BigDecimal newInvestedMoney,
             @Param("newAveragePrice") BigDecimal newAveragePrice);
+
+    @Modifying
+    @Transactional
+    @Query("""
+            UPDATE Portfolio p 
+            SET
+            p.lastUpdated = :date,  
+            p.dividendsAmount = :amount
+            WHERE p.productName = :productName
+            """)
+    int updatePortfolioForDividend(
+            @Param("date") LocalDate date,
+            @Param("productName") String productName,
+            @Param("amount") BigDecimal amount);
 }

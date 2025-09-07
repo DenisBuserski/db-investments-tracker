@@ -18,25 +18,25 @@ public class Portfolio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "last_updated", nullable = false)
+    @Column(name = "last_updated")
     private LocalDate lastUpdated;
 
-    @Column(name = "product_name", nullable = false)
+    @Column(name = "product_name")
     private String productName;
 
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "invested_money", nullable = false)
+    @Column(name = "invested_money")
     private BigDecimal investedMoney;
 
-    @Column(name = "average_price", nullable = false)
+    @Column(name = "average_price")
     private BigDecimal averagePrice;
 
-    @Column(name = "dividends_amount", nullable = false)
+    @Column(name = "dividends_amount")
     private BigDecimal dividendsAmount;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
 }

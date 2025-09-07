@@ -18,34 +18,37 @@ public class Dividend {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date")
     private LocalDate date;
 
-    @Column(name = "product_name", nullable = false)
+    @Column(name = "product_name")
     private String productName;
 
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "dividend_amount_after_tax")
-    private BigDecimal dividendAmountAfterTax;
+    @Column(name = "total_amount_after_tax_and_conversion")
+    private BigDecimal totalAmountAfterTaxAndConversion;
 
-    @Column(name = "dividend_amount_before_tax", nullable = false, precision = 10, scale = 2)
-    private BigDecimal dividendAmountBeforeTax;
+    @Column(name = "total_amount_after_tax_before_conversion")
+    private BigDecimal totalAmountAfterTaxBeforeConversion;
 
-    @Column(name = "dividend_tax_amount", nullable = false, precision = 10, scale = 2)
-    private BigDecimal dividendTaxAmount;
+    @Column(name = "base_amount")
+    private BigDecimal baseAmount;
 
-    @Column(name = "dividend_amount_per_share", nullable = false, precision = 10, scale = 4)
-    private BigDecimal dividendAmountPerShare;
+    @Column(name = "total_tax_amount")
+    private BigDecimal totalTaxAmount;
 
-    @Column(name = "dividend_tax_amount_per_share", nullable = false, precision = 10, scale = 4)
-    private BigDecimal dividendTaxAmountPerShare;
+    @Column(name = "dividend_amount_per_share")
+    private BigDecimal amountPerShare;
 
-    @Column(name = "exchange_rate", nullable = false, precision = 10, scale = 4)
+    @Column(name = "dividend_tax_amount_per_share")
+    private BigDecimal taxAmountPerShare;
+
+    @Column(name = "exchange_rate")
     private BigDecimal exchangeRate;
 
-    @Column(name = "dividend_currency", nullable = false)
+    @Column(name = "dividend_currency")
     @Enumerated(EnumType.STRING)
     private Currency dividendCurrency;
 }
