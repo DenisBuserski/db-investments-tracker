@@ -12,7 +12,6 @@ import com.investments.tracker.repository.DividendRepository;
 import com.investments.tracker.service.CashTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,6 +21,7 @@ import java.util.Optional;
 
 import static com.investments.tracker.controller.balance.BalanceResponse.createBalanceResponse;
 import static java.math.RoundingMode.CEILING;
+import static java.math.RoundingMode.FLOOR;
 
 @Service
 @Slf4j
@@ -36,7 +36,7 @@ public class DividendService {
     // TODO: Check the scaling with the exchange rate
     public BalanceResponse insertDividend(DividendRequest dividendRequest) {
         BigDecimal exchangeRate = dividendRequest.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequest.getExchangeRate();
-        BigDecimal dividendAmountBeforeConversion = calculateDividendAmount(dividendRequest);
+        BigDecimal dividendAmountBeforeConversion = calculateDividendAmountReceived(dividendRequest);
         BigDecimal dividendAmountAfterConversion = dividendConversion(exchangeRate, dividendAmountBeforeConversion);
 
         CashTransaction dividend = cashtransactionService.createCashTransactionForDividend(dividendRequest, dividendAmountAfterConversion);
@@ -58,15 +58,15 @@ public class DividendService {
         return createBalanceResponse(newBalance);
     }
 
-    private static BigDecimal calculateDividendAmount(DividendRequest dividendRequest) {
-        BigDecimal dividendAmountBeforeConversion = dividendRequest.getDividendAmount();
-        BigDecimal dividendTaxBeforeConversion = dividendRequest.getDividendTax();
+    private static BigDecimal calculateDividendAmountReceived(DividendRequest dividendRequest) {
+        BigDecimal dividendAmountBeforeConversion = dividendRequest.getTotalDividendReceived();
+        BigDecimal dividendTaxBeforeConversion = dividendRequest.getTotalDividendTaxCharged();
         return dividendAmountBeforeConversion.subtract(dividendTaxBeforeConversion);
     }
 
     private static BigDecimal dividendConversion(BigDecimal exchangeRate, BigDecimal dividendAmountBeforeConversion) {
         if (!exchangeRate.equals(BigDecimal.ZERO)) {
-            return dividendAmountBeforeConversion.divide(exchangeRate, 10, CEILING).setScale(2, CEILING);
+            return dividendAmountBeforeConversion.divide(exchangeRate, 10, FLOOR).setScale(2, FLOOR);
         } else {
             return dividendAmountBeforeConversion;
         }
@@ -74,8 +74,8 @@ public class DividendService {
 
     private static Dividend creteDividendEntity(DividendRequest dividendRequest) {
         int quantity = dividendRequest.getQuantity();
-        BigDecimal dividendAmount = dividendRequest.getDividendAmount();
-        BigDecimal dividendTaxAmount = dividendRequest.getDividendTax();
+        BigDecimal dividendAmount = dividendRequest.getTotalDividendReceived();
+        BigDecimal dividendTaxAmount = dividendRequest.getTotalDividendTaxCharged();
         BigDecimal dividendAmountPerShare = dividendAmount.divide(BigDecimal.valueOf(quantity), 10, CEILING);
         BigDecimal dividendTaxAmountPerShare = dividendTaxAmount.divide(BigDecimal.valueOf(quantity), 10, CEILING);
 
@@ -88,7 +88,7 @@ public class DividendService {
                 .dividendAmountPerShare(dividendAmountPerShare)
                 .dividendTaxAmountPerShare(dividendTaxAmountPerShare)
                 .exchangeRate(dividendRequest.getExchangeRate())
-                .currency(dividendRequest.getCurrency())
+                .dividendCurrency(dividendRequest.getCurrency())
                 .build();
 
     }

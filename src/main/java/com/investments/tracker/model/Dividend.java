@@ -27,8 +27,11 @@ public class Dividend {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "dividend_amount", nullable = false, precision = 10, scale = 2)
-    private BigDecimal dividendAmount;
+    @Column(name = "dividend_amount_after_tax")
+    private BigDecimal dividendAmountAfterTax;
+
+    @Column(name = "dividend_amount_before_tax", nullable = false, precision = 10, scale = 2)
+    private BigDecimal dividendAmountBeforeTax;
 
     @Column(name = "dividend_tax_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal dividendTaxAmount;
@@ -42,7 +45,7 @@ public class Dividend {
     @Column(name = "exchange_rate", nullable = false, precision = 10, scale = 4)
     private BigDecimal exchangeRate;
 
-    @Column(name = "currency", nullable = false)
+    @Column(name = "dividend_currency", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Currency currency;
+    private Currency dividendCurrency;
 }

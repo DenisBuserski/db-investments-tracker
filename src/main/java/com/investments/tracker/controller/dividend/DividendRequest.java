@@ -27,11 +27,11 @@ public class DividendRequest {
 
     @NotNull(message = DIVIDEND_AMOUNT_NOT_NULL)
     @Positive(message = DIVIDEND_AMOUNT_MORE_THAN_ZERO)
-    private BigDecimal dividendAmount;
+    private BigDecimal totalDividendReceived;
 
     @NotNull(message = DIVIDEND_TAX_AMOUNT_NOT_NULL)
     @PositiveOrZero(message = DIVIDEND_TAX_AMOUNT_MORE_THAN_ZERO)
-    private BigDecimal dividendTax;
+    private BigDecimal totalDividendTaxCharged;
 
     @NotNull(message = EXCHANGE_RATE_NOT_NULL)
     private BigDecimal exchangeRate;
