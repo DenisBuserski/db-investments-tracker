@@ -45,7 +45,7 @@ public class PortfolioService{
                     .productName(productName)
                     .quantity(transactionRequest.getQuantity())
                     .investedMoney(totalTransactionValue)
-                    .averagePrice(totalTransactionValue.divide(BigDecimal.valueOf(transactionRequest.getQuantity()), 4, RoundingMode.HALF_UP))
+                    .averagePrice(totalTransactionValue.divide(BigDecimal.valueOf(transactionRequest.getQuantity()), 4, RoundingMode.DOWN))
                     .dividendsAmount(BigDecimal.ZERO)
                     .status(ACTIVE)
                     .build();

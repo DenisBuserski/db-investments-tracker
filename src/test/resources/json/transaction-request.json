@@ -1,0 +1,13 @@
+{
+  "date": "2025-10-15",
+  "transactionType": "BUY",
+  "productType": "STOCK",
+  "productName": "APPLE",
+  "singlePrice": 15,
+  "quantity": 5,
+  "exchangeRate": 1.0645,
+  "fees": {
+    "TEF": 1.00
+  },
+  "currency": "USD"
+}

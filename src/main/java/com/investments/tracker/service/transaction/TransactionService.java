@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 import static com.investments.tracker.enums.Currency.EUR;
@@ -73,7 +74,7 @@ public class TransactionService{
         if (exchangeRate.equals(BigDecimal.ZERO)) {
             return calculationWithoutExchangeRate;
         } else {
-            return calculationWithoutExchangeRate.divide(exchangeRate, 2, BigDecimal.ROUND_HALF_UP);
+            return calculationWithoutExchangeRate.divide(exchangeRate, 2, RoundingMode.DOWN);
         }
     }
 

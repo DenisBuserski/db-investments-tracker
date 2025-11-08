@@ -11,7 +11,7 @@ public class TransactionBalanceBuilderService {
 
     public Balance createNewBalanceFromTransaction(Balance balance, Transaction transaction, BigDecimal totalAmountOfInsertedFees) {
         LocalDate newBalanceDate = transaction.getDate();
-        BigDecimal newBalanceAmount = balance.getBalance().subtract(transaction.getTotalAmount());
+        BigDecimal newBalanceAmount = balance.getBalance().subtract(transaction.getTotalAmount()).subtract(totalAmountOfInsertedFees);
         BigDecimal newTotalInvestments = balance.getTotalInvestments().add(transaction.getTotalAmount());
         BigDecimal newTotalDeposits = balance.getTotalDeposits();
         BigDecimal newTotalWithdrawals = balance.getTotalWithdrawals();
