@@ -1,7 +1,7 @@
 package com.investments.tracker.controller.withdrawal;
 
 import com.investments.tracker.enums.Currency;
-import com.investments.tracker.common.validation.ValidCurrency;
+import com.investments.tracker.validation.ValidCurrency;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
@@ -10,15 +10,15 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.investments.tracker.common.util.ValidationMessages.*;
+import static com.investments.tracker.validation.ValidationMessages.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
 public class WithdrawalRequest {
-    @NotNull(message = WITHDRAWAL_DATE_NOT_NULL)
-    @PastOrPresent(message = WITHDRAWAL_DATE_NOT_IN_FUTURE)
+    @NotNull(message = DATE_NOT_NULL)
+    @PastOrPresent(message = DATE_NOT_IN_FUTURE)
     private LocalDate date;
 
     @NotNull(message = WITHDRAWAL_AMOUNT_NOT_NULL)
@@ -29,5 +29,6 @@ public class WithdrawalRequest {
     @ValidCurrency
     private Currency currency;
 
+    @NotNull(message = DESCRIPTION_NOT_NULL)
     private String description;
 }

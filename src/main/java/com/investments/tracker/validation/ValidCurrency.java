@@ -1,4 +1,4 @@
-package com.investments.tracker.common.validation;
+package com.investments.tracker.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static com.investments.tracker.controller.balance.BalanceResponse.createBalanceResponse;
 import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
+import static com.investments.tracker.validation.ValidationMessages.*;
 
 
 @Service
@@ -43,7 +44,7 @@ public class WithdrawalService {
             Balance balance = latestBalance.get();
 
             if (withdrawalRequest.getDate().isBefore(balance.getDate())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Withdrawal date cannot be before the latest balance date");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, WITHDRAWAL_DATE_NOT_BEFORE_LATEST_BALANCE);
             } else {
                 if (balance.getBalance().compareTo(withdrawalRequest.getAmount()) >= 0) {
                     CashTransaction withdrawal = cashTransactionMapper.createCashtransaction(withdrawalRequest, withdrawalMapper);
@@ -54,11 +55,14 @@ public class WithdrawalService {
                     log.info("Withdrawal for [{} {}] successful", String.format("%.2f", withdrawal.getAmount()), withdrawal.getCurrency());
                     return createBalanceResponse(newBalance);
                 } else {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("You don't have enough money to withdraw. Current balance is [%s %s]", balance.getBalance(), "EUR"));
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, NOT_ENOUGH_TO_WITHDRAWAL
+                            .replace("%1", balance.getBalance().toString())
+                            .replace("%2", "EUR")
+                    );
                 }
             }
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Withdrawal cannot be made, because no balance exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, WITHDRAWAL_NOT_POSSIBLE_BALANCE_DOES_NOT_EXIST);
         }
     }
 

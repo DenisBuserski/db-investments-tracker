@@ -5,8 +5,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <include file="/db/changelog/001-create-balance-table.sql"/>
-    <include file="/db/changelog/002-create-cash-transaction-table.sql"/>
+    <include file="/db/changelog/002-create-cash-transactions-table.sql"/>
     <include file="/db/changelog/003-create-dividend-table.sql"/>
-    <include file="/db/changelog/004-create-transaction-table.sql"/>
+    <include file="/db/changelog/004-create-transactions-table.sql"/>
     <include file="/db/changelog/005-create-portfolio-table.sql"/>
 </databaseChangeLog>

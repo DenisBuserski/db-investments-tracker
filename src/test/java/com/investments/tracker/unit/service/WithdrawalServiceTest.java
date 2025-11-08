@@ -27,6 +27,8 @@ import java.util.Optional;
 
 import static com.investments.tracker.enums.CashTransactionType.WITHDRAWAL;
 import static com.investments.tracker.enums.Currency.EUR;
+import static com.investments.tracker.validation.ValidationMessages.WITHDRAWAL_DATE_NOT_BEFORE_LATEST_BALANCE;
+import static com.investments.tracker.validation.ValidationMessages.WITHDRAWAL_NOT_POSSIBLE_BALANCE_DOES_NOT_EXIST;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
@@ -113,7 +115,7 @@ class WithdrawalServiceTest {
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                 () -> withdrawalService.insertWithdraw(withdrawalRequest));
-        assertEquals("Withdrawal cannot be made, because no balance exists", exception.getReason());
+        assertEquals(WITHDRAWAL_NOT_POSSIBLE_BALANCE_DOES_NOT_EXIST, exception.getReason());
     }
 
     @Test
@@ -133,7 +135,7 @@ class WithdrawalServiceTest {
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                 () -> withdrawalService.insertWithdraw(withdrawalRequest));
-        assertEquals("Withdrawal date cannot be before the latest balance date", exception.getReason());
+        assertEquals(WITHDRAWAL_DATE_NOT_BEFORE_LATEST_BALANCE, exception.getReason());
     }
 
 
@@ -204,7 +206,7 @@ class WithdrawalServiceTest {
 
     @Test
     @DisplayName("Test should return total amount of all deposits when we have deposits")
-    public void testGetTotalWithdrawalsAmountNotEmpty() {
+    void testGetTotalWithdrawalsAmountNotEmpty() {
         when(cashTransactionRepository.getTotalAmountOf(WITHDRAWAL)).thenReturn(Optional.of(MOCK_BALANCE_WITH_ENOUGH_MONEY_AFTER_WITHDRAWAL.getTotalWithdrawals()));
 
         BigDecimal result = withdrawalService.getTotalWithdrawalsAmount();
@@ -215,7 +217,7 @@ class WithdrawalServiceTest {
 
     @Test
     @DisplayName("Test should return total amount of all deposits when we don't have deposits")
-    public void testGetTotalWithdrawalsAmountEmpty() {
+    void testGetTotalWithdrawalsAmountEmpty() {
         when(cashTransactionRepository.getTotalAmountOf(WITHDRAWAL)).thenReturn(Optional.empty());
 
         BigDecimal result = withdrawalService.getTotalWithdrawalsAmount();

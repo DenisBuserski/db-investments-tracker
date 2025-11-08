@@ -26,7 +26,8 @@ public class CashTransactionMapper {
     }
 
     public List<CashTransactionResponse> mapToResponseDTOList(List<CashTransaction> cashTransactions, CashTransactionType cashTransactionType) {
-        return cashTransactions.stream()
+        return cashTransactions
+                .stream()
                 .map(cashTransaction -> mapToResponseDTO(cashTransaction, cashTransactionType))
                 .toList();
     }

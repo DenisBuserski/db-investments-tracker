@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 
 @Service
-@Slf4j
 public class WithdrawalBalanceBuilderService extends BalanceBuilder {
     @Override
     public Balance createBalanceFromCashTransaction(Balance balance, CashTransaction withdrawal) {
@@ -23,10 +22,10 @@ public class WithdrawalBalanceBuilderService extends BalanceBuilder {
         BigDecimal newTotalDividends = balance.getTotalDividends();
         BigDecimal newTotalFees = balance.getTotalFees();
         BigDecimal newLastPortfolioValue = balance.getLastPortfolioValue();
-        BigDecimal lastUnrealizedPl = balance == null ? BigDecimal.ZERO : balance.getLastUnrealizedPl();
-        BigDecimal lastUnrealizedPlPercentage = balance == null ? BigDecimal.ZERO : balance.getLastUnrealizedPlPercentage();
-        BigDecimal totalSold = balance == null ? BigDecimal.ZERO : balance.getTotalSold();
-        BigDecimal realizedPl = balance == null ? BigDecimal.ZERO : balance.getRealizedPl();
+        BigDecimal lastUnrealizedPl = balance.getLastUnrealizedPl();
+        BigDecimal lastUnrealizedPlPercentage = balance.getLastUnrealizedPlPercentage();
+        BigDecimal totalSold = balance.getTotalSold();
+        BigDecimal realizedPl = balance.getRealizedPl();
 
         return balanceBuilder(
                 newBalanceDate,

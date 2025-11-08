@@ -34,7 +34,7 @@ public class TransactionService{
     @Transactional
     public BalanceResponse insertTransaction(TransactionRequest transactionRequest) {
         Optional<Balance> currentBalance = balanceRepository.getLatestBalance();
-        if (!currentBalance.isPresent()) {
+        if (currentBalance.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction cannot be created, because no balance exists");
         } else {
             TransactionType transactionType = transactionRequest.getTransactionType();
@@ -48,7 +48,12 @@ public class TransactionService{
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction of type [BUY] cannot be created because there is not enough money");
                 }
             } else if (transactionType == SELL) {
-
+                boolean isValid = sellTransactionService.validateSellTransaction(transactionRequest.getProductName(), transactionValue);
+                if (isValid) {
+                    balanceResponse = sellTransactionService.insertSellTransaction();
+                } else {
+                    // SELL transaction cannot be made
+                }
             }
             return balanceResponse;
         }

@@ -1,6 +1,7 @@
 package com.investments.tracker.service.dividend;
 
 import com.investments.tracker.controller.cashtransaction.CashTransactionResponse;
+import com.investments.tracker.enums.Status;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.model.Dividend;
@@ -43,7 +44,7 @@ public class DividendService {
     public BalanceResponse insertDividend(DividendRequest dividendRequest) {
         Optional<Portfolio> portfolioForProduct = portfolioService.findByProductName(dividendRequest.getProductName());
 
-        if (!portfolioForProduct.isEmpty()) {
+        if (portfolioForProduct.isPresent() && portfolioForProduct.get().getStatus().equals(Status.ACTIVE)) {
             BigDecimal exchangeRate = dividendRequest.getExchangeRate() == null ? BigDecimal.ZERO : dividendRequest.getExchangeRate();
             BigDecimal dividendAmountReceivedBeforeConversion = calculateDividendAmountReceived(dividendRequest);
             BigDecimal dividendAmountReceivedAfterConversion = dividendConversion(exchangeRate, dividendAmountReceivedBeforeConversion);

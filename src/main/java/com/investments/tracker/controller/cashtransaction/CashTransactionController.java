@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.investments.tracker.common.util.Constants.START_DATE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -43,6 +43,9 @@ public class CashTransactionController {
     private final WithdrawalService withdrawalService;
     private final DividendService dividendService;
     private final FeeService feeService;
+
+    @Value("${application.start-date}")
+    private String startDate;
 
     // TODO: Add Pagination
     @GetMapping(value = "/get", produces = APPLICATION_JSON_VALUE)
@@ -66,7 +69,7 @@ public class CashTransactionController {
             @Parameter(description = "The type of cash transaction", required = true) @RequestParam("cashTransactionType") CashTransactionType type,
             @Parameter(description = "The start date of the range. Format YYYY-MM-DD") @RequestParam(name = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> from,
             @Parameter(description = "The end date of the range Format YYYY-MM-DD") @RequestParam(name = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> to) {
-        LocalDate fromDate = from.orElse(START_DATE);
+        LocalDate fromDate = from.orElse(LocalDate.parse(startDate));
         LocalDate toDate = to.orElse(LocalDate.now());
         log.info("Getting cash transactions type: {} from [{}] to [{}]", type.name().toUpperCase(), fromDate, toDate);
         List<CashTransactionResponse> result = switch (type) {

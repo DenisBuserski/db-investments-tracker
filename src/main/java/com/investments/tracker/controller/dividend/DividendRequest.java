@@ -1,14 +1,14 @@
 package com.investments.tracker.controller.dividend;
 
 import com.investments.tracker.enums.Currency;
-import com.investments.tracker.common.validation.ValidCurrency;
+import com.investments.tracker.validation.ValidCurrency;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.investments.tracker.common.util.ValidationMessages.*;
+import static com.investments.tracker.validation.ValidationMessages.*;
 
 @AllArgsConstructor
 @NoArgsConstructor

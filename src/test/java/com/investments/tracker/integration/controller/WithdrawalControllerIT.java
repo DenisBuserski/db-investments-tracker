@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static com.investments.tracker.validation.ValidationMessages.WITHDRAWAL_NOT_POSSIBLE_BALANCE_DOES_NOT_EXIST;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -39,7 +40,7 @@ class WithdrawalControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.detail").value("Withdrawal cannot be made, because no balance exists"));
+                .andExpect(jsonPath("$.detail").value(WITHDRAWAL_NOT_POSSIBLE_BALANCE_DOES_NOT_EXIST));
     }
 
 

@@ -3,7 +3,6 @@ package com.investments.tracker.service.deposit;
 import com.investments.tracker.model.Balance;
 import com.investments.tracker.model.CashTransaction;
 import com.investments.tracker.service.BalanceBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,7 +10,6 @@ import java.time.LocalDate;
 
 
 @Service
-@Slf4j
 public class DepositBalanceBuilderService extends BalanceBuilder {
     @Override
     public Balance createBalanceFromCashTransaction(Balance balance, CashTransaction deposit) {

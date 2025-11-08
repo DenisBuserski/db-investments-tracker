@@ -22,18 +22,18 @@ import java.nio.file.Paths;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Transactional
 class DepositControllerIT {
-    @Value("${deposit.insert.url}")
-    private String depositInsertUrl;
-
     private static final String DEPOSIT_REQUEST_JSON = "src/test/resources/json/deposit-request.json";
     private static final String BALANCE_RESPONSE_JSON = "src/test/resources/json/balance-response.json";
+
+    @Value("${deposit.insert.url}")
+    private String depositInsertUrl;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("Test the insertion from the DepositController")
-    void testCallingInsertDepositMethod() throws Exception {
+    @DisplayName("Test successful insertion of a deposit")
+    void testSuccessfulInsertionOfADeposit() throws Exception {
         String requestBody = Files.readString(Paths.get(DEPOSIT_REQUEST_JSON));
         String expectedResponse = Files.readString(Paths.get(BALANCE_RESPONSE_JSON));
 

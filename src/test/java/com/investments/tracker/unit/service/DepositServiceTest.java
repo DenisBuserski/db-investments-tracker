@@ -125,7 +125,7 @@ class DepositServiceTest {
 
     @Test
     @DisplayName("Test should create a successful deposit")
-    public void testInsertSuccessfulDeposit() {
+    void testInsertSuccessfulDeposit() {
         when(cashTransactionMapper.createCashtransaction(eq(depositRequest), eq(depositMapper))).thenReturn(deposit);
         when(cashTransactionRepository.save(any(CashTransaction.class))).thenReturn(deposit);
         when(balanceRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(balance));
@@ -170,7 +170,7 @@ class DepositServiceTest {
 
     @Test
     @DisplayName("Test should return total amount of all deposits when we have deposits")
-    public void testGetTotalDepositsAmountNotEmpty() {
+    void testGetTotalDepositsAmountNotEmpty() {
         when(cashTransactionRepository.getTotalAmountOf(DEPOSIT)).thenReturn(Optional.of(balance.getTotalDeposits()));
 
         BigDecimal result = depositService.getTotalDepositsAmount();
@@ -181,7 +181,7 @@ class DepositServiceTest {
 
     @Test
     @DisplayName("Test should return total amount of all deposits when we don't have deposits")
-    public void testGetTotalDepositsAmountEmpty() {
+    void testGetTotalDepositsAmountEmpty() {
         when(cashTransactionRepository.getTotalAmountOf(DEPOSIT)).thenReturn(Optional.empty());
 
         BigDecimal result = depositService.getTotalDepositsAmount();

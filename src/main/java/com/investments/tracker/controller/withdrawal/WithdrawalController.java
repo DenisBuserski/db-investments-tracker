@@ -3,6 +3,7 @@ package com.investments.tracker.controller.withdrawal;
 import com.investments.tracker.controller.balance.BalanceResponse;
 import com.investments.tracker.service.withdrawal.WithdrawalService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,7 +42,7 @@ public class WithdrawalController {
                     description = "Withdrawal created",
                     content = {
                             @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = BalanceResponse.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = BalanceResponse.class)))
                     }),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
