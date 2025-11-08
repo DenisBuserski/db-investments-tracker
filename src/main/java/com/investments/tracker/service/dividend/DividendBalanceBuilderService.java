@@ -11,22 +11,21 @@ import java.time.LocalDate;
 
 
 @Service
-@Slf4j
 public class DividendBalanceBuilderService extends BalanceBuilder {
     @Override
     public Balance createBalanceFromCashTransaction(Balance balance, CashTransaction dividend) {
         LocalDate newBalanceDate = dividend.getDate();
-        BigDecimal newBalanceAmount = balance == null ? dividend.getAmount() : balance.getBalance().add(dividend.getAmount());
-        BigDecimal newTotalInvestments = balance == null ? BigDecimal.ZERO : balance.getTotalInvestments();
-        BigDecimal newTotalDeposits = balance == null ? BigDecimal.ZERO : balance.getTotalDeposits();
-        BigDecimal newTotalWithdrawals = balance == null ? BigDecimal.ZERO : balance.getTotalWithdrawals();
-        BigDecimal newTotalDividends = balance == null ? dividend.getAmount() : balance.getTotalDividends().add(dividend.getAmount());
-        BigDecimal newTotalFees = balance == null ? BigDecimal.ZERO : balance.getTotalFees();
-        BigDecimal newLastPortfolioValue = balance == null ? BigDecimal.ZERO : balance.getLastPortfolioValue();
-        BigDecimal lastUnrealizedPl = balance == null ? BigDecimal.ZERO : balance.getLastUnrealizedPl();
-        BigDecimal lastUnrealizedPlPercentage = balance == null ? BigDecimal.ZERO : balance.getLastUnrealizedPlPercentage();
-        BigDecimal totalSold = balance == null ? BigDecimal.ZERO : balance.getTotalSold();
-        BigDecimal realizedPl = balance == null ? BigDecimal.ZERO : balance.getRealizedPl();
+        BigDecimal newBalanceAmount = balance.getBalance().add(dividend.getAmount());
+        BigDecimal newTotalInvestments = balance.getTotalInvestments();
+        BigDecimal newTotalDeposits = balance.getTotalDeposits();
+        BigDecimal newTotalWithdrawals = balance.getTotalWithdrawals();
+        BigDecimal newTotalDividends = balance.getTotalDividends().add(dividend.getAmount());
+        BigDecimal newTotalFees = balance.getTotalFees();
+        BigDecimal newLastPortfolioValue = balance.getLastPortfolioValue();
+        BigDecimal lastUnrealizedPl = balance.getLastUnrealizedPl();
+        BigDecimal lastUnrealizedPlPercentage = balance.getLastUnrealizedPlPercentage();
+        BigDecimal totalSold = balance.getTotalSold();
+        BigDecimal realizedPl = balance.getRealizedPl();
 
         return balanceBuilder(
                 newBalanceDate,

@@ -15,8 +15,8 @@ import static com.investments.tracker.validation.ValidationMessages.*;
 @Getter
 @Builder
 public class DividendRequest {
-    @NotNull(message = DIVIDEND_DATE_NOT_NULL)
-    @PastOrPresent(message = DIVIDEND_DATE_NOT_IN_FUTURE)
+    @NotNull(message = DATE_NOT_NULL)
+    @PastOrPresent(message = DATE_NOT_IN_FUTURE)
     private LocalDate date;
 
     @NotBlank(message = PRODUCT_NAME_NOT_BLANK_OR_NULL)

@@ -28,7 +28,7 @@ public class PortfolioService{
         String productName = transactionRequest.getProductName();
 
         Optional<Portfolio> portfolioForProduct = portfolioRepository.findByProductName(productName);
-        if (!portfolioForProduct.isEmpty()) {
+        if (portfolioForProduct.isPresent()) {
             int newQuantity = portfolioForProduct.get().getQuantity() + transactionRequest.getQuantity();
             BigDecimal newInvestedMoney = portfolioForProduct.get().getInvestedMoney().add(totalTransactionValue);
             BigDecimal newAveragePrice = newInvestedMoney.divide(BigDecimal.valueOf(newQuantity), 4, RoundingMode.HALF_UP);

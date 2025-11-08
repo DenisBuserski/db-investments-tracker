@@ -52,7 +52,7 @@ public class BalanceController {
     public ResponseEntity<BalanceResponse> getLatestBalanceData() {
         LocalDateTime dateTime = LocalDateTime.now();
         log.info("Getting latest balance data from [{}]", dateTime);
-        BalanceResponse latestBalanceData = this.balanceService.getLatestBalanceData(dateTime);
+        BalanceResponse latestBalanceData = balanceService.getLatestBalanceData(dateTime);
         return new ResponseEntity<>(latestBalanceData, HttpStatus.CREATED);
     }
 }

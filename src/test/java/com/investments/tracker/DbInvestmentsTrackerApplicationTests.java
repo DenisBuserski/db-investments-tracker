@@ -1,8 +1,10 @@
 package com.investments.tracker;
 
 import com.investments.tracker.controller.deposit.DepositController;
+import com.investments.tracker.controller.dividend.DividendController;
 import com.investments.tracker.controller.withdrawal.WithdrawalController;
 import com.investments.tracker.service.deposit.DepositService;
+import com.investments.tracker.service.dividend.DividendService;
 import com.investments.tracker.service.withdrawal.WithdrawalService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,20 @@ class DbInvestmentsTrackerApplicationTests {
 	@Autowired
 	private WithdrawalService withdrawalService;
 
+	@Autowired
+	private DividendController dividendController;
+
+	@Autowired
+	private DividendService dividendService;
+
 	@Test
 	void contextLoads() {
 		assertThat(depositController).isNotNull();
 		assertThat(depositService).isNotNull();
 		assertThat(withdrawalController).isNotNull();
 		assertThat(withdrawalService).isNotNull();
+		assertThat(dividendController).isNotNull();
+		assertThat(dividendService).isNotNull();
 	}
 
 }

@@ -21,6 +21,8 @@ import java.util.Optional;
 import static com.investments.tracker.enums.Currency.EUR;
 import static com.investments.tracker.enums.TransactionType.BUY;
 import static com.investments.tracker.enums.TransactionType.SELL;
+import static com.investments.tracker.validation.ValidationMessages.TRANSACTION_NOT_POSSIBLE_BALANCE_DOES_NOT_EXIST;
+import static com.investments.tracker.validation.ValidationMessages.TRANSACTION_NOT_POSSIBLE_NOT_ENOUGH_MONEY;
 
 
 @Service
@@ -35,7 +37,7 @@ public class TransactionService{
     public BalanceResponse insertTransaction(TransactionRequest transactionRequest) {
         Optional<Balance> currentBalance = balanceRepository.getLatestBalance();
         if (currentBalance.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction cannot be created, because no balance exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, TRANSACTION_NOT_POSSIBLE_BALANCE_DOES_NOT_EXIST);
         } else {
             TransactionType transactionType = transactionRequest.getTransactionType();
             BigDecimal transactionValue = calculateTransactionValue(transactionRequest);
@@ -45,7 +47,7 @@ public class TransactionService{
                 if (currentBalance.get().getBalance().compareTo(transactionValue) >= 0) {
                     balanceResponse = buyTransactionService.insertBuyTransaction(currentBalance.get(), transactionValue, transactionRequest);
                 } else {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction of type [BUY] cannot be created because there is not enough money");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, TRANSACTION_NOT_POSSIBLE_NOT_ENOUGH_MONEY.replace("%1", "BUY"));
                 }
             } else if (transactionType == SELL) {
                 boolean isValid = sellTransactionService.validateSellTransaction(transactionRequest.getProductName(), transactionValue);

@@ -19,8 +19,8 @@ import static com.investments.tracker.validation.ValidationMessages.*;
 @Getter
 @Builder
 public class TransactionRequest {
-    @NotNull(message = TRANSACTION_DATE_NOT_NULL)
-    @PastOrPresent(message = TRANSACTION_DATE_NOT_IN_FUTURE)
+    @NotNull(message = DATE_NOT_NULL)
+    @PastOrPresent(message = DATE_NOT_IN_FUTURE)
     private LocalDate date;
 
     @NotNull(message = TRANSACTION_TYPE_NOT_NULL)

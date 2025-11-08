@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.investments.tracker.controller.balance.BalanceResponse.createBalanceResponse;
+import static com.investments.tracker.validation.ValidationMessages.PRODUCT_NOT_EXIST;
 import static java.math.RoundingMode.CEILING;
 import static java.math.RoundingMode.FLOOR;
 
@@ -58,22 +59,13 @@ public class DividendService {
             portfolioService.updatePortfolioForDividend(dividend.getDate(), dividendRequest.getProductName(), dividend.getAmount());
 
             Optional<Balance> latestBalance = balanceRepository.getLatestBalance();
-            Balance newBalance;
-            if (latestBalance.isPresent()) {
-                newBalance = dividendBalanceBuilderService.createBalanceFromCashTransaction(latestBalance.get(), dividend);
-            } else {
-                newBalance = dividendBalanceBuilderService.createBalanceFromCashTransaction(null, dividend);
-            }
-
+            Balance newBalance = dividendBalanceBuilderService.createBalanceFromCashTransaction(latestBalance.get(), dividend);
             balanceRepository.save(newBalance);
             log.info("Dividend for product: {} created successfully", dividendRequest.getProductName());
             return createBalanceResponse(newBalance);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Product with name %s not found", dividendRequest.getProductName()));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PRODUCT_NOT_EXIST.replace("%1", dividendRequest.getProductName()));
         }
-
-
-
     }
 
     private static BigDecimal calculateDividendAmountReceived(DividendRequest dividendRequest) {

@@ -40,17 +40,15 @@ public class FeeService {
     }
 
     private List<CashTransaction> createFees(TransactionRequest transactionRequest, long transactionId) {
-        Map<FeeType, BigDecimal> feesMap = transactionRequest.getFees();
-
-        List<CashTransaction> fees = feesMap
+        List<CashTransaction> fees  = transactionRequest
+                .getFees()
                 .entrySet()
                 .stream()
                 .map(entry -> {
                     String feeType = checkFeeType(entry.getKey());
                     BigDecimal feeValue = entry.getValue();
                     return cashTransactionService.createCashTransactionForFee(transactionRequest.getDate(), FEE, feeType, feeValue, transactionId);
-                })
-                .collect(Collectors.toList());
+                }).toList();
         return cashTransactionRepository.saveAll(fees);
     }
 
