@@ -12,7 +12,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
+@ToString
 public class Portfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

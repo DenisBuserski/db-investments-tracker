@@ -11,17 +11,19 @@ public class TransactionBalanceBuilderService {
 
     public Balance createNewBalanceFromTransaction(Balance balance, Transaction transaction, BigDecimal totalAmountOfInsertedFees) {
         LocalDate newBalanceDate = transaction.getDate();
-        BigDecimal newBalanceAmount = balance.getBalance().subtract(transaction.getTotalAmount()).subtract(totalAmountOfInsertedFees);
+        BigDecimal newBalanceAmount = balance.getBalance()
+                .subtract(transaction.getTotalAmount())
+                .subtract(totalAmountOfInsertedFees);
         BigDecimal newTotalInvestments = balance.getTotalInvestments().add(transaction.getTotalAmount());
         BigDecimal newTotalDeposits = balance.getTotalDeposits();
         BigDecimal newTotalWithdrawals = balance.getTotalWithdrawals();
         BigDecimal newTotalDividends = balance.getTotalDividends();
         BigDecimal newTotalFees = balance.getTotalFees().add(totalAmountOfInsertedFees);
         BigDecimal newLastPortfolioValue = balance.getLastPortfolioValue();
-        BigDecimal lastUnrealizedPl = balance == null ? BigDecimal.ZERO : balance.getLastUnrealizedPl();
-        BigDecimal lastUnrealizedPlPercentage = balance == null ? BigDecimal.ZERO : balance.getLastUnrealizedPlPercentage();
-        BigDecimal totalSold = balance == null ? BigDecimal.ZERO : balance.getTotalSold();
-        BigDecimal realizedPl = balance == null ? BigDecimal.ZERO : balance.getRealizedPl();
+        BigDecimal lastUnrealizedPl = balance.getLastUnrealizedPl();
+        BigDecimal lastUnrealizedPlPercentage = balance.getLastUnrealizedPlPercentage();
+        BigDecimal totalSold = balance.getTotalSold();
+        BigDecimal realizedPl = balance.getRealizedPl();
 
         return Balance.builder()
                 .date(newBalanceDate)

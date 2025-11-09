@@ -4,7 +4,6 @@ import com.investments.tracker.model.Portfolio;
 import com.investments.tracker.controller.transaction.TransactionRequest;
 import com.investments.tracker.repository.PortfolioRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,20 +31,29 @@ public class PortfolioService{
             int newQuantity = portfolioForProduct.get().getQuantity() + transactionRequest.getQuantity();
             BigDecimal newInvestedMoney = portfolioForProduct.get().getInvestedMoney().add(totalTransactionValue);
             BigDecimal newAveragePrice = newInvestedMoney.divide(BigDecimal.valueOf(newQuantity), 4, RoundingMode.HALF_UP);
-            int updatedResult = portfolioRepository.updatePortfolioWithBuyTransaction(transactionDate, productName, newQuantity, newInvestedMoney, newAveragePrice);
 
-            if (updatedResult == 1) {
-                log.info("Portfolio updated successfully for product [{}]", productName);
-            } else {
-                log.warn("Portfolio for product [{}] was not updated", productName);
-            }
+            Portfolio portfolio = portfolioForProduct.get();
+            portfolio.setLastUpdated(transactionDate);
+            portfolio.setQuantity(newQuantity);
+            portfolio.setInvestedMoney(newInvestedMoney);
+            portfolio.setAveragePrice(newAveragePrice);
+            portfolioRepository.save(portfolio);
+
+
+//            int updatedResult = portfolioRepository.updatePortfolioWithBuyTransaction(transactionDate, productName, newQuantity, newInvestedMoney, newAveragePrice);
+//
+//            if (updatedResult == 1) {
+//                log.info("Portfolio updated successfully for product [{}]", productName);
+//            } else {
+//                log.warn("Portfolio for product [{}] was not updated", productName);
+//            }
         } else {
             Portfolio portfolio = Portfolio.builder()
                     .lastUpdated(transactionDate)
                     .productName(productName)
                     .quantity(transactionRequest.getQuantity())
                     .investedMoney(totalTransactionValue)
-                    .averagePrice(totalTransactionValue.divide(BigDecimal.valueOf(transactionRequest.getQuantity()), 4, RoundingMode.DOWN))
+                    .averagePrice(totalTransactionValue.divide(BigDecimal.valueOf(transactionRequest.getQuantity()), 4, RoundingMode.HALF_UP))
                     .dividendsAmount(BigDecimal.ZERO)
                     .status(ACTIVE)
                     .build();
