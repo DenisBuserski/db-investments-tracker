@@ -1,12 +1,8 @@
 package com.investments.tracker.integration;
 
 import com.investments.tracker.model.Portfolio;
-import com.investments.tracker.model.Transaction;
-import com.investments.tracker.repository.BalanceRepository;
 import com.investments.tracker.repository.PortfolioRepository;
-import com.investments.tracker.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -15,14 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Transactional
-class TransactionInsertionIT {
+class TransactionServiceIT {
     private static final String DEPOSIT_REQUEST_JSON = "src/test/resources/json/deposit-request.json";
     private static final String TRANSACTION_REQUEST_JSON = "src/test/resources/json/transaction-request.json";
     private static final String TRANSACTION_TWO_REQUEST_JSON = "src/test/resources/json/transaction-2-request.json";
@@ -46,10 +40,10 @@ class TransactionInsertionIT {
     @Autowired
     private PortfolioRepository portfolioRepository;
 
-    @Value("${deposit.insert.url}")
+    @Value("${application.test.deposit-insert-url}")
     private String depositInsertUrl;
 
-    @Value("${transaction.insert.url}")
+    @Value("${application.test.transaction-insert-url}")
     private String transactionInsertUrl;
 
     @Test

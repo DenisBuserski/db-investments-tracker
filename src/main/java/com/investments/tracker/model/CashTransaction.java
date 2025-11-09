@@ -18,24 +18,17 @@ public class CashTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @Column(name = "date")
     private LocalDate date;
 
-    @Column(name = "cash_transaction_type")
     @Enumerated(EnumType.STRING)
     private CashTransactionType cashTransactionType;
 
-    @Column(name = "amount")
     private BigDecimal amount;
 
-    @Column(name = "currency")
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "reference_id")
     private Long referenceId;
 }

@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Transactional
-class DepositWithdrawalIT {
+class DepositWithdrawalServiceIT {
     private static final String DEPOSIT_REQUEST_JSON = "src/test/resources/json/deposit-request.json";
     private static final String BALANCE_AFTER_DEPOSIT_ESPONSE_JSON = "src/test/resources/json/balance-after-deposit-response.json";
     private static final String WITHDRAWAL_REQUEST_JSON = "src/test/resources/json/withdrawal-request.json";
@@ -30,10 +30,10 @@ class DepositWithdrawalIT {
     @Autowired
     private MockMvc mockMvc;
 
-    @Value("${deposit.insert.url}")
+    @Value("${application.test.deposit-insert-url}")
     private String depositInsertUrl;
 
-    @Value("${withdrawal.out.url}")
+    @Value("${application.test.withdrawal-out-url}")
     private String withdrawalOutUrl;
 
     @Test

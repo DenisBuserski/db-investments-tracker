@@ -1,4 +1,4 @@
 package com.investments.tracker.integration;
 
-public class DividendInsertionIT {
+public class DividendServiceIT {
 }
