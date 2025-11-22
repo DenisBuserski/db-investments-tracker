@@ -106,11 +106,7 @@ public class ReportService {
         weeklyOverviewRepository.save(weeklyOverviewBuilder(lastDayOfTheWeek, weekNumber,
                 totalROIPercentage, totalBeggingPortfolioValue, totalInvestedValue, totalUnrealizedProfitLoss, totalUnrealizedProfitLossPercentage));
 
-
-        log.info("Sending email for Weekly view report");
-        // emailService.sendEmail();
-
-        return WeeklyViewResponse.builder()
+        WeeklyViewResponse weeklyViewResponse = WeeklyViewResponse.builder()
                 .weekNumber(weekNumber)
                 .lastDayOfTheWeek(lastDayOfTheWeek)
                 .returnOnInvestment(totalROIPercentage)
@@ -120,6 +116,12 @@ public class ReportService {
                 .totalUnrealizedProfitLossPercentage(totalUnrealizedProfitLossPercentage)
                 .weeklyPositions(finalWeeklyProductPositions)
                 .build();
+
+        log.info("Sending email for Weekly view report");
+        String subject = "Weekly Overview Report";
+        emailService.sendEmailForWeeklyView(subject, weeklyViewResponse, true);
+
+        return weeklyViewResponse;
     }
 
     private WeeklyOverview weeklyOverviewBuilder(LocalDate lastDayOfTheWeek, int weekNumber,

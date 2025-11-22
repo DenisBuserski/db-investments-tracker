@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Weekly Investment Summary</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background: #f5f7fa;
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 700px;
+                margin: 30px auto;
+                background: #ffffff;
+                border-radius: 12px;
+                padding: 25px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            h2 {
+                color: #333333;
+                border-bottom: 2px solid #e2e8f0;
+                padding-bottom: 10px;
+            }
+
+            p {
+                font-size: 15px;
+                margin: 6px 0;
+                color: #555;
+            }
+
+            .label {
+                font-weight: bold;
+                color: #222;
+            }
+
+            .table-container {
+                margin-top: 20px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background: #ffffff;
+            }
+
+            table th {
+                background: #4f46e5;
+                color: #ffffff;
+                padding: 10px;
+                text-align: left;
+                font-size: 14px;
+            }
+
+            table td {
+                padding: 10px;
+                border-bottom: 1px solid #e5e7eb;
+                font-size: 14px;
+            }
+
+            tr:nth-child(even) {
+                background: #f9fafb;
+            }
+
+            .profit {
+                color: #16a34a;
+                font-weight: bold;
+            }
+
+            .loss {
+                color: #dc2626;
+                font-weight: bold;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h2>Weekly Investment Summary</h2>
+
+            <p><span class="label">Week Number:</span>
+                <span th:text="${content.weekNumber}"></span></p>
+            <p><span class="label">Last Day of Week:</span>
+                <span th:text="${content.lastDayOfTheWeek}"></span></p>
+            <p><span class="label">Return on Investment:</span>
+                <span th:text="${content.returnOnInvestment}"></span>%</p>
+            <p><span class="label">Beginning Portfolio Value:</span>
+                <span th:text="${content.beggingPortfolioValue}"></span></p>
+            <p><span class="label">Total Invested Value:</span>
+                <span th:text="${content.totalInvestedValue}"></span></p>
+
+            <p><span class="label">Unrealized P/L:</span>
+                <span th:text="${content.totalUnrealizedProfitLoss}"
+                      th:classappend="${content.totalUnrealizedProfitLoss >= 0} ? 'profit' : 'loss'"></span></p>
+            <p><span class="label">Unrealized P/L %:</span>
+                <span th:text="${content.totalUnrealizedProfitLossPercentage}"
+                      th:classappend="${content.totalUnrealizedProfitLossPercentage >= 0} ? 'profit' : 'loss'"></span>%</p>
+
+            <div class="table-container">
+                <h3>Weekly Positions</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Begging value</th>
+                        <th>Open price</th>
+                        <th>Total value</th>
+                        <th>Total Unrealized P/L</th>
+                        <th>Total Unrealized P/L(%)</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="weeklyPosition : ${content.weeklyPositions}">
+                        <td th:text="${weeklyPosition.productName}"></td>
+                        <td th:text="${weeklyPosition.quantity}"></td>
+                        <td th:text="${weeklyPosition.beggingPortfolioValue}"></td>
+                        <td th:text="${weeklyPosition.openPrice}"></td>
+                        <td th:text="${weeklyPosition.totalValue}"></td>
+                        <td th:text="${weeklyPosition.totalUnrealizedProfitLoss}"></td>
+                        <td th:text="${weeklyPosition.totalUnrealizedProfitLossPercentage}"></td>
+
+                        <!-- Conditional red/green coloring -->
+                        <td th:text="${pos.pnl}"
+                            th:classappend="${pos.pnl >= 0} ? 'profit' : 'loss'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
