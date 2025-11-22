@@ -41,4 +41,10 @@ public class ValidationMessages {
     public static final String DIVIDEND_AMOUNT_MORE_THAN_ZERO = "Dividend amount must be more than 0!";
     public static final String DIVIDEND_TAX_AMOUNT_NOT_NULL = "Dividend tax amount cannot be NULL!";
     public static final String DIVIDEND_TAX_AMOUNT_MORE_THAN_ZERO = "Dividend tax amount cannot be in the future!";
+
+    // Gold
+    public static final String SELLER_NOT_NULL = "Seller name cannot be NULL!";
+    public static final String SIZE_MORE_THAN_ZERO = "Size must be more than 0!";
+    public static final String PRICE_NOT_NULL = "Price cannot be NULL!";
+    public static final String PRICE_MORE_THAN_ZERO = "Price must be more than 0!";
 }

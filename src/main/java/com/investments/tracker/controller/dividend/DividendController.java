@@ -22,7 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/api/v1/dividends")
 @CrossOrigin(
         origins = "http://localhost:3000",
-        methods = RequestMethod.GET
+        methods = { RequestMethod.POST }
 )
 @Slf4j
 @Tag(name = "Dividend Controller", description = "Contains REST POST method for inserting a dividend in the database")

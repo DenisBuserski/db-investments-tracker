@@ -22,8 +22,8 @@ public class Dividend {
     private int quantity;
     private BigDecimal totalAmountAfterTaxAndConversion;
     private BigDecimal totalAmountAfterTaxBeforeConversion;
-    private BigDecimal baseAmount;
-    private BigDecimal totalTaxAmount;
+    private BigDecimal totalBaseAmount;
+    private BigDecimal totalBaseTaxAmount;
     private BigDecimal amountPerShare;
     private BigDecimal taxAmountPerShare;
     private BigDecimal exchangeRate;

@@ -50,7 +50,7 @@ public class DepositController {
     public ResponseEntity<BalanceResponse> insertDeposit(@RequestBody @Valid DepositRequest depositRequest) {
         log.info("Inserting deposit for [{} {}]", String.format("%.2f", depositRequest.getAmount()), depositRequest.getCurrency());
         BalanceResponse balanceResponse = depositService.insertDeposit(depositRequest);
-        return new ResponseEntity<>(balanceResponse, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(balanceResponse);
     }
 
 }

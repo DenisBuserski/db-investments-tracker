@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +77,7 @@ public class DividendService {
 
     private static BigDecimal dividendConversion(BigDecimal exchangeRate, BigDecimal dividendAmountBeforeConversion) {
         if (!exchangeRate.equals(BigDecimal.ZERO)) {
-            return dividendAmountBeforeConversion.divide(exchangeRate, 10, FLOOR).setScale(2, FLOOR);
+            return dividendAmountBeforeConversion.divide(exchangeRate, 2, RoundingMode.HALF_UP);
         } else {
             return dividendAmountBeforeConversion;
         }
@@ -98,8 +99,8 @@ public class DividendService {
                 .quantity(quantity)
                 .totalAmountAfterTaxAndConversion(dividendAmountReceivedAfterConversion)
                 .totalAmountAfterTaxBeforeConversion(dividendAmountReceivedBeforeConversion)
-                .baseAmount(dividendAmount)
-                .totalTaxAmount(dividendTaxAmount)
+                .totalBaseAmount(dividendAmount)
+                .totalBaseTaxAmount(dividendTaxAmount)
                 .amountPerShare(dividendAmountPerShare)
                 .taxAmountPerShare(dividendTaxAmountPerShare)
                 .exchangeRate(dividendRequest.getExchangeRate())
