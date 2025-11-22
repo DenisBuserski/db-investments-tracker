@@ -1,6 +1,6 @@
-package com.investments.tracker.dto;
+package com.investments.tracker.controller.report;
 
-import com.investments.tracker.model.WeeklyPosition;
+import com.investments.tracker.service.report.WeeklyProductPosition;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -12,15 +12,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WeeklyViewResponceDTO {
-    private int year;
+public class WeeklyViewResponse {
     private int weekNumber;
-    private LocalDate fromDate;
-    private LocalDate toDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private BigDecimal returnOnInvestment;
     private BigDecimal beggingPortfolioValue;
-    private BigDecimal totalInvestmentValue;
+    private BigDecimal totalInvestedValue;
     private BigDecimal totalUnrealizedProfitLoss;
     private BigDecimal totalUnrealizedProfitLossPercentage;
-    private List<WeeklyPosition> weeklyPositions;
+    private List<WeeklyProductPosition> weeklyPositions;
 }
