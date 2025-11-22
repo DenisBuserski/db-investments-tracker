@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Builder
-public class PreciousMetals {
+public class PreciousMetal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -25,14 +25,31 @@ public class PreciousMetals {
     @Enumerated(EnumType.STRING)
     private PreciousMetalType type;
 
+    @Column(name = "seller_name")
     private String sellerName;
+
+    @Column(name = "product_name")
     private String productName;
+
     private URL url;
+
+    @Column(name = "transaction_date")
     private LocalDate transactionDate;
+
+    @Column(name = "size_in_grams")
     private double sizeInGrams;
+
+    @Column(name = "price_bgn")
     private BigDecimal priceBGN;
+
+    @Column(name = "price_eur")
     private BigDecimal priceEUR;
+
+    @Column(name = "price_per_gram_eur")
     private BigDecimal pricePerGramEUR;
+
+    @Column(name = "price_per_gram_on_date_eur")
     private BigDecimal pricePerGramOnDateEUR;
+
     private BigDecimal difference;
 }

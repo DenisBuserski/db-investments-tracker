@@ -1,7 +1,7 @@
 package com.investments.tracker.service.gold;
 
 import com.investments.tracker.controller.preciousmetals.GoldBuyRequest;
-import com.investments.tracker.model.PreciousMetals;
+import com.investments.tracker.model.PreciousMetal;
 import com.investments.tracker.repository.PreciousMetalsRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class GoldService {
     public void insertGoldTransaction(GoldBuyRequest goldBuyRequest) {
         BigDecimal pricePerGramEUR = goldBuyRequest.getPriceEUR().divide(BigDecimal.valueOf(goldBuyRequest.getSizeInGrams()));
 
-        PreciousMetals gold = PreciousMetals.builder()
+        PreciousMetal gold = PreciousMetal.builder()
                 .type(GOLD)
                 .sellerName(goldBuyRequest.getSellerName())
                 .productName(goldBuyRequest.getProductName())
