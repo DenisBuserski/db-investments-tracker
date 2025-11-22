@@ -1,6 +1,8 @@
 package com.investments.tracker.controller.report;
 
 import com.investments.tracker.service.report.ReportService;
+import com.investments.tracker.service.report.WeeklyProductPositionDTO;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.temporal.WeekFields;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -25,27 +28,21 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class ReportController {
     private final ReportService reportService;
 
-    // Trigger calculation via API
-    // List of WeeklyPositions
-    // Calculate Total invested money
-    // Calculate Total current value
-    // Total Unrealized P/L
-    // Total Unrealized P/L %
-
     @PostMapping(value = "/prepare", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<WeeklyViewResponse> prepareWeeklyViewReport(@RequestBody DateRangeRequest request) {
-        LocalDate startDate = request.getStartDate();
-        LocalDate endDate = request.getEndDate();
-        log.info("Preparing weekly view report for {} to {}", startDate, endDate);
-        WeeklyViewResponse weeklyViewResponse = reportService.prepareWeeklyViewReport(startDate, endDate);
-        return ResponseEntity.status(HttpStatus.CREATED).body(weeklyViewResponse);
+    public ResponseEntity<List<WeeklyProductPositionDTO>> prepareWeeklyViewReport(
+            @Parameter(description = "The last day of the week", required = true) @RequestParam("lastDayOfTheWeek") LocalDate lastDayOfTheWeek) {
+        int weekNumber = lastDayOfTheWeek.get(WeekFields.ISO.weekOfWeekBasedYear());
+        LocalDate firstDayOfWeek = lastDayOfTheWeek.minusDays(6); // If the last day of the week is in the new year
+        log.info("Preparing weekly view report for week {} of year {}", weekNumber, firstDayOfWeek.getYear());
+        List<WeeklyProductPositionDTO> weeklyProductPositions = reportService.prepareWeeklyViewReport(lastDayOfTheWeek);
+        return ResponseEntity.status(HttpStatus.CREATED).body(weeklyProductPositions);
     }
 
     @PostMapping(value = "/generate", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> generateWeeklyViewReport(@RequestBody WeeklyViewResponse updatedResponse) {
+    public ResponseEntity<WeeklyViewResponse> generateWeeklyViewReport(@RequestBody List<WeeklyProductPositionDTO> updatedWeeklyProductPositions) {
         log.info("Generating weekly view report");
-        reportService.generateWeeklyViewReport(updatedResponse);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        WeeklyViewResponse weeklyViewResponse = reportService.generateWeeklyViewReport(updatedWeeklyProductPositions);
+        return ResponseEntity.status(HttpStatus.CREATED).body(weeklyViewResponse);
     }
 
 }

@@ -16,5 +16,5 @@ public class ProductDetailsDTO {
     private String productName;
     private Long totalQuantity;
     private BigDecimal totalInvestedValue;
-    private Currency currency;
+    private Currency baseProductCurrency;
 }

@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,87 +27,115 @@ public class ReportService {
     private final WeeklyOverviewRepository weeklyOverviewRepository;
     private final EmailService emailService;
 
-    BigDecimal totalBeggingPortfolioValue = BigDecimal.ZERO;
-    BigDecimal totalInvestedValue = BigDecimal.ZERO;
-    BigDecimal totalUnrealizedProfitLoss = BigDecimal.ZERO;
-    BigDecimal totalUnrealizedProfitLossPercentage = BigDecimal.ZERO; // Maybe calcualte this
-
     @Transactional
-    public WeeklyViewResponse prepareWeeklyViewReport(LocalDate startDate, LocalDate endDate) {
-        int weekNumber = startDate.get(WeekFields.ISO.weekOfWeekBasedYear());
-
-        List<WeeklyProductPosition> weeklyPositions = calculateWeeklyPositions();
-        log.info("Finished calculating weekly positions - {}", weeklyPositions.size());
-
-        return WeeklyViewResponse.builder()
-                .weekNumber(weekNumber)
-                .startDate(startDate)
-                .endDate(endDate)
-                .returnOnInvestment(totalUnrealizedProfitLoss.divide(totalBeggingPortfolioValue))
-                .beggingPortfolioValue(totalBeggingPortfolioValue)
-                .totalInvestedValue(totalInvestedValue)
-                .totalUnrealizedProfitLoss(totalUnrealizedProfitLoss)
-                .totalUnrealizedProfitLossPercentage(totalUnrealizedProfitLossPercentage)
-                .weeklyPositions(weeklyPositions)
-                .build();
-
-    }
-
-    private List<WeeklyProductPosition> calculateWeeklyPositions() {
+    public List<WeeklyProductPositionDTO> prepareWeeklyViewReport(LocalDate lastDayOfTheWeek) {
         log.info("Getting unique product names with their total quantity and invested money");
-        return transactionRepository.findDistinctProductDetails()
-                       .stream()
-                       .map(productDetails -> {
-                           totalBeggingPortfolioValue.add(productDetails.getTotalInvestedValue());
-                           totalInvestedValue.add(null);
-                           totalUnrealizedProfitLoss.add(null);
-
-                           return WeeklyProductPosition.builder()
-                                   .productName(productDetails.getProductName())
-                                   .quantity(Math.toIntExact(productDetails.getTotalQuantity()))
-                                   .beggingPortfolioValue(productDetails.getTotalInvestedValue())
-                                   .openPrice(null)
-                                   .currency(productDetails.getCurrency())
-                                   .exchangeRate(null)
-                                   .totalValue(null) // openPrice * quantity
-                                   .totalUnrealizedProfitLoss(null) // totalValue - beggingPortfolioValue
-                                   .totalUnrealizedProfitLossPercentage(null) // (totalValue / beggingPortfolioValue) / beggingPortfolioValue
-                                   .build();
-
-                       })
+        return transactionRepository
+                .findDistinctProductDetails(lastDayOfTheWeek)
+                .stream()
+                .map(productDetails -> WeeklyProductPositionDTO.builder()
+                        .date(lastDayOfTheWeek)
+                        .productName(productDetails.getProductName())
+                        .quantity(Math.toIntExact(productDetails.getTotalQuantity()))
+                        .beggingPortfolioValue(productDetails.getTotalInvestedValue())
+                        .openPrice(null) // Passed by the user
+                        .currency(productDetails.getBaseProductCurrency())
+                        .exchangeRate(null) // Passed by the user
+                        .totalValue(null) // openPrice * quantity
+                        .totalUnrealizedProfitLoss(null) // totalValue - beggingPortfolioValue
+                        .totalUnrealizedProfitLossPercentage(null) // (totalValue / beggingPortfolioValue) / beggingPortfolioValue
+                        .build())
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void generateWeeklyViewReport(WeeklyViewResponse updatedResponse) {
-        // Save the WeeklyPosition
-        List<WeeklyProductPosition> weeklyPositions = updatedResponse.getWeeklyPositions();
+    public WeeklyViewResponse generateWeeklyViewReport(List<WeeklyProductPositionDTO> updatedWeeklyProductPositions) {
+        LocalDate lastDayOfTheWeek = updatedWeeklyProductPositions.getFirst().getDate();
+        LocalDate firstDayOfWeek = lastDayOfTheWeek.minusDays(6);
+        int weekNumber = lastDayOfTheWeek.get(WeekFields.ISO.weekOfWeekBasedYear());
 
-        // calculate totals before saving in db
+        BigDecimal totalBeggingPortfolioValue = BigDecimal.ZERO;
+        BigDecimal totalInvestedValue = BigDecimal.ZERO;
+        BigDecimal totalUnrealizedProfitLoss = BigDecimal.ZERO;
 
-        log.info("Inserting entries in table 'weekly_overview' for the period {} to {}", updatedResponse.getStartDate(), updatedResponse.getEndDate());
-        weeklyOverviewRepository.save(weeklyOverviewBuilder(updatedResponse));
+        List<WeeklyProductPositionDTO> finalWeeklyProductPositions = new ArrayList<>();
 
+        for (WeeklyProductPositionDTO updatedWeeklyProductPosition : updatedWeeklyProductPositions) {
+            BigDecimal openPrice;
+            BigDecimal exchangeRate;
+            BigDecimal beggingPortfolioValueForProduct = updatedWeeklyProductPosition.getBeggingPortfolioValue();
+            totalBeggingPortfolioValue.add(beggingPortfolioValueForProduct);
 
-        // Take from updatedResponse and save in DB
-        // startDate / endDate / returnOnInvestment / beggingPortfolioValue / totalInvestedValue / totalUnrealizedProfitLoss / totalUnrealizedProfitLossPercentage
+            if (BigDecimal.ZERO.compareTo(updatedWeeklyProductPosition.getExchangeRate()) == 0) {
+                exchangeRate = updatedWeeklyProductPosition.getExchangeRate();
+                openPrice = BigDecimal.ONE;
+                // Calculate open price with rate
+            } else {
+                exchangeRate = BigDecimal.ZERO;
+                openPrice = updatedWeeklyProductPosition.getOpenPrice();
+            }
 
+            BigDecimal investedValue = openPrice.multiply(BigDecimal.valueOf(updatedWeeklyProductPosition.getQuantity()));
+            totalInvestedValue.add(investedValue);
 
+            BigDecimal unrealizedProfitLoss = totalInvestedValue.subtract(beggingPortfolioValueForProduct);
+            totalUnrealizedProfitLoss.add(unrealizedProfitLoss);
+
+            BigDecimal unrealizedProfitLossPercentage = unrealizedProfitLoss.divide(beggingPortfolioValueForProduct);
+
+            WeeklyProductPositionDTO newWeeklyProductPosition = WeeklyProductPositionDTO.builder()
+                    .date(lastDayOfTheWeek)
+                    .productName(updatedWeeklyProductPosition.getProductName())
+                    .quantity(Math.toIntExact(updatedWeeklyProductPosition.getQuantity()))
+                    .beggingPortfolioValue(beggingPortfolioValueForProduct)
+                    .openPrice(openPrice)
+                    .currency(updatedWeeklyProductPosition.getCurrency())
+                    .exchangeRate(exchangeRate)
+                    .totalValue(investedValue)
+                    .totalUnrealizedProfitLoss(unrealizedProfitLoss)
+                    .totalUnrealizedProfitLossPercentage(unrealizedProfitLossPercentage)
+                    .build();
+            finalWeeklyProductPositions.add(newWeeklyProductPosition);
+            // Save in DB
+        }
+
+        BigDecimal totalUnrealizedProfitLossPercentage = totalUnrealizedProfitLoss.divide(totalBeggingPortfolioValue);
+        BigDecimal totalROIPercentage = totalUnrealizedProfitLoss.divide(totalBeggingPortfolioValue);
+
+        log.info("Inserting entries in table 'weekly_overview' for week {} of year {}", weekNumber, firstDayOfWeek.getYear());
+        weeklyOverviewRepository.save(weeklyOverviewBuilder(lastDayOfTheWeek, weekNumber,
+                totalROIPercentage, totalBeggingPortfolioValue, totalInvestedValue, totalUnrealizedProfitLoss, totalUnrealizedProfitLossPercentage));
 
 
         log.info("Sending email for Weekly view report");
         // emailService.sendEmail();
+
+        return WeeklyViewResponse.builder()
+                .weekNumber(weekNumber)
+                .lastDayOfTheWeek(lastDayOfTheWeek)
+                .returnOnInvestment(totalROIPercentage)
+                .beggingPortfolioValue(totalBeggingPortfolioValue)
+                .totalInvestedValue(totalInvestedValue)
+                .totalUnrealizedProfitLoss(totalUnrealizedProfitLoss)
+                .totalUnrealizedProfitLossPercentage(totalUnrealizedProfitLossPercentage)
+                .weeklyPositions(finalWeeklyProductPositions)
+                .build();
     }
 
-    private WeeklyOverview weeklyOverviewBuilder(WeeklyViewResponse updatedResponse) {
+    private WeeklyOverview weeklyOverviewBuilder(LocalDate lastDayOfTheWeek, int weekNumber,
+                                                 BigDecimal totalROIPercentage,
+                                                 BigDecimal totalBeggingPortfolioValue,
+                                                 BigDecimal totalInvestedValue,
+                                                 BigDecimal totalUnrealizedProfitLoss,
+                                                 BigDecimal totalUnrealizedProfitLossPercentage) {
         return WeeklyOverview.builder()
-                .startDate(updatedResponse.getStartDate())
-                .endDate(updatedResponse.getEndDate())
-                .returnOnInvestment(updatedResponse.getReturnOnInvestment())
-                .beggingPortfolioValue(updatedResponse.getBeggingPortfolioValue())
-                .totalInvestedValue(updatedResponse.getTotalInvestedValue())
-                .totalUnrealizedProfitLoss(updatedResponse.getTotalUnrealizedProfitLoss())
-                .totalUnrealizedProfitLossPercentage(updatedResponse.getTotalUnrealizedProfitLossPercentage())
+                .lastDayOfTheWeek(lastDayOfTheWeek)
+                .week(weekNumber)
+                .ROIPercentage(totalROIPercentage)
+                .beggingPortfolioValue(totalBeggingPortfolioValue)
+                .totalInvestedValue(totalInvestedValue)
+                .totalUnrealizedProfitLoss(totalUnrealizedProfitLoss)
+                .totalUnrealizedProfitLossPercentage(totalUnrealizedProfitLossPercentage)
                 .build();
     }
 }

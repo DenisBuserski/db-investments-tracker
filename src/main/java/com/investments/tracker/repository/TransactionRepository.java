@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +16,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
            SELECT new com.investments.tracker.service.report.ProductDetailsDTO(
                       t.productName, SUM(t.quantity), SUM(t.totalAmount), t.baseProductCurrency)
            FROM Transaction t
-           GROUP BY t.productName
+           WHERE t.date <= :date
+           GROUP BY t.productName, t.baseProductCurrency
            """)
-    Set<ProductDetailsDTO> findDistinctProductDetails();
+    Set<ProductDetailsDTO> findDistinctProductDetails(LocalDate date);
 }

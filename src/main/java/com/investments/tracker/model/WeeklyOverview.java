@@ -20,9 +20,9 @@ public class WeeklyOverview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private BigDecimal returnOnInvestment;
+    private LocalDate lastDayOfTheWeek;
+    private int week;
+    private BigDecimal ROIPercentage;
     private BigDecimal beggingPortfolioValue;
     private BigDecimal totalInvestedValue;
     private BigDecimal totalUnrealizedProfitLoss;
