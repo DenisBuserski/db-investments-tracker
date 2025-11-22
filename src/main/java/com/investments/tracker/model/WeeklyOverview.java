@@ -1,6 +1,6 @@
-package com.investments.tracker.controller.report;
+package com.investments.tracker.model;
 
-import com.investments.tracker.service.report.WeeklyProductPosition;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,14 +8,18 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
+@Entity
+@Table(name = "weekly_overview")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
-public class WeeklyViewResponse {
-    private int weekNumber;
+public class WeeklyOverview {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
     private LocalDate startDate;
     private LocalDate endDate;
     private BigDecimal returnOnInvestment;
@@ -23,5 +27,5 @@ public class WeeklyViewResponse {
     private BigDecimal totalInvestedValue;
     private BigDecimal totalUnrealizedProfitLoss;
     private BigDecimal totalUnrealizedProfitLossPercentage;
-    private List<WeeklyProductPosition> weeklyPositions;
+
 }

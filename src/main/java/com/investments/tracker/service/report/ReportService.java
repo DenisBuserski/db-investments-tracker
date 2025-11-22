@@ -1,7 +1,10 @@
 package com.investments.tracker.service.report;
 
 import com.investments.tracker.controller.report.WeeklyViewResponse;
+import com.investments.tracker.model.WeeklyOverview;
 import com.investments.tracker.repository.TransactionRepository;
+import com.investments.tracker.repository.WeeklyOverviewRepository;
+import com.investments.tracker.repository.WeeklyPositionRepository;
 import com.investments.tracker.service.email.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReportService {
     private final TransactionRepository transactionRepository;
+    private final WeeklyPositionRepository weeklyPositionRepository;
+    private final WeeklyOverviewRepository weeklyOverviewRepository;
     private final EmailService emailService;
 
     BigDecimal totalBeggingPortfolioValue = BigDecimal.ZERO;
@@ -76,14 +81,34 @@ public class ReportService {
 
     @Transactional
     public void generateWeeklyViewReport(WeeklyViewResponse updatedResponse) {
-        updatedResponse
+        // Save the WeeklyPosition
+        List<WeeklyProductPosition> weeklyPositions = updatedResponse.getWeeklyPositions();
+
+        // calculate totals before saving in db
+
+        log.info("Inserting entries in table 'weekly_overview' for the period {} to {}", updatedResponse.getStartDate(), updatedResponse.getEndDate());
+        weeklyOverviewRepository.save(weeklyOverviewBuilder(updatedResponse));
 
 
-        // Update repot
+        // Take from updatedResponse and save in DB
+        // startDate / endDate / returnOnInvestment / beggingPortfolioValue / totalInvestedValue / totalUnrealizedProfitLoss / totalUnrealizedProfitLossPercentage
 
-        // Save info in weekly_position + another table for the other info
+
+
 
         log.info("Sending email for Weekly view report");
         // emailService.sendEmail();
+    }
+
+    private WeeklyOverview weeklyOverviewBuilder(WeeklyViewResponse updatedResponse) {
+        return WeeklyOverview.builder()
+                .startDate(updatedResponse.getStartDate())
+                .endDate(updatedResponse.getEndDate())
+                .returnOnInvestment(updatedResponse.getReturnOnInvestment())
+                .beggingPortfolioValue(updatedResponse.getBeggingPortfolioValue())
+                .totalInvestedValue(updatedResponse.getTotalInvestedValue())
+                .totalUnrealizedProfitLoss(updatedResponse.getTotalUnrealizedProfitLoss())
+                .totalUnrealizedProfitLossPercentage(updatedResponse.getTotalUnrealizedProfitLossPercentage())
+                .build();
     }
 }

@@ -12,8 +12,8 @@ import java.time.LocalDate;
 @Table(name = "weekly_positions")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Builder
+@Getter
 public class WeeklyPosition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +38,6 @@ public class WeeklyPosition {
     @Enumerated(EnumType.STRING)
     private ProductType productType;
 
-    @Column(nullable = false)
     private BigDecimal quantity;
 
     @Column(name = "total_invested_cash")
